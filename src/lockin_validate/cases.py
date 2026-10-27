@@ -31,6 +31,9 @@ def default_cases_root() -> Path:
 
 
 def _match(f: Finding, pattern: str) -> bool:
+    """``@data`` matches any data-quality check (blocks ``data`` and ``input``); ``@<block>`` matches a block."""
+    if pattern == "@data":
+        return f.block in ("data", "input")
     if pattern.startswith("@"):
         return f.block == pattern[1:]
     return f.check == pattern

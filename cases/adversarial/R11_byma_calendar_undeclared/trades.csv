@@ -1,0 +1,6 @@
+trade_id,timestamp,ticker,side,quantity,price,commission
+1,2024-06-03T16:00:00,DELTA,buy,431,114.81,0.0
+2,2024-06-03T16:00:00,GAMMA,buy,496,99.76,0.0
+3,2024-07-01T16:00:00,DELTA,sell,431,116.77,0.0
+4,2024-07-01T16:00:00,GAMMA,sell,12,106.32,0.0
+5,2024-07-01T16:00:00,ALPHA,buy,972,52.99,0.0

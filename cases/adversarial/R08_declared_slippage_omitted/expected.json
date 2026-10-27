@@ -1,0 +1,23 @@
+{
+  "description": "Rules declare 50 bps of slippage; trades at the exact close and a gross result. The result is reproduced only without costs: it should be the same finding as core case 04.",
+  "origin": "adversarial",
+  "must_include": [
+    {
+      "check": "omitted_costs",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "omitted_costs",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "omitted_costs",
+    "results_reconciliation",
+    "reconstruction"
+  ]
+}

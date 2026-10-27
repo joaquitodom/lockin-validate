@@ -1,0 +1,21 @@
+{
+  "description": "The 2024-05-01 decision uses the Q1-2024 report, available only on 2024-05-10. Exercises the fundamentals.csv branch that no core case tests.",
+  "origin": "adversarial",
+  "must_include": [
+    {
+      "check": "lookahead",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "lookahead",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "lookahead"
+  ]
+}

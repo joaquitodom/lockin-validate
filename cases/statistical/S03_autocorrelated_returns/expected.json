@@ -1,0 +1,32 @@
+{
+  "description": "Returns follow an AR(1) process with phi = 0.6 (smoothed marks of an illiquid book).",
+  "origin": "statistical",
+  "must_include": [
+    {
+      "check": "sharpe_autocorrelation",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "deflated_sharpe",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "trials_declared",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "sharpe_autocorrelation",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "For AR(1) with phi = 0.6 the naive sqrt(q) annualisation overstates the Sharpe by about sqrt((1 + phi) / (1 - phi)) = 2 (Lo 2002)."
+}

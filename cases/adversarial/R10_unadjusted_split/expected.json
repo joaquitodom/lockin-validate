@@ -1,0 +1,17 @@
+{
+  "description": "Every ticker falls 50% on 2024-05-15 (2:1 split not adjusted, adjusted=true). Some data check should flag the jump.",
+  "origin": "adversarial",
+  "must_include": [
+    {
+      "check": "@data",
+      "status": [
+        "NEEDS_REVIEW",
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [],
+  "errors_only_from": [
+    "@data"
+  ]
+}

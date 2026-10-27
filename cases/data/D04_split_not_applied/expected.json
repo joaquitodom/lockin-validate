@@ -1,0 +1,27 @@
+{
+  "description": "CB had a declared 2:1 split on 2023-05-15; the series flagged as adjusted still halves that day.",
+  "origin": "data",
+  "must_include": [
+    {
+      "check": "corporate_actions",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    },
+    {
+      "check": "price_jumps",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "corporate_actions",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "corporate_actions"
+  ]
+}

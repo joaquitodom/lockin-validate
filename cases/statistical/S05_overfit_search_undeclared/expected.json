@@ -1,0 +1,31 @@
+{
+  "description": "Best of 100 noise strategies; the number of trials is not declared, only the log is delivered.",
+  "origin": "statistical",
+  "must_include": [
+    {
+      "check": "trials_declared",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "deflated_sharpe",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "pbo",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "deflated_sharpe",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": []
+}

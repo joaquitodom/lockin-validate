@@ -1,0 +1,20 @@
+{
+  "description": "declared_results.json with keys the tool does not recognise (profitability, sharpe_ratio), one of them false. Concluding 'reconciled' would be a false negative.",
+  "origin": "adversarial",
+  "must_include": [
+    {
+      "check": "results_reconciliation",
+      "status": [
+        "NOT_EXECUTABLE",
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "results_reconciliation",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": []
+}

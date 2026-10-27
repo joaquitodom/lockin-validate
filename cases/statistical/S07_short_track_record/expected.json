@@ -1,0 +1,19 @@
+{
+  "description": "Six months of a strategy with a true annual Sharpe of 0.5: too short to tell from luck.",
+  "origin": "statistical",
+  "must_include": [
+    {
+      "check": "sharpe_significance",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "sharpe_significance",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": []
+}

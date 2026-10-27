@@ -1,0 +1,25 @@
+{
+  "description": "Everything correct and declared; total_return = final NAV / initial cash - 1. Tests whether the core excludes first-day costs from the return (NAV base after trading).",
+  "origin": "adversarial",
+  "must_include": [
+    {
+      "check": "results_reconciliation",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "omitted_costs",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "results_reconciliation",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": []
+}

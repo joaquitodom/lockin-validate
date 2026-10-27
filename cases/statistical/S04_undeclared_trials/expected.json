@@ -1,0 +1,21 @@
+{
+  "description": "declared_results.json declares 5 trials but trials.csv logs 50 configurations.",
+  "origin": "statistical",
+  "must_include": [
+    {
+      "check": "trials_declared",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "trials_declared",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "trials_declared"
+  ]
+}

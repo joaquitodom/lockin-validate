@@ -1,0 +1,19 @@
+{
+  "description": "RB has a +30% one-day bad tick on 2023-08-15 that the independent reference does not show.",
+  "origin": "data",
+  "must_include": [
+    {
+      "check": "reference_accuracy",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "reference_accuracy",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": []
+}

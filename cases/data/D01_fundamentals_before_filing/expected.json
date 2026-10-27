@@ -1,0 +1,21 @@
+{
+  "description": "Two fundamentals rows are available to the strategy 5 days after the period end, about 35 days before their filing date.",
+  "origin": "data",
+  "must_include": [
+    {
+      "check": "pit_fundamentals",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "pit_fundamentals",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "pit_fundamentals"
+  ]
+}

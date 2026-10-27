@@ -1,0 +1,7 @@
+{
+  "description": "Clean data from a market with another calendar (BYMA 2024) and no declared calendar, as an Argentine client would send it. A confirmed error here is a false positive; the right answer is a review item for the undeclared calendar.",
+  "origin": "adversarial",
+  "must_include": [],
+  "must_not_include": [],
+  "errors_only_from": []
+}

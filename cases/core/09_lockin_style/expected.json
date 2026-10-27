@@ -1,0 +1,100 @@
+{
+  "description": "Synthetic lockin-style case (replaces the original case 09, which used vendor prices). Partial package: no available_from in prices, no positions.csv, no costs.csv. What can be reviewed passes; lookahead and positions_reconciliation are NOT_EXECUTABLE.",
+  "origin": "lockin-style",
+  "must_include": [
+    {
+      "check": "lookahead",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "positions_reconciliation",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "results_reconciliation",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "metrics",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "duplicates",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "duplicates",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "duplicates",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "dates",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "dates",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "dates",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "stale_prices",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "stale_prices",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "stale_prices",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "reconstruction",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "reconstruction",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "reconstruction",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "omitted_costs",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "omitted_costs",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "omitted_costs",
+      "status": "NOT_EXECUTABLE"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "Commissions total 2.96% of the initial cash (> 2 x tolerance), so omitted_costs can discriminate with and without costs."
+}

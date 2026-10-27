@@ -1,0 +1,17 @@
+{
+  "description": "Buys for 150% of the capital with leverage=false.",
+  "origin": "adversarial",
+  "must_include": [
+    {
+      "check": "reconstruction",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [],
+  "errors_only_from": [
+    "reconstruction",
+    "rules_vs_implementation"
+  ]
+}

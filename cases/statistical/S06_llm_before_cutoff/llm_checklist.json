@@ -1,0 +1,16 @@
+{
+  "uses_llm": true,
+  "model_name": "generic-llm",
+  "model_training_cutoff": "2024-10",
+  "backtest_start": "2019-01-01",
+  "backtest_end": "2023-12-31",
+  "uses_company_names": true,
+  "uses_tickers": true,
+  "uses_explicit_dates": true,
+  "uses_news_or_filings_text": true,
+  "anonymized_entities": false,
+  "retrieval_pit_filtered": false,
+  "pit_model": false,
+  "post_cutoff_evaluation": false,
+  "memorization_probe_done": false
+}

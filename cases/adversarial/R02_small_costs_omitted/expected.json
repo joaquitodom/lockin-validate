@@ -1,0 +1,25 @@
+{
+  "description": "5 bps declared, trades without commission, gross declared result. The test does not discriminate: the honest answer is NEEDS_REVIEW or not conclusive, never PASS.",
+  "origin": "adversarial",
+  "must_include": [
+    {
+      "check": "omitted_costs",
+      "status": [
+        "NEEDS_REVIEW",
+        "CONFIRMED_ERROR",
+        "NOT_EXECUTABLE"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "omitted_costs",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "omitted_costs",
+    "reconstruction",
+    "results_reconciliation"
+  ]
+}

@@ -1,0 +1,149 @@
+{
+  "description": "Every extended data input present and clean: measures false positives of the extended checks.",
+  "origin": "data",
+  "must_include": [
+    {
+      "check": "pit_fundamentals",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "survivorship",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "ticker_identity",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "corporate_actions",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "reference_accuracy",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "price_jumps",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "coverage",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "dates",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "duplicates",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "stale_prices",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "pit_fundamentals",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "pit_fundamentals",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "survivorship",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "survivorship",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "ticker_identity",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "ticker_identity",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "corporate_actions",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "corporate_actions",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "reference_accuracy",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "reference_accuracy",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "price_jumps",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "price_jumps",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "coverage",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "coverage",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "dates",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "dates",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "duplicates",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "duplicates",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "stale_prices",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "stale_prices",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": []
+}

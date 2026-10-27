@@ -1,0 +1,41 @@
+strategy: quality ranking, top 3 of 10, monthly, equal weights (synthetic, lockin-style)
+universe:
+- QA01
+- QA02
+- QA03
+- QA04
+- QA05
+- QA06
+- QA07
+- QA08
+- QA09
+- QA10
+period:
+  start: '2024-01-02'
+  end: '2025-06-30'
+signal:
+  column: signal
+  order: desc
+  description: quality score with data of the previous close
+selection:
+  top_n: 3
+rebalance:
+  frequency: monthly
+  timing: first_day
+sizing: equal_weight
+costs:
+  commission_rate: 0.001
+  slippage_rate: 0.0
+conventions:
+  initial_cash: 100000.0
+  valuation: close
+  leverage: false
+  short_selling: false
+  calendar: nyse
+  review_date: '2026-10-20'
+  end_date: '2025-06-30'
+  periods_per_year: 252
+  sharpe: arithmetic
+  std_ddof: 1
+  risk_free_annual: 0.0
+  annual_return: geometric

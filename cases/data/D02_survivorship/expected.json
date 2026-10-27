@@ -1,0 +1,21 @@
+{
+  "description": "Three members left the universe inside the window (XA, XB, XC) and have no price at all; XT's series stops five months before its exit.",
+  "origin": "data",
+  "must_include": [
+    {
+      "check": "survivorship",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "survivorship",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "survivorship"
+  ]
+}

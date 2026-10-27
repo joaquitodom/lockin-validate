@@ -1,0 +1,17 @@
+{
+  "description": "Sale of 100 DELTA without holdings on 2024-04-01, with short selling not declared.",
+  "origin": "adversarial",
+  "must_include": [
+    {
+      "check": "reconstruction",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [],
+  "errors_only_from": [
+    "reconstruction",
+    "rules_vs_implementation"
+  ]
+}

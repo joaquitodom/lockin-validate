@@ -1,0 +1,22 @@
+{
+  "description": "Ticker ZZZ belonged to one company until 2022-12-30 and to a different one from 2023-06-01; the price series joins both under one symbol.",
+  "origin": "data",
+  "must_include": [
+    {
+      "check": "ticker_identity",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "ticker_identity",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "ticker_identity"
+  ],
+  "comment": "coverage is expected to raise a review item for the 5-month gap in ZZZ (same problem)."
+}

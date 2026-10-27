@@ -1,0 +1,4 @@
+strategy: data-quality case (no trades)
+conventions:
+  calendar: nyse
+  review_date: '2026-10-20'

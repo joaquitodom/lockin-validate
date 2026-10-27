@@ -1,0 +1,23 @@
+{
+  "description": "The signal is the FUTURE 20-session return, but data_date declares the previous session. With the declarations alone it cannot be confirmed; a correct reviewer cannot say 'no future information': it must raise a hint or limit the conclusion.",
+  "origin": "adversarial",
+  "must_include": [
+    {
+      "check": "lookahead",
+      "status": [
+        "NEEDS_REVIEW",
+        "CONFIRMED_ERROR",
+        "NOT_EXECUTABLE"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "lookahead",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "lookahead"
+  ]
+}

@@ -305,9 +305,10 @@ def read_table(p: Path, name: str, log: TransformationLog) -> Table:
         original = pd.read_csv(f, dtype=str, keep_default_na=False)
     original = original.astype(object)
     work, renames = _normalise_columns(original.copy(), name)
-    for c in list(work.columns):
-        work[c] = pd.Series([None if x == "" else x for x in work[c]], index=work.index, dtype=object)
-    work.insert(0, "row", range(2, len(work) + 2))  # CSV line number (line 1 is the header)
+    cols = {"row": list(range(2, len(work) + 2))}  # CSV line number (line 1 is the header)
+    for c in work.columns:
+        cols[c] = pd.Series([None if x == "" else x for x in work[c]], index=work.index, dtype=object)
+    work = pd.DataFrame(cols, index=work.index)
     if renames:
         log.applied(name, "rename_columns", "column aliases mapped to canonical names",
                     {"columns": list(original.columns)}, {"renames": renames})

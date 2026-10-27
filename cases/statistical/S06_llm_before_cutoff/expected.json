@@ -1,0 +1,29 @@
+{
+  "description": "An LLM with a 2024-10 training cutoff is asked about 2019-2023 with company names, tickers and dates, no as-of retrieval and no post-cutoff evaluation.",
+  "origin": "statistical",
+  "must_include": [
+    {
+      "check": "llm_lookahead_risk",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "llm_lookahead_risk",
+      "status": "PASS"
+    },
+    {
+      "check": "llm_lookahead_risk",
+      "status": "NOT_EXECUTABLE"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "llm_lookahead_risk",
+      "text": "uses_company_names"
+    }
+  ]
+}

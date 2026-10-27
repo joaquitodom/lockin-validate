@@ -1,0 +1,42 @@
+{
+  "description": "The reported strategy is the best of 200 pure-noise series; all 200 are declared and logged.",
+  "origin": "statistical",
+  "must_include": [
+    {
+      "check": "deflated_sharpe",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "multiple_testing",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "pbo",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "trials_declared",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "deflated_sharpe",
+      "status": "PASS"
+    },
+    {
+      "check": "multiple_testing",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "The best of 200 noise series has an annualised Sharpe of 1.12 and looks significant as a single test; the expected maximum of 200 noise Sharpe ratios is about 2.75 / sqrt(T) per period, so the deflated Sharpe is near 0.5."
+}

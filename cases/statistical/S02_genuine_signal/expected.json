@@ -1,0 +1,48 @@
+{
+  "description": "Genuine signal: the reported configuration is the truly best of 20 with real, dispersed Sharpe.",
+  "origin": "statistical",
+  "must_include": [
+    {
+      "check": "deflated_sharpe",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "multiple_testing",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "sharpe_significance",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "pbo",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "trials_declared",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "deflated_sharpe",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "pbo",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "20 configurations with true annual Sharpe from 0.5 to 3.0; the reported one has a true Sharpe of 3.0 over 5 years. Expected maximum Sharpe by chance with N = 20 and the cross-trial variance is far below it; the in-sample winner stays near the top out of sample, so PBO is low."
+}

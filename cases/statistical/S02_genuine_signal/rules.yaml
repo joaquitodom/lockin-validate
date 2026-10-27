@@ -1,0 +1,4 @@
+strategy: synthetic return series for statistical checks
+conventions:
+  periods_per_year: 252
+  review_date: '2026-10-20'
