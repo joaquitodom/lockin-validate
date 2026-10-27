@@ -1,0 +1,13 @@
+date,ticker,close,adjusted
+2024-03-01,XX,10,true
+2024-03-01,YY,20,true
+2024-03-04,XX,10,true
+2024-03-04,YY,20,true
+2024-03-05,XX,11,true
+2024-03-05,YY,19,true
+2024-03-06,XX,10,true
+2024-03-06,YY,21,true
+2024-03-07,XX,12,true
+2024-03-07,YY,22,true
+2024-03-08,XX,13,true
+2024-03-08,YY,20,true

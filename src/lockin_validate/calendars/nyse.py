@@ -10,7 +10,7 @@ full-day closures listed below. Early closes (half days) are trading days.
 from __future__ import annotations
 
 from datetime import date, timedelta
-from functools import lru_cache
+from functools import cache
 
 # Unscheduled full-day NYSE closures since 2000.
 SPECIAL_CLOSURES = {
@@ -59,7 +59,7 @@ def _observed(d: date, allow_friday: bool = True) -> date | None:
     return d
 
 
-@lru_cache(maxsize=None)
+@cache
 def nyse_holidays(year: int) -> frozenset[date]:
     hs: set[date | None] = set()
     hs.add(_observed(date(year, 1, 1), allow_friday=False))

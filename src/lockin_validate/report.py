@@ -14,8 +14,17 @@ import math
 from pathlib import Path
 from typing import Any
 
-from .findings import (CONFIRMED_ERROR, NEEDS_REVIEW, NOT_EXECUTABLE, PASS, PRIORITIES, STATUS_TEXT, STATUSES,
-                       AuditResult, Finding)
+from .findings import (
+    CONFIRMED_ERROR,
+    NEEDS_REVIEW,
+    NOT_EXECUTABLE,
+    PASS,
+    PRIORITIES,
+    STATUS_TEXT,
+    STATUSES,
+    AuditResult,
+    Finding,
+)
 
 EVIDENCE_ROWS_MD = 8
 

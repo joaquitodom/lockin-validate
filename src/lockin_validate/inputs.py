@@ -40,7 +40,7 @@ import pandas as pd
 import yaml
 
 from .calendars import Calendar, calendar_from
-from .findings import CONFIRMED_ERROR, NEEDS_REVIEW, PASS, AuditResult, Finding
+from .findings import CONFIRMED_ERROR, NEEDS_REVIEW, NOT_EXECUTABLE, PASS, AuditResult, Finding
 from .profiles import DEFAULTS, get_profile
 from .transformations import TransformationLog
 
@@ -490,7 +490,11 @@ def validate_schema(pkg: Package, res: AuditResult) -> None:
         res.findings.append(f)
     for v in EXTERNAL_VALIDATORS:
         res.findings.extend(v(pkg))
-    if not any(f.check == "schema_and_types" for f in res.findings):
+    if not pkg.tables and not any(f.check == "schema_and_types" for f in res.findings):
+        res.add("schema_and_types", "input", NOT_EXECUTABLE, "Input structure and types", "", [],
+                reason="no input table found in the folder (see docs/INPUT_SPEC.md for the file names)",
+                action="Run `lockin-validate init <dir>` to get a template.", priority="high")
+    elif not any(f.check == "schema_and_types" for f in res.findings):
         res.add("schema_and_types", "input", PASS, "Input structure and types",
                 "Every table present has its required columns and its dates and numbers parse.", [],
                 "Header compared with the input schema; dates and numbers coerced.", inputs=list(pkg.tables))

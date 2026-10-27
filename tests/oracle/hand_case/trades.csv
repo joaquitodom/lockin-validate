@@ -1,0 +1,5 @@
+trade_id,timestamp,ticker,side,quantity,price,commission
+1,2024-03-04T16:00:00,XX,buy,50,10,1
+2,2024-03-04T16:00:00,YY,buy,20,20,0.5
+3,2024-03-06T16:00:00,XX,sell,50,10,1
+4,2024-03-08T16:00:00,XX,buy,10,13,0

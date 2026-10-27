@@ -1,0 +1,7 @@
+date,cash,positions_value,nav,computation
+2024-03-01,1000,0,1000,"initial point = initial cash (CONVENTIONS 1.1), before trading"
+2024-03-04,98.5,900,998.5,"cash = 1000 - 50*10 - 1 - 20*20 - 0.5 = 98.5; positions = 50*10 + 20*20 = 900"
+2024-03-05,98.5,930,1028.5,"positions = 50*11 + 20*19 = 550 + 380 = 930"
+2024-03-06,597.5,420,1017.5,"sell 50 XX at 10 with commission 1: cash = 98.5 + 500 - 1 = 597.5; positions = 20*21 = 420"
+2024-03-07,597.5,440,1037.5,"positions = 20*22 = 440"
+2024-03-08,467.5,530,997.5,"buy 10 XX at 13: cash = 597.5 - 130 = 467.5; positions = 10*13 + 20*20 = 530"

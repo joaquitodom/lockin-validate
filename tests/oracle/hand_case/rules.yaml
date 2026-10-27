@@ -1,0 +1,10 @@
+strategy: case computed by hand (5 sessions, 2 assets)
+conventions:
+  initial_cash: 1000
+  calendar: nyse
+  review_date: '2026-10-20'
+  periods_per_year: 252
+  sharpe: arithmetic
+  std_ddof: 1
+  risk_free_annual: 0.0
+  annual_return: geometric

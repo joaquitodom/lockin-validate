@@ -26,8 +26,7 @@ import yaml
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-from core_cases import (DECL_CONV, REVIEW_DATE, case_metrics, firsts_of_period, simulate,  # noqa: E402
-                        trading_days)
+from core_cases import DECL_CONV, REVIEW_DATE, case_metrics, firsts_of_period, simulate, trading_days  # noqa: E402
 
 OUT = HERE.parent / "core" / "09_lockin_style"
 TICKERS = ["QA01", "QA02", "QA03", "QA04", "QA05", "QA06", "QA07", "QA08", "QA09", "QA10"]
