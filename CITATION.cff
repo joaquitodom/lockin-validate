@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "lockin-validate: offline validation of quantitative investment strategies and their backtests"
+type: software
+authors:
+  - given-names: "Joaquín"
+    family-names: "Domínguez"
+  - given-names: "Mateo"
+    family-names: "Domínguez"
+version: "0.1.0"
+date-released: "2026-10-27"
+license: Apache-2.0
+keywords:
+  - backtest
+  - validation
+  - deflated sharpe ratio
+  - probability of backtest overfitting
+  - look-ahead bias
+  - reconciliation
+abstract: >-
+  An offline Python toolkit that audits the inputs of a quantitative strategy, reconstructs and reconciles its results
+  from trades, detects look-ahead, omitted costs, metric errors and rule-versus-implementation mismatches, and assesses
+  statistical significance and overfitting, producing a reproducible report in which every finding links to its
+  evidence.

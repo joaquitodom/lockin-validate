@@ -1,0 +1,2334 @@
+{
+  "meta": {
+    "tool": "lockin-validate",
+    "tool_version": "0.1.0",
+    "run_at": "2026-10-27T11:34:48",
+    "input_folder": "quickstart_inputs",
+    "profile": "equities_daily",
+    "disclaimer": "This is an automated, offline technical review of the inputs delivered. It makes no claim about future or past profitability, it is not a certification or an audit opinion, and it is not an independent professional approval: a qualified person must review the findings, the NEEDS_REVIEW items and the limitations before any decision. It is not investment advice."
+  },
+  "scope": {
+    "inputs_present": [
+      "prices",
+      "signals",
+      "trades",
+      "positions",
+      "costs",
+      "rules",
+      "declared_results",
+      "version"
+    ],
+    "inputs_absent": [
+      "fundamentals",
+      "universe",
+      "security_master",
+      "corporate_actions",
+      "reference_prices",
+      "returns",
+      "trials",
+      "llm_checklist"
+    ],
+    "strategy_version": "1.0",
+    "profile": "equities_daily",
+    "calendar": {
+      "name": "nyse",
+      "declared": true,
+      "declared_by": "rules.yaml",
+      "holidays_source": null
+    },
+    "conventions_used": {
+      "calendar": {
+        "value": "nyse",
+        "source": "rules.yaml"
+      },
+      "periods_per_year": {
+        "value": 252,
+        "source": "rules.yaml"
+      },
+      "initial_cash": {
+        "value": 100000.0,
+        "source": "rules.yaml"
+      },
+      "stale_run": {
+        "value": 10,
+        "source": "default"
+      },
+      "jump_threshold": {
+        "value": 0.4,
+        "source": "default"
+      },
+      "review_date": {
+        "value": "2026-10-20",
+        "source": "rules.yaml"
+      }
+    },
+    "requirements_per_check": {
+      "schema_and_types": {
+        "required": [],
+        "optional": [
+          "prices",
+          "signals",
+          "trades",
+          "positions",
+          "costs",
+          "fundamentals",
+          "universe",
+          "security_master",
+          "corporate_actions",
+          "reference_prices",
+          "returns",
+          "trials"
+        ]
+      },
+      "duplicates": {
+        "required": [
+          "prices"
+        ],
+        "optional": [
+          "trades",
+          "signals",
+          "positions"
+        ]
+      },
+      "dates": {
+        "required": [
+          "prices"
+        ],
+        "optional": [
+          "trades",
+          "signals",
+          "positions",
+          "rules"
+        ]
+      },
+      "essential_fields": {
+        "required": [
+          "prices"
+        ],
+        "optional": [
+          "trades",
+          "signals",
+          "positions"
+        ]
+      },
+      "coverage": {
+        "required": [
+          "prices"
+        ],
+        "optional": [
+          "trades",
+          "rules"
+        ]
+      },
+      "trade_before_signal": {
+        "required": [
+          "trades",
+          "signals"
+        ],
+        "optional": []
+      },
+      "signal_data_after_decision": {
+        "required": [
+          "signals",
+          "signals(data_date)"
+        ],
+        "optional": []
+      },
+      "stale_prices": {
+        "required": [
+          "prices"
+        ],
+        "optional": [
+          "trades"
+        ]
+      },
+      "price_jumps": {
+        "required": [
+          "prices"
+        ],
+        "optional": [
+          "corporate_actions"
+        ]
+      },
+      "corporate_actions": {
+        "required": [
+          "prices",
+          "corporate_actions"
+        ],
+        "optional": []
+      },
+      "reference_accuracy": {
+        "required": [
+          "prices",
+          "reference_prices"
+        ],
+        "optional": []
+      },
+      "pit_fundamentals": {
+        "required": [
+          "fundamentals"
+        ],
+        "optional": [
+          "signals"
+        ]
+      },
+      "survivorship": {
+        "required": [
+          "prices",
+          "universe"
+        ],
+        "optional": [
+          "fundamentals",
+          "trades"
+        ]
+      },
+      "ticker_identity": {
+        "required": [
+          "prices",
+          "security_master"
+        ],
+        "optional": [
+          "fundamentals"
+        ]
+      },
+      "reconstruction": {
+        "required": [
+          "trades",
+          "prices"
+        ],
+        "optional": [
+          "rules"
+        ]
+      },
+      "positions_reconciliation": {
+        "required": [
+          "trades",
+          "prices",
+          "positions"
+        ],
+        "optional": []
+      },
+      "results_reconciliation": {
+        "required": [
+          "trades",
+          "prices",
+          "declared_results"
+        ],
+        "optional": [
+          "rules"
+        ]
+      },
+      "lookahead": {
+        "required": [
+          "signals",
+          "signals(data_date)",
+          "prices(available_from) or fundamentals(available_from) or fundamentals(filing_date)"
+        ],
+        "optional": []
+      },
+      "omitted_costs": {
+        "required": [
+          "trades",
+          "prices"
+        ],
+        "optional": [
+          "rules",
+          "costs",
+          "declared_results"
+        ]
+      },
+      "metrics": {
+        "required": [
+          "trades",
+          "prices",
+          "declared_results"
+        ],
+        "optional": [
+          "rules"
+        ]
+      },
+      "rules_vs_implementation": {
+        "required": [
+          "rules",
+          "signals",
+          "trades",
+          "prices"
+        ],
+        "optional": []
+      },
+      "sharpe_significance": {
+        "required": [
+          "trades and prices, or returns"
+        ],
+        "optional": [
+          "rules"
+        ]
+      },
+      "sharpe_autocorrelation": {
+        "required": [
+          "trades and prices, or returns"
+        ],
+        "optional": [
+          "rules"
+        ]
+      },
+      "trials_declared": {
+        "required": [
+          "declared_results(n_trials) or trials"
+        ],
+        "optional": [
+          "returns"
+        ]
+      },
+      "deflated_sharpe": {
+        "required": [
+          "trades and prices, or returns",
+          "declared_results(n_trials) or trials"
+        ],
+        "optional": []
+      },
+      "multiple_testing": {
+        "required": [
+          "trades and prices, or returns",
+          "declared_results(n_trials) or trials"
+        ],
+        "optional": []
+      },
+      "pbo": {
+        "required": [
+          "trials (at least 2 configurations)"
+        ],
+        "optional": []
+      },
+      "llm_lookahead_risk": {
+        "required": [
+          "llm_checklist"
+        ],
+        "optional": [
+          "returns"
+        ]
+      }
+    },
+    "reconstruction_conventions": {
+      "initial_cash": 100000.0,
+      "valuation": "close",
+      "commission_rate": 0.0025,
+      "slippage_rate": 0.0,
+      "leverage": false,
+      "short_selling": false,
+      "start_date": null,
+      "end_date": "2024-06-28",
+      "use_trade_commissions": true,
+      "impute_costs": false
+    },
+    "review_date": "2026-10-20"
+  },
+  "manifest": {
+    "folder": "quickstart_inputs",
+    "read_at": "2026-10-27T11:34:48",
+    "files": {
+      "prices": {
+        "file": "prices.csv",
+        "present": true,
+        "bytes": 85258,
+        "sha256": "c5af45afe939645ec9cda55f2be505ea45c50faae40367408ef323447ac8d7ba",
+        "rows": 1152,
+        "columns": [
+          "date",
+          "ticker",
+          "open",
+          "high",
+          "low",
+          "close",
+          "volume",
+          "adjusted",
+          "available_from"
+        ]
+      },
+      "signals": {
+        "file": "signals.csv",
+        "present": true,
+        "bytes": 2094,
+        "sha256": "0282d6252e472127911fbdc3f6d59ab9c82bc58527e612df1a9dcbfd1388cc48",
+        "rows": 48,
+        "columns": [
+          "decision_time",
+          "ticker",
+          "signal",
+          "data_date"
+        ]
+      },
+      "trades": {
+        "file": "trades.csv",
+        "present": true,
+        "bytes": 1232,
+        "sha256": "ac4239b6ab225be85c03ff310135976eb39b9498f3cd21e58f2a452e9eff1712",
+        "rows": 28,
+        "columns": [
+          "trade_id",
+          "timestamp",
+          "ticker",
+          "side",
+          "quantity",
+          "price"
+        ]
+      },
+      "positions": {
+        "file": "positions.csv",
+        "present": true,
+        "bytes": 382,
+        "sha256": "f101c64e1de72a7cb401197d198bf06d977e0c2e8defbfe46e924f2affd3f5f6",
+        "rows": 18,
+        "columns": [
+          "date",
+          "ticker",
+          "quantity"
+        ]
+      },
+      "costs": {
+        "file": "costs.csv",
+        "present": true,
+        "bytes": 54,
+        "sha256": "c5424573b1f273a562eec463e6f50f0e3bdb51f0a041340f2a42d44a60515182",
+        "rows": 2,
+        "columns": [
+          "item",
+          "value",
+          "unit"
+        ]
+      },
+      "fundamentals": {
+        "file": "fundamentals.csv",
+        "present": false
+      },
+      "universe": {
+        "file": "universe.csv",
+        "present": false
+      },
+      "security_master": {
+        "file": "security_master.csv",
+        "present": false
+      },
+      "corporate_actions": {
+        "file": "corporate_actions.csv",
+        "present": false
+      },
+      "reference_prices": {
+        "file": "reference_prices.csv",
+        "present": false
+      },
+      "returns": {
+        "file": "returns.csv",
+        "present": false
+      },
+      "trials": {
+        "file": "trials.csv",
+        "present": false
+      },
+      "rules": {
+        "file": "rules.yaml",
+        "present": true,
+        "bytes": 725,
+        "sha256": "33b8e3417af285e6867b7c6586f2fba27f2483ac6869a98b8eb0335087b54f3f",
+        "keys": [
+          "conventions",
+          "costs",
+          "period",
+          "rebalance",
+          "selection",
+          "signal",
+          "sizing",
+          "strategy",
+          "universe"
+        ]
+      },
+      "declared_results": {
+        "file": "declared_results.json",
+        "present": true,
+        "bytes": 1283,
+        "sha256": "8054c85448230bdaccac3e5944c8452c827b3600b2d8cfbfd2a3b77235b2a331",
+        "keys": [
+          "annual_return",
+          "convention",
+          "curve",
+          "final_nav",
+          "max_drawdown",
+          "n_trades",
+          "sharpe",
+          "total_return"
+        ]
+      },
+      "llm_checklist": {
+        "file": "llm_checklist.json",
+        "present": false
+      },
+      "version": {
+        "file": "version.txt",
+        "present": true,
+        "bytes": 5,
+        "sha256": "8a4434489576de41f28a2d1d6e9d15e53deac6b48c2a4f416a52b7584a92964f",
+        "version": "1.0"
+      }
+    },
+    "unrecognised": [],
+    "declared_version": "1.0"
+  },
+  "counts": {
+    "CONFIRMED_ERROR": 1,
+    "NEEDS_REVIEW": 1,
+    "NOT_EXECUTABLE": 10,
+    "PASS": 16
+  },
+  "checks_run": [
+    {
+      "check": "schema_and_types",
+      "status": "PASS"
+    },
+    {
+      "check": "duplicates",
+      "status": "PASS"
+    },
+    {
+      "check": "dates",
+      "status": "PASS"
+    },
+    {
+      "check": "essential_fields",
+      "status": "PASS"
+    },
+    {
+      "check": "coverage",
+      "status": "PASS"
+    },
+    {
+      "check": "trade_before_signal",
+      "status": "PASS"
+    },
+    {
+      "check": "signal_data_after_decision",
+      "status": "PASS"
+    },
+    {
+      "check": "stale_prices",
+      "status": "PASS"
+    },
+    {
+      "check": "price_jumps",
+      "status": "PASS"
+    },
+    {
+      "check": "corporate_actions",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "reference_accuracy",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "pit_fundamentals",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "survivorship",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "ticker_identity",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "reconstruction",
+      "status": "PASS"
+    },
+    {
+      "check": "positions_reconciliation",
+      "status": "PASS"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "PASS"
+    },
+    {
+      "check": "lookahead",
+      "status": "PASS"
+    },
+    {
+      "check": "omitted_costs",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "metrics",
+      "status": "PASS"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "PASS"
+    },
+    {
+      "check": "sharpe_significance",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "sharpe_autocorrelation",
+      "status": "PASS"
+    },
+    {
+      "check": "trials_declared",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "deflated_sharpe",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "multiple_testing",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "pbo",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "llm_lookahead_risk",
+      "status": "NOT_EXECUTABLE"
+    }
+  ],
+  "findings": [
+    {
+      "check": "schema_and_types",
+      "block": "input",
+      "status": "PASS",
+      "title": "Input structure and types",
+      "detail": "Every table present has its required columns and its dates and numbers parse.",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "Header compared with the input schema; dates and numbers coerced.",
+      "reason": "",
+      "action": "",
+      "priority": "medium",
+      "inputs": [
+        "prices",
+        "signals",
+        "trades",
+        "positions",
+        "costs"
+      ]
+    },
+    {
+      "check": "duplicates",
+      "block": "data",
+      "status": "PASS",
+      "title": "No duplicates",
+      "detail": "No repeated (ticker, date) in prices and no repeated trades, signals or positions.",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "df.duplicated on the natural keys of each table.",
+      "reason": "",
+      "action": "",
+      "priority": "medium",
+      "inputs": [
+        "prices",
+        "signals",
+        "trades",
+        "positions",
+        "costs"
+      ]
+    },
+    {
+      "check": "dates",
+      "block": "data",
+      "status": "PASS",
+      "title": "Dates consistent",
+      "detail": "No future dates (limit 2026-10-20), no non-session days (nyse calendar), no non-positive closes and no inconsistent OHLC.",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "Row-wise comparison against review date, calendar and OHLC range.",
+      "reason": "",
+      "action": "",
+      "priority": "medium",
+      "inputs": [
+        "prices",
+        "trades",
+        "signals",
+        "positions"
+      ]
+    },
+    {
+      "check": "essential_fields",
+      "block": "data",
+      "status": "PASS",
+      "title": "Essential fields complete",
+      "detail": "No empty cell in the essential fields of the tables present.",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "Search for empty cells in the original CSV.",
+      "reason": "",
+      "action": "",
+      "priority": "medium",
+      "inputs": [
+        "prices",
+        "signals",
+        "trades",
+        "positions",
+        "costs"
+      ]
+    },
+    {
+      "check": "coverage",
+      "block": "data",
+      "status": "PASS",
+      "title": "Price coverage sufficient",
+      "detail": "Every traded ticker has a price on its trade dates; no session gaps; the declared period is covered.",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "Tickers/dates of trades crossed with prices and the calendar.",
+      "reason": "",
+      "action": "",
+      "priority": "medium",
+      "inputs": [
+        "prices",
+        "trades"
+      ]
+    },
+    {
+      "check": "trade_before_signal",
+      "block": "data",
+      "status": "PASS",
+      "title": "Every buy has an earlier signal",
+      "detail": "Each buy has at least one signal of its ticker with decision_time earlier or equal.",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "Search of a previous signal per ticker.",
+      "reason": "",
+      "action": "",
+      "priority": "medium",
+      "inputs": [
+        "trades",
+        "signals"
+      ]
+    },
+    {
+      "check": "signal_data_after_decision",
+      "block": "data",
+      "status": "PASS",
+      "title": "Signals use data not later than the decision",
+      "detail": "data_date <= decision_time for every signal.",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "data_date > decision_time per row.",
+      "reason": "",
+      "action": "",
+      "priority": "medium",
+      "inputs": [
+        "signals"
+      ]
+    },
+    {
+      "check": "stale_prices",
+      "block": "data",
+      "status": "PASS",
+      "title": "No frozen prices",
+      "detail": "No run of 10 or more identical consecutive closes.",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "Scan of consecutive closes per ticker.",
+      "reason": "",
+      "action": "",
+      "priority": "medium",
+      "inputs": [
+        "prices"
+      ]
+    },
+    {
+      "check": "price_jumps",
+      "block": "data",
+      "status": "PASS",
+      "title": "No one-period price move larger than 40%",
+      "detail": "",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "close_t / close_(t-1) - 1 per ticker on consecutive dates of the series; split-like if the ratio is within 3% of 1/2, 1/3, 1/4, 1/5, 1/10, 2, 3, 4, 5, 10...; spike if the next day reverts by more than 25%. Threshold 40% (conventions.jump_threshold).",
+      "reason": "",
+      "action": "",
+      "priority": "medium",
+      "inputs": [
+        "prices"
+      ]
+    },
+    {
+      "check": "corporate_actions",
+      "block": "data",
+      "status": "NOT_EXECUTABLE",
+      "title": "Declared corporate actions reflected in prices",
+      "detail": "",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "",
+      "reason": "missing required inputs: corporate_actions",
+      "action": "Provide corporate_actions to enable this check.",
+      "priority": "medium",
+      "inputs": []
+    },
+    {
+      "check": "reference_accuracy",
+      "block": "data",
+      "status": "NOT_EXECUTABLE",
+      "title": "Accuracy against an independent reference",
+      "detail": "",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "",
+      "reason": "missing required inputs: reference_prices",
+      "action": "Provide reference_prices to enable this check.",
+      "priority": "medium",
+      "inputs": []
+    },
+    {
+      "check": "pit_fundamentals",
+      "block": "data",
+      "status": "NOT_EXECUTABLE",
+      "title": "Point-in-time fundamentals",
+      "detail": "",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "",
+      "reason": "missing required inputs: fundamentals",
+      "action": "Provide fundamentals to enable this check.",
+      "priority": "medium",
+      "inputs": []
+    },
+    {
+      "check": "survivorship",
+      "block": "data",
+      "status": "NOT_EXECUTABLE",
+      "title": "Survivorship (delisted members)",
+      "detail": "",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "",
+      "reason": "missing required inputs: universe",
+      "action": "Provide universe to enable this check.",
+      "priority": "medium",
+      "inputs": []
+    },
+    {
+      "check": "ticker_identity",
+      "block": "data",
+      "status": "NOT_EXECUTABLE",
+      "title": "Ticker identity (recycled tickers)",
+      "detail": "",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "",
+      "reason": "missing security_master.csv (ticker -> entity_id); the price heuristic found no gap with a level shift, which does not prove identity",
+      "action": "Provide security_master.csv.",
+      "priority": "medium",
+      "inputs": []
+    },
+    {
+      "check": "reconstruction",
+      "block": "reconstruction",
+      "status": "PASS",
+      "title": "Reconstruction complete with the available inputs",
+      "detail": "28 trades applied over 125 dates; initial NAV 100,000.00 and final 104,609.34; costs 0.00.",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "Loop per date with the declared conventions (see metrics.reconstruction).",
+      "reason": "",
+      "action": "",
+      "priority": "medium",
+      "inputs": [
+        "trades",
+        "prices",
+        "rules"
+      ]
+    },
+    {
+      "check": "positions_reconciliation",
+      "block": "reconstruction",
+      "status": "PASS",
+      "title": "Declared positions reconciled",
+      "detail": "18 declared positions match the reconstruction (tolerance 1e-06).",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "Comparison per (date, ticker).",
+      "reason": "",
+      "action": "",
+      "priority": "medium",
+      "inputs": [
+        "positions",
+        "trades"
+      ]
+    },
+    {
+      "check": "results_reconciliation",
+      "block": "reconstruction",
+      "status": "PASS",
+      "title": "Declared results reconciled",
+      "detail": "Every declared metric present is within tolerance.",
+      "evidence": [
+        {
+          "metric": "total_return",
+          "declared": 0.046093,
+          "reconstructed": 0.04609339999999973,
+          "difference": -3.999999997270076e-07,
+          "tolerance": 0.005,
+          "within_tolerance": true,
+          "note": ""
+        },
+        {
+          "metric": "annual_return",
+          "declared": 0.095903,
+          "reconstructed": 0.09590328651921176,
+          "difference": -2.8651921175903983e-07,
+          "tolerance": 0.005,
+          "within_tolerance": true,
+          "note": ""
+        },
+        {
+          "metric": "sharpe",
+          "declared": 0.90321,
+          "reconstructed": 0.9032095278958251,
+          "difference": 4.721041748645405e-07,
+          "tolerance": 0.05,
+          "within_tolerance": true,
+          "note": ""
+        },
+        {
+          "metric": "max_drawdown",
+          "declared": -0.066551,
+          "reconstructed": -0.06655134098103255,
+          "difference": 3.4098103254831535e-07,
+          "tolerance": 0.005,
+          "within_tolerance": true,
+          "note": ""
+        },
+        {
+          "metric": "n_trades",
+          "declared": 28,
+          "reconstructed": 28,
+          "difference": 0.0,
+          "tolerance": 0,
+          "within_tolerance": true,
+          "note": ""
+        },
+        {
+          "metric": "final_nav",
+          "declared": 104609.34,
+          "reconstructed": 104609.33999999998,
+          "difference": 1.4551915228366852e-11,
+          "tolerance": 0.005,
+          "within_tolerance": true,
+          "note": ""
+        }
+      ],
+      "n_evidence": 6,
+      "procedure": "Daily NAV reconstructed from trades -> metrics with the declared convention (periods_per_year=252, sharpe=arithmetic, std_ddof=1, risk_free_annual=0, annual_return=geometric, returns=simple) -> comparison with declared_results.json using explicit tolerances.",
+      "reason": "",
+      "action": "",
+      "priority": "medium",
+      "inputs": [
+        "declared_results",
+        "trades",
+        "prices"
+      ]
+    },
+    {
+      "check": "lookahead",
+      "block": "strategy",
+      "status": "PASS",
+      "title": "No early use of data according to the declared dates (data_date and availability)",
+      "detail": "48 signals evaluated: according to data_date and the availability timestamps, all use data available before the decision. Scope: the data_date declared by the strategy owner is trusted; the hint test (correlation with the subsequent return) gives -0.37, no hint.",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "For each signal: (ticker, data_date) -> availability in prices.csv (available_from) or fundamentals.csv (max of filing_date and available_from); error if availability > decision_time.",
+      "reason": "",
+      "action": "",
+      "priority": "medium",
+      "inputs": [
+        "signals",
+        "prices",
+        "fundamentals"
+      ]
+    },
+    {
+      "check": "omitted_costs",
+      "block": "strategy",
+      "status": "CONFIRMED_ERROR",
+      "title": "The declared result is reproduced only WITHOUT the declared costs (commission)",
+      "detail": "Declared: commission 0.0025, slippage 0 of notional. In the trades: commission absent, slippage 0. The declared total_return (+0.0461) matches the no-cost scenario (+0.0461) and not the declared-cost one (+0.0265). Consequence of the same problem (not a separate finding): with the declared costs applied, the delivered trades leave cash negative on 63 dates (minimum -914.14), because they were sized without costs.",
+      "evidence": [
+        {
+          "source": "declared commission (rules.yaml)",
+          "fraction": 0.0025
+        },
+        {
+          "source": "declared slippage (rules.yaml)",
+          "fraction": 0.0
+        },
+        {
+          "source": "effective commission (sum commission / notional)",
+          "fraction": null
+        },
+        {
+          "source": "effective slippage (trade price vs close, weighted)",
+          "fraction": 0.0
+        },
+        {
+          "source": "turnover (traded notional / initial cash)",
+          "value": 7.8484
+        },
+        {
+          "source": "declared total_return",
+          "value": 0.046093,
+          "scenarios": {
+            "no costs": 0.046093,
+            "declared costs": 0.026472
+          },
+          "reproduced_by": [
+            "no costs"
+          ]
+        }
+      ],
+      "n_evidence": 6,
+      "procedure": "Declared costs (rules.yaml or costs.csv; commission and slippage separately) are contrasted with the effective ones in trades.csv (commission column; execution price vs the close of the day) and with the cost scenario that reproduces the declared total_return. Each scenario is a full reconstruction from the initial cash: 'no costs' (zero commission and slippage), 'declared costs' (only the declared ones, not added to those in trades.csv) and 'commissions in trades.csv'. Total return tolerance: 0.005.",
+      "reason": "",
+      "action": "Recompute the result with the declared costs and report both.",
+      "priority": "high",
+      "inputs": [
+        "rules",
+        "costs",
+        "trades",
+        "declared_results"
+      ]
+    },
+    {
+      "check": "metrics",
+      "block": "strategy",
+      "status": "PASS",
+      "title": "Declared metrics reproduced",
+      "detail": "They match the declared convention: sharpe, annual_return, max_drawdown.",
+      "evidence": [
+        {
+          "metric": "sharpe",
+          "declared": 0.90321,
+          "with_declared_convention": 0.9032095278958251,
+          "matches_declared_convention": true,
+          "conventions_that_reproduce_it": [
+            "ppy=252, arithmetic, ddof=1, rf=0, simple",
+            "ppy=252, arithmetic, ddof=0, rf=0, simple",
+            "ppy=252, arithmetic, ddof=0, rf=0, log",
+            "ppy=252, geometric, ddof=1, rf=0, simple",
+            "ppy=252, geometric, ddof=0, rf=0, simple",
+            "ppy=260, arithmetic, ddof=1, rf=0, simple",
+            "ppy=260, arithmetic, ddof=1, rf=0, log",
+            "ppy=260, arithmetic, ddof=0, rf=0, simple"
+          ],
+          "tolerance": 0.05,
+          "note": ""
+        },
+        {
+          "metric": "annual_return",
+          "declared": 0.095903,
+          "with_declared_convention": 0.09590328651921176,
+          "matches_declared_convention": true,
+          "conventions_that_reproduce_it": [
+            "geometric, ppy=252",
+            "arithmetic, ppy=252",
+            "geometric, ppy=260",
+            "arithmetic, ppy=260",
+            "geometric, calendar days/365"
+          ],
+          "tolerance": 0.005,
+          "note": ""
+        },
+        {
+          "metric": "max_drawdown",
+          "declared": -0.066551,
+          "with_declared_convention": -0.06655134098103255,
+          "matches_declared_convention": true,
+          "conventions_that_reproduce_it": [
+            "nav (negative)",
+            "sum of returns, not compounded"
+          ],
+          "tolerance": 0.005,
+          "note": ""
+        }
+      ],
+      "n_evidence": 3,
+      "procedure": "Recomputed on the reconstructed NAV with the declared convention (periods_per_year=252, sharpe=arithmetic, std_ddof=1, risk_free_annual=0, annual_return=geometric, returns=simple) and with common alternatives: 252/260/365/360 periods, arithmetic vs geometric mean, std ddof 1 vs 0, with and without a risk-free rate (0/2/4/5%), simple vs log returns; max drawdown on the NAV, as a positive number, worst single period and sum of returns without compounding.",
+      "reason": "",
+      "action": "",
+      "priority": "medium",
+      "inputs": [
+        "declared_results",
+        "trades",
+        "prices"
+      ]
+    },
+    {
+      "check": "rules_vs_implementation",
+      "block": "strategy",
+      "status": "PASS",
+      "title": "The trades implement the declared rule",
+      "detail": "6 rebalance dates with holdings equal to the top 3; weights within 10% of 1/N; no trades off schedule. Scope: the signal column delivered is re-ranked; the signal computation itself is not verified.",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "From rules.yaml: ranking on `signal` (desc), top 3, monthly rebalance (first_day), equal_weight. On each rebalance date the top N of signals.csv is compared with the reconstructed holdings at the close of that day, and the weights with 1/N (tolerance 10%).",
+      "reason": "",
+      "action": "",
+      "priority": "medium",
+      "inputs": [
+        "rules",
+        "signals",
+        "trades",
+        "prices"
+      ]
+    },
+    {
+      "check": "sharpe_significance",
+      "block": "statistics",
+      "status": "NEEDS_REVIEW",
+      "title": "Sharpe ratio not distinguishable from zero even as a single test (PSR = 0.74)",
+      "detail": "Annualised Sharpe 0.90 over 0.49 years (NAV reconstructed from trades); 95% interval -1.90 to 3.71. With this Sharpe about 3.3 years of history would be needed for 95% confidence (Minimum Track Record Length). Conditional result: earlier blocks have confirmed errors (omitted_costs); these statistics describe the series as delivered, not a corrected one.",
+      "evidence": [
+        {
+          "source": "NAV reconstructed from trades",
+          "T": 124,
+          "years": 0.492,
+          "sharpe_per_period": 0.056896852204676406,
+          "sharpe_annualised_sqrt_rule": 0.9032095278958251,
+          "se_iid_per_period": 0.08987530007556349,
+          "se_nonnormal_per_period": 0.09009394584949464,
+          "ci95_annualised": [
+            -1.899976694223499,
+            3.7063957500151496
+          ],
+          "t_stat": 0.633576532124808,
+          "skewness": 0.05227671717083254,
+          "kurtosis": 2.674787655951736,
+          "psr_vs_0": 0.7361523364128881,
+          "min_track_record_periods": 835.400127053642,
+          "min_track_record_years": 3.315079869260484
+        }
+      ],
+      "n_evidence": 1,
+      "procedure": "Per-period Sharpe = mean / std (ddof 1) of the returns; standard error under i.i.d. returns sqrt((1 + SR^2/2) / T) (Lo 2002) and with skewness and kurtosis sqrt((1 - g3 SR + (g4 - 1)/4 SR^2) / (T - 1)); PSR(0) = Phi(SR sqrt(T - 1) / sqrt(1 - g3 SR + (g4 - 1)/4 SR^2)) and Minimum Track Record Length at 95% (Bailey and Lopez de Prado 2012). Threshold PSR >= 0.95.",
+      "reason": "",
+      "action": "Do not present the result as statistically significant; extend the track record.",
+      "priority": "medium",
+      "inputs": [
+        "trades",
+        "prices"
+      ]
+    },
+    {
+      "check": "sharpe_autocorrelation",
+      "block": "statistics",
+      "status": "PASS",
+      "title": "No material Sharpe inflation from autocorrelation",
+      "detail": "Naive annualised Sharpe 0.90, Lo-adjusted 1.48 (ratio 0.61); Ljung-Box p = 0.767. Conditional result: earlier blocks have confirmed errors (omitted_costs); these statistics describe the series as delivered, not a corrected one.",
+      "evidence": [
+        {
+          "T": 124,
+          "periods_per_year": 252,
+          "max_lag": 10,
+          "autocorrelations": [
+            0.0742,
+            -0.0635,
+            -0.0487,
+            -0.0523,
+            -0.0477,
+            -0.0516,
+            -0.0638,
+            -0.0489,
+            -0.1174,
+            0.0974
+          ],
+          "rho1_band_95": 0.1760131959862394,
+          "ljung_box_Q": 6.568386860281991,
+          "ljung_box_p": 0.7666675730142055,
+          "eta_q": 26.089930534909897,
+          "sqrt_q": 15.874507866387544,
+          "sharpe_annualised_naive": 0.9032095278958251,
+          "sharpe_annualised_lo": 1.4844349216750423,
+          "naive_over_adjusted": 0.6084534355178332
+        }
+      ],
+      "n_evidence": 1,
+      "procedure": "Sample autocorrelations rho_1..rho_10 of the period returns (rho_k = 0 beyond lag 10); Lo (2002) factor eta(q) = q / sqrt(q + 2 sum (q - k) rho_k) with q = 252, compared with the naive sqrt(q); Ljung-Box test on the same lags. Review if the naive annualised Sharpe exceeds the adjusted one by more than 10% and the autocorrelation is statistically significant.",
+      "reason": "",
+      "action": "",
+      "priority": "medium",
+      "inputs": [
+        "trades",
+        "prices"
+      ]
+    },
+    {
+      "check": "trials_declared",
+      "block": "statistics",
+      "status": "NOT_EXECUTABLE",
+      "title": "Declared number of trials",
+      "detail": "",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "",
+      "reason": "neither declared_results.n_trials nor trials.csv: the number of configurations tried is unknown, so the Sharpe cannot be deflated for selection",
+      "action": "Declare n_trials (every configuration tried, including discarded ones) and deliver trials.csv.",
+      "priority": "medium",
+      "inputs": []
+    },
+    {
+      "check": "deflated_sharpe",
+      "block": "statistics",
+      "status": "NOT_EXECUTABLE",
+      "title": "Deflated Sharpe ratio (selection among trials)",
+      "detail": "",
+      "evidence": [
+        {
+          "dsr_with_n_1": 0.7361523364128881
+        }
+      ],
+      "n_evidence": 1,
+      "procedure": "",
+      "reason": "number of trials unknown (declared_results.n_trials or trials.csv); with N = 1 the DSR equals the PSR (0.736), the most optimistic possible case",
+      "action": "Declare n_trials and deliver trials.csv.",
+      "priority": "medium",
+      "inputs": []
+    },
+    {
+      "check": "multiple_testing",
+      "block": "statistics",
+      "status": "NOT_EXECUTABLE",
+      "title": "Multiple-testing haircut",
+      "detail": "",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "",
+      "reason": "number of trials unknown (declared_results.n_trials or trials.csv)",
+      "action": "",
+      "priority": "medium",
+      "inputs": []
+    },
+    {
+      "check": "pbo",
+      "block": "statistics",
+      "status": "NOT_EXECUTABLE",
+      "title": "Probability of backtest overfitting (CSCV)",
+      "detail": "",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "",
+      "reason": "missing required inputs: trials (at least 2 configurations)",
+      "action": "Provide trials (at least 2 configurations) to enable this check.",
+      "priority": "medium",
+      "inputs": []
+    },
+    {
+      "check": "llm_lookahead_risk",
+      "block": "statistics",
+      "status": "NOT_EXECUTABLE",
+      "title": "LLM look-ahead risk",
+      "detail": "",
+      "evidence": [],
+      "n_evidence": 0,
+      "procedure": "",
+      "reason": "missing required inputs: llm_checklist",
+      "action": "Provide llm_checklist to enable this check.",
+      "priority": "medium",
+      "inputs": []
+    }
+  ],
+  "metrics": {
+    "reconstruction": {
+      "conventions": {
+        "initial_cash": 100000.0,
+        "valuation": "close",
+        "commission_rate": 0.0025,
+        "slippage_rate": 0.0,
+        "leverage": false,
+        "short_selling": false,
+        "start_date": null,
+        "end_date": "2024-06-28",
+        "use_trade_commissions": true,
+        "impute_costs": false
+      },
+      "window": {
+        "start": "2024-01-02",
+        "end": "2024-06-28"
+      },
+      "n_dates": 125,
+      "initial_nav": 100000.0,
+      "final_nav": 104609.33999999998,
+      "n_trades_applied": 28,
+      "total_costs": 0.0,
+      "total_notional": 784842.61,
+      "days_valued_with_older_close": {},
+      "days_unvalued": {},
+      "n_negative_cash": 0,
+      "n_negative_quantity": 0,
+      "notes": [
+        "trades.csv has no commission: the reconstruction uses zero commission (declared costs are contrasted in omitted_costs)"
+      ]
+    },
+    "reconstructed_nav": [
+      {
+        "date": "2023-12-29",
+        "cash": 100000.0,
+        "positions_value": 0.0,
+        "nav": 100000.0
+      },
+      {
+        "date": "2024-01-02",
+        "cash": 1091.150000000016,
+        "positions_value": 98908.84999999999,
+        "nav": 100000.0
+      },
+      {
+        "date": "2024-01-03",
+        "cash": 1091.150000000016,
+        "positions_value": 99196.29,
+        "nav": 100287.44
+      },
+      {
+        "date": "2024-01-04",
+        "cash": 1091.150000000016,
+        "positions_value": 98729.88,
+        "nav": 99821.03000000003
+      },
+      {
+        "date": "2024-01-05",
+        "cash": 1091.150000000016,
+        "positions_value": 99329.34,
+        "nav": 100420.49000000002
+      },
+      {
+        "date": "2024-01-08",
+        "cash": 1091.150000000016,
+        "positions_value": 99211.86000000002,
+        "nav": 100303.01000000004
+      },
+      {
+        "date": "2024-01-09",
+        "cash": 1091.150000000016,
+        "positions_value": 98784.59999999999,
+        "nav": 99875.75
+      },
+      {
+        "date": "2024-01-10",
+        "cash": 1091.150000000016,
+        "positions_value": 99767.0,
+        "nav": 100858.15000000002
+      },
+      {
+        "date": "2024-01-11",
+        "cash": 1091.150000000016,
+        "positions_value": 100527.64,
+        "nav": 101618.79000000001
+      },
+      {
+        "date": "2024-01-12",
+        "cash": 1091.150000000016,
+        "positions_value": 101512.4,
+        "nav": 102603.55000000002
+      },
+      {
+        "date": "2024-01-16",
+        "cash": 1091.150000000016,
+        "positions_value": 100826.22,
+        "nav": 101917.37000000002
+      },
+      {
+        "date": "2024-01-17",
+        "cash": 1091.150000000016,
+        "positions_value": 101111.84999999999,
+        "nav": 102203.0
+      },
+      {
+        "date": "2024-01-18",
+        "cash": 1091.150000000016,
+        "positions_value": 101671.93,
+        "nav": 102763.08000000002
+      },
+      {
+        "date": "2024-01-19",
+        "cash": 1091.150000000016,
+        "positions_value": 102776.76000000001,
+        "nav": 103867.91000000003
+      },
+      {
+        "date": "2024-01-22",
+        "cash": 1091.150000000016,
+        "positions_value": 102441.12,
+        "nav": 103532.27000000002
+      },
+      {
+        "date": "2024-01-23",
+        "cash": 1091.150000000016,
+        "positions_value": 101740.9,
+        "nav": 102832.05000000002
+      },
+      {
+        "date": "2024-01-24",
+        "cash": 1091.150000000016,
+        "positions_value": 101866.73,
+        "nav": 102957.88
+      },
+      {
+        "date": "2024-01-25",
+        "cash": 1091.150000000016,
+        "positions_value": 101116.39,
+        "nav": 102207.54000000001
+      },
+      {
+        "date": "2024-01-26",
+        "cash": 1091.150000000016,
+        "positions_value": 100155.71,
+        "nav": 101246.86000000002
+      },
+      {
+        "date": "2024-01-29",
+        "cash": 1091.150000000016,
+        "positions_value": 100025.67,
+        "nav": 101116.82
+      },
+      {
+        "date": "2024-01-30",
+        "cash": 1091.150000000016,
+        "positions_value": 101519.28,
+        "nav": 102610.43000000002
+      },
+      {
+        "date": "2024-01-31",
+        "cash": 1091.150000000016,
+        "positions_value": 102270.76,
+        "nav": 103361.91
+      },
+      {
+        "date": "2024-02-01",
+        "cash": 1108.149999999987,
+        "positions_value": 101975.26000000001,
+        "nav": 103083.41
+      },
+      {
+        "date": "2024-02-02",
+        "cash": 1108.149999999987,
+        "positions_value": 101928.69,
+        "nav": 103036.84
+      },
+      {
+        "date": "2024-02-05",
+        "cash": 1108.149999999987,
+        "positions_value": 103648.01999999999,
+        "nav": 104756.16999999998
+      },
+      {
+        "date": "2024-02-06",
+        "cash": 1108.149999999987,
+        "positions_value": 102963.1,
+        "nav": 104071.25
+      },
+      {
+        "date": "2024-02-07",
+        "cash": 1108.149999999987,
+        "positions_value": 102566.97999999998,
+        "nav": 103675.12999999998
+      },
+      {
+        "date": "2024-02-08",
+        "cash": 1108.149999999987,
+        "positions_value": 102596.1,
+        "nav": 103704.25
+      },
+      {
+        "date": "2024-02-09",
+        "cash": 1108.149999999987,
+        "positions_value": 101645.57,
+        "nav": 102753.72
+      },
+      {
+        "date": "2024-02-12",
+        "cash": 1108.149999999987,
+        "positions_value": 101137.86000000002,
+        "nav": 102246.01000000001
+      },
+      {
+        "date": "2024-02-13",
+        "cash": 1108.149999999987,
+        "positions_value": 101245.70000000001,
+        "nav": 102353.85
+      },
+      {
+        "date": "2024-02-14",
+        "cash": 1108.149999999987,
+        "positions_value": 100430.07,
+        "nav": 101538.22
+      },
+      {
+        "date": "2024-02-15",
+        "cash": 1108.149999999987,
+        "positions_value": 99919.04,
+        "nav": 101027.18999999997
+      },
+      {
+        "date": "2024-02-16",
+        "cash": 1108.149999999987,
+        "positions_value": 99850.73999999999,
+        "nav": 100958.88999999998
+      },
+      {
+        "date": "2024-02-20",
+        "cash": 1108.149999999987,
+        "positions_value": 100732.86,
+        "nav": 101841.00999999998
+      },
+      {
+        "date": "2024-02-21",
+        "cash": 1108.149999999987,
+        "positions_value": 101527.06,
+        "nav": 102635.20999999999
+      },
+      {
+        "date": "2024-02-22",
+        "cash": 1108.149999999987,
+        "positions_value": 101424.29,
+        "nav": 102532.43999999997
+      },
+      {
+        "date": "2024-02-23",
+        "cash": 1108.149999999987,
+        "positions_value": 101208.03,
+        "nav": 102316.18
+      },
+      {
+        "date": "2024-02-26",
+        "cash": 1108.149999999987,
+        "positions_value": 101184.32,
+        "nav": 102292.47
+      },
+      {
+        "date": "2024-02-27",
+        "cash": 1108.149999999987,
+        "positions_value": 102021.04000000001,
+        "nav": 103129.19
+      },
+      {
+        "date": "2024-02-28",
+        "cash": 1108.149999999987,
+        "positions_value": 102772.42,
+        "nav": 103880.56999999998
+      },
+      {
+        "date": "2024-02-29",
+        "cash": 1108.149999999987,
+        "positions_value": 102586.48,
+        "nav": 103694.62999999998
+      },
+      {
+        "date": "2024-03-01",
+        "cash": 1236.0699999999779,
+        "positions_value": 100746.23000000001,
+        "nav": 101982.29999999999
+      },
+      {
+        "date": "2024-03-04",
+        "cash": 1236.0699999999779,
+        "positions_value": 100742.91,
+        "nav": 101978.97999999998
+      },
+      {
+        "date": "2024-03-05",
+        "cash": 1236.0699999999779,
+        "positions_value": 101189.87,
+        "nav": 102425.93999999997
+      },
+      {
+        "date": "2024-03-06",
+        "cash": 1236.0699999999779,
+        "positions_value": 100327.57,
+        "nav": 101563.63999999998
+      },
+      {
+        "date": "2024-03-07",
+        "cash": 1236.0699999999779,
+        "positions_value": 100550.85999999999,
+        "nav": 101786.92999999996
+      },
+      {
+        "date": "2024-03-08",
+        "cash": 1236.0699999999779,
+        "positions_value": 100128.4,
+        "nav": 101364.46999999997
+      },
+      {
+        "date": "2024-03-11",
+        "cash": 1236.0699999999779,
+        "positions_value": 100296.04000000001,
+        "nav": 101532.10999999999
+      },
+      {
+        "date": "2024-03-12",
+        "cash": 1236.0699999999779,
+        "positions_value": 99848.19,
+        "nav": 101084.25999999998
+      },
+      {
+        "date": "2024-03-13",
+        "cash": 1236.0699999999779,
+        "positions_value": 100894.78,
+        "nav": 102130.84999999998
+      },
+      {
+        "date": "2024-03-14",
+        "cash": 1236.0699999999779,
+        "positions_value": 101689.94999999998,
+        "nav": 102926.01999999996
+      },
+      {
+        "date": "2024-03-15",
+        "cash": 1236.0699999999779,
+        "positions_value": 101783.23000000001,
+        "nav": 103019.29999999999
+      },
+      {
+        "date": "2024-03-18",
+        "cash": 1236.0699999999779,
+        "positions_value": 102132.29999999999,
+        "nav": 103368.36999999997
+      },
+      {
+        "date": "2024-03-19",
+        "cash": 1236.0699999999779,
+        "positions_value": 102423.38999999998,
+        "nav": 103659.45999999996
+      },
+      {
+        "date": "2024-03-20",
+        "cash": 1236.0699999999779,
+        "positions_value": 102007.18000000001,
+        "nav": 103243.24999999999
+      },
+      {
+        "date": "2024-03-21",
+        "cash": 1236.0699999999779,
+        "positions_value": 101576.2,
+        "nav": 102812.26999999997
+      },
+      {
+        "date": "2024-03-22",
+        "cash": 1236.0699999999779,
+        "positions_value": 101619.32,
+        "nav": 102855.38999999998
+      },
+      {
+        "date": "2024-03-25",
+        "cash": 1236.0699999999779,
+        "positions_value": 102036.96000000002,
+        "nav": 103273.03
+      },
+      {
+        "date": "2024-03-26",
+        "cash": 1236.0699999999779,
+        "positions_value": 102369.68000000001,
+        "nav": 103605.74999999999
+      },
+      {
+        "date": "2024-03-27",
+        "cash": 1236.0699999999779,
+        "positions_value": 101325.12,
+        "nav": 102561.18999999997
+      },
+      {
+        "date": "2024-03-28",
+        "cash": 1236.0699999999779,
+        "positions_value": 102620.84,
+        "nav": 103856.90999999997
+      },
+      {
+        "date": "2024-04-01",
+        "cash": 1153.9499999999825,
+        "positions_value": 102946.14,
+        "nav": 104100.08999999998
+      },
+      {
+        "date": "2024-04-02",
+        "cash": 1153.9499999999825,
+        "positions_value": 104326.18000000001,
+        "nav": 105480.12999999999
+      },
+      {
+        "date": "2024-04-03",
+        "cash": 1153.9499999999825,
+        "positions_value": 105870.61,
+        "nav": 107024.55999999998
+      },
+      {
+        "date": "2024-04-04",
+        "cash": 1153.9499999999825,
+        "positions_value": 105195.20000000001,
+        "nav": 106349.15
+      },
+      {
+        "date": "2024-04-05",
+        "cash": 1153.9499999999825,
+        "positions_value": 104990.54,
+        "nav": 106144.48999999998
+      },
+      {
+        "date": "2024-04-08",
+        "cash": 1153.9499999999825,
+        "positions_value": 104956.67000000001,
+        "nav": 106110.62
+      },
+      {
+        "date": "2024-04-09",
+        "cash": 1153.9499999999825,
+        "positions_value": 103850.29999999999,
+        "nav": 105004.24999999997
+      },
+      {
+        "date": "2024-04-10",
+        "cash": 1153.9499999999825,
+        "positions_value": 104529.33,
+        "nav": 105683.27999999998
+      },
+      {
+        "date": "2024-04-11",
+        "cash": 1153.9499999999825,
+        "positions_value": 105241.42000000001,
+        "nav": 106395.37
+      },
+      {
+        "date": "2024-04-12",
+        "cash": 1153.9499999999825,
+        "positions_value": 104558.87,
+        "nav": 105712.81999999998
+      },
+      {
+        "date": "2024-04-15",
+        "cash": 1153.9499999999825,
+        "positions_value": 104425.78,
+        "nav": 105579.72999999998
+      },
+      {
+        "date": "2024-04-16",
+        "cash": 1153.9499999999825,
+        "positions_value": 104439.33,
+        "nav": 105593.27999999998
+      },
+      {
+        "date": "2024-04-17",
+        "cash": 1153.9499999999825,
+        "positions_value": 104574.65000000001,
+        "nav": 105728.59999999999
+      },
+      {
+        "date": "2024-04-18",
+        "cash": 1153.9499999999825,
+        "positions_value": 103794.69000000002,
+        "nav": 104948.64
+      },
+      {
+        "date": "2024-04-19",
+        "cash": 1153.9499999999825,
+        "positions_value": 103931.16,
+        "nav": 105085.10999999999
+      },
+      {
+        "date": "2024-04-22",
+        "cash": 1153.9499999999825,
+        "positions_value": 104034.04000000001,
+        "nav": 105187.98999999999
+      },
+      {
+        "date": "2024-04-23",
+        "cash": 1153.9499999999825,
+        "positions_value": 103371.78,
+        "nav": 104525.72999999998
+      },
+      {
+        "date": "2024-04-24",
+        "cash": 1153.9499999999825,
+        "positions_value": 104546.28,
+        "nav": 105700.22999999998
+      },
+      {
+        "date": "2024-04-25",
+        "cash": 1153.9499999999825,
+        "positions_value": 104858.15,
+        "nav": 106012.09999999998
+      },
+      {
+        "date": "2024-04-26",
+        "cash": 1153.9499999999825,
+        "positions_value": 105812.85999999999,
+        "nav": 106966.80999999997
+      },
+      {
+        "date": "2024-04-29",
+        "cash": 1153.9499999999825,
+        "positions_value": 106679.79000000001,
+        "nav": 107833.73999999999
+      },
+      {
+        "date": "2024-04-30",
+        "cash": 1153.9499999999825,
+        "positions_value": 106223.99000000002,
+        "nav": 107377.94
+      },
+      {
+        "date": "2024-05-01",
+        "cash": 1276.599999999984,
+        "positions_value": 106038.56,
+        "nav": 107315.15999999997
+      },
+      {
+        "date": "2024-05-02",
+        "cash": 1276.599999999984,
+        "positions_value": 104771.47,
+        "nav": 106048.06999999998
+      },
+      {
+        "date": "2024-05-03",
+        "cash": 1276.599999999984,
+        "positions_value": 104774.59000000001,
+        "nav": 106051.19
+      },
+      {
+        "date": "2024-05-06",
+        "cash": 1276.599999999984,
+        "positions_value": 104311.74,
+        "nav": 105588.34
+      },
+      {
+        "date": "2024-05-07",
+        "cash": 1276.599999999984,
+        "positions_value": 104109.66,
+        "nav": 105386.25999999998
+      },
+      {
+        "date": "2024-05-08",
+        "cash": 1276.599999999984,
+        "positions_value": 104195.30000000002,
+        "nav": 105471.9
+      },
+      {
+        "date": "2024-05-09",
+        "cash": 1276.599999999984,
+        "positions_value": 104121.84,
+        "nav": 105398.43999999997
+      },
+      {
+        "date": "2024-05-10",
+        "cash": 1276.599999999984,
+        "positions_value": 102831.35,
+        "nav": 104107.94999999998
+      },
+      {
+        "date": "2024-05-13",
+        "cash": 1276.599999999984,
+        "positions_value": 103391.26999999999,
+        "nav": 104667.86999999997
+      },
+      {
+        "date": "2024-05-14",
+        "cash": 1276.599999999984,
+        "positions_value": 103009.12999999999,
+        "nav": 104285.72999999998
+      },
+      {
+        "date": "2024-05-15",
+        "cash": 1276.599999999984,
+        "positions_value": 102726.27,
+        "nav": 104002.87
+      },
+      {
+        "date": "2024-05-16",
+        "cash": 1276.599999999984,
+        "positions_value": 101130.53,
+        "nav": 102407.12999999998
+      },
+      {
+        "date": "2024-05-17",
+        "cash": 1276.599999999984,
+        "positions_value": 100696.9,
+        "nav": 101973.49999999997
+      },
+      {
+        "date": "2024-05-20",
+        "cash": 1276.599999999984,
+        "positions_value": 100925.64000000001,
+        "nav": 102202.23999999999
+      },
+      {
+        "date": "2024-05-21",
+        "cash": 1276.599999999984,
+        "positions_value": 101877.06,
+        "nav": 103153.65999999997
+      },
+      {
+        "date": "2024-05-22",
+        "cash": 1276.599999999984,
+        "positions_value": 102710.25999999998,
+        "nav": 103986.85999999996
+      },
+      {
+        "date": "2024-05-23",
+        "cash": 1276.599999999984,
+        "positions_value": 102798.72999999998,
+        "nav": 104075.32999999996
+      },
+      {
+        "date": "2024-05-24",
+        "cash": 1276.599999999984,
+        "positions_value": 101645.36000000002,
+        "nav": 102921.95999999999
+      },
+      {
+        "date": "2024-05-28",
+        "cash": 1276.599999999984,
+        "positions_value": 100448.95999999999,
+        "nav": 101725.55999999997
+      },
+      {
+        "date": "2024-05-29",
+        "cash": 1276.599999999984,
+        "positions_value": 100122.18999999999,
+        "nav": 101398.78999999998
+      },
+      {
+        "date": "2024-05-30",
+        "cash": 1276.599999999984,
+        "positions_value": 99809.79000000001,
+        "nav": 101086.38999999998
+      },
+      {
+        "date": "2024-05-31",
+        "cash": 1276.599999999984,
+        "positions_value": 100438.69,
+        "nav": 101715.28999999998
+      },
+      {
+        "date": "2024-06-03",
+        "cash": 1047.9699999999864,
+        "positions_value": 99609.29,
+        "nav": 100657.25999999998
+      },
+      {
+        "date": "2024-06-04",
+        "cash": 1047.9699999999864,
+        "positions_value": 99900.56,
+        "nav": 100948.52999999998
+      },
+      {
+        "date": "2024-06-05",
+        "cash": 1047.9699999999864,
+        "positions_value": 100704.18000000001,
+        "nav": 101752.15
+      },
+      {
+        "date": "2024-06-06",
+        "cash": 1047.9699999999864,
+        "positions_value": 100996.32999999999,
+        "nav": 102044.29999999997
+      },
+      {
+        "date": "2024-06-07",
+        "cash": 1047.9699999999864,
+        "positions_value": 101053.01999999999,
+        "nav": 102100.98999999998
+      },
+      {
+        "date": "2024-06-10",
+        "cash": 1047.9699999999864,
+        "positions_value": 101584.25,
+        "nav": 102632.21999999999
+      },
+      {
+        "date": "2024-06-11",
+        "cash": 1047.9699999999864,
+        "positions_value": 101877.03,
+        "nav": 102924.99999999999
+      },
+      {
+        "date": "2024-06-12",
+        "cash": 1047.9699999999864,
+        "positions_value": 102090.05,
+        "nav": 103138.01999999999
+      },
+      {
+        "date": "2024-06-13",
+        "cash": 1047.9699999999864,
+        "positions_value": 101554.78,
+        "nav": 102602.74999999999
+      },
+      {
+        "date": "2024-06-14",
+        "cash": 1047.9699999999864,
+        "positions_value": 102283.57,
+        "nav": 103331.54
+      },
+      {
+        "date": "2024-06-17",
+        "cash": 1047.9699999999864,
+        "positions_value": 101983.95999999999,
+        "nav": 103031.92999999998
+      },
+      {
+        "date": "2024-06-18",
+        "cash": 1047.9699999999864,
+        "positions_value": 102677.73999999999,
+        "nav": 103725.70999999998
+      },
+      {
+        "date": "2024-06-20",
+        "cash": 1047.9699999999864,
+        "positions_value": 104252.15,
+        "nav": 105300.11999999998
+      },
+      {
+        "date": "2024-06-21",
+        "cash": 1047.9699999999864,
+        "positions_value": 104726.50000000001,
+        "nav": 105774.47
+      },
+      {
+        "date": "2024-06-24",
+        "cash": 1047.9699999999864,
+        "positions_value": 103914.06,
+        "nav": 104962.02999999998
+      },
+      {
+        "date": "2024-06-25",
+        "cash": 1047.9699999999864,
+        "positions_value": 104250.0,
+        "nav": 105297.96999999999
+      },
+      {
+        "date": "2024-06-26",
+        "cash": 1047.9699999999864,
+        "positions_value": 103512.65,
+        "nav": 104560.61999999998
+      },
+      {
+        "date": "2024-06-27",
+        "cash": 1047.9699999999864,
+        "positions_value": 104138.94,
+        "nav": 105186.90999999999
+      },
+      {
+        "date": "2024-06-28",
+        "cash": 1047.9699999999864,
+        "positions_value": 103561.37,
+        "nav": 104609.33999999998
+      }
+    ],
+    "reconstructed_metrics": {
+      "convention": {
+        "periods_per_year": 252,
+        "sharpe": "arithmetic",
+        "std_ddof": 1,
+        "risk_free_annual": 0.0,
+        "annual_return": "geometric",
+        "max_drawdown": "nav",
+        "returns": "simple"
+      },
+      "n_periods": 124,
+      "initial_nav": 100000.0,
+      "final_nav": 104609.33999999998,
+      "total_return": 0.04609339999999973,
+      "annual_return": 0.09590328651921176,
+      "sharpe": 0.9032095278958251,
+      "max_drawdown": -0.06655134098103255,
+      "annual_volatility": 0.10778727000042165,
+      "peak_index": 82,
+      "trough_index": 106,
+      "peak_nav": 107833.73999999999,
+      "trough_nav": 100657.25999999998,
+      "peak_date": "2024-04-29",
+      "trough_date": "2024-06-03",
+      "n_trades": 28
+    },
+    "declared_convention": {
+      "periods_per_year": 252,
+      "sharpe": "arithmetic",
+      "std_ddof": 1,
+      "risk_free_annual": 0.0,
+      "annual_return": "geometric",
+      "max_drawdown": "nav",
+      "returns": "simple"
+    },
+    "declared_curve_points": 13,
+    "curve_differences": 0,
+    "anticipation_hint": {
+      "evaluable": true,
+      "mean_ic": -0.3690333333333333,
+      "ics": [
+        {
+          "decision_date": "2024-01-02",
+          "ic": -0.5714,
+          "n": 8
+        },
+        {
+          "decision_date": "2024-02-01",
+          "ic": -0.2857,
+          "n": 8
+        },
+        {
+          "decision_date": "2024-03-01",
+          "ic": -0.2143,
+          "n": 8
+        },
+        {
+          "decision_date": "2024-04-01",
+          "ic": -0.0952,
+          "n": 8
+        },
+        {
+          "decision_date": "2024-05-01",
+          "ic": -0.4286,
+          "n": 8
+        },
+        {
+          "decision_date": "2024-06-03",
+          "ic": -0.619,
+          "n": 8
+        }
+      ],
+      "hint": false
+    },
+    "costs": {
+      "declared_source": "rules.yaml",
+      "declared_commission": 0.0025,
+      "declared_slippage": 0.0,
+      "effective_commission": null,
+      "effective_slippage": 0.0,
+      "turnover_over_capital": 7.8484261,
+      "scenarios": {
+        "no costs": {
+          "total_return": 0.04609339999999973,
+          "dates_negative_cash": 0,
+          "min_cash": 1047.9699999999864
+        },
+        "declared costs": {
+          "total_return": 0.026472334749999993,
+          "dates_negative_cash": 63,
+          "min_cash": -914.1365250000006
+        }
+      },
+      "reproduce_declared": [
+        "no costs"
+      ]
+    },
+    "metric_variants": {
+      "sharpe": {
+        "ppy=252, arithmetic, ddof=1, rf=0, simple": 0.9032095278958251,
+        "ppy=252, arithmetic, ddof=1, rf=0, log": 0.8500623847854637,
+        "ppy=252, arithmetic, ddof=1, rf=0.02, simple": 0.7176588594363515,
+        "ppy=252, arithmetic, ddof=1, rf=0.04, simple": 0.5321081909768779,
+        "ppy=252, arithmetic, ddof=1, rf=0.05, simple": 0.4393328567471412,
+        "ppy=252, arithmetic, ddof=0, rf=0, simple": 0.9068736789569445,
+        "ppy=252, arithmetic, ddof=0, rf=0, log": 0.853510927889837,
+        "ppy=252, arithmetic, ddof=0, rf=0.02, simple": 0.7205702663581226,
+        "ppy=252, arithmetic, ddof=0, rf=0.04, simple": 0.5342668537593006,
+        "ppy=252, arithmetic, ddof=0, rf=0.05, simple": 0.4411151474598896,
+        "ppy=252, geometric, ddof=1, rf=0, simple": 0.8897459460550081,
+        "ppy=252, geometric, ddof=1, rf=0.02, simple": 0.7041952775955346,
+        "ppy=252, geometric, ddof=1, rf=0.04, simple": 0.518644609136061,
+        "ppy=252, geometric, ddof=1, rf=0.05, simple": 0.4258692749063242,
+        "ppy=252, geometric, ddof=0, rf=0, simple": 0.8933554778985875,
+        "ppy=252, geometric, ddof=0, rf=0.02, simple": 0.7070520652997655,
+        "ppy=252, geometric, ddof=0, rf=0.04, simple": 0.5207486527009435,
+        "ppy=252, geometric, ddof=0, rf=0.05, simple": 0.4275969464015325,
+        "ppy=260, arithmetic, ddof=1, rf=0, simple": 0.9174341750818995,
+        "ppy=260, arithmetic, ddof=1, rf=0, log": 0.8634500175952018,
+        "ppy=260, arithmetic, ddof=1, rf=0.02, simple": 0.734760435415427,
+        "ppy=260, arithmetic, ddof=1, rf=0.04, simple": 0.5520866957489544,
+        "ppy=260, arithmetic, ddof=1, rf=0.05, simple": 0.4607498259157182,
+        "ppy=260, arithmetic, ddof=0, rf=0, simple": 0.9211560328594243,
+        "ppy=260, arithmetic, ddof=0, rf=0, log": 0.8669528718061906,
+        "ppy=260, arithmetic, ddof=0, rf=0.02, simple": 0.7377412202122483,
+        "ppy=260, arithmetic, ddof=0, rf=0.04, simple": 0.5543264075650723,
+        "ppy=260, arithmetic, ddof=0, rf=0.05, simple": 0.46261900124148425,
+        "ppy=260, geometric, ddof=1, rf=0, simple": 0.9050936416940113,
+        "ppy=260, geometric, ddof=1, rf=0.02, simple": 0.7224199020275387,
+        "ppy=260, geometric, ddof=1, rf=0.04, simple": 0.5397461623610662,
+        "ppy=260, geometric, ddof=1, rf=0.05, simple": 0.4484092925278299,
+        "ppy=260, geometric, ddof=0, rf=0, simple": 0.9087654362501998,
+        "ppy=260, geometric, ddof=0, rf=0.02, simple": 0.7253506236030237,
+        "ppy=260, geometric, ddof=0, rf=0.04, simple": 0.5419358109558478,
+        "ppy=260, geometric, ddof=0, rf=0.05, simple": 0.4502284046322597,
+        "ppy=365, arithmetic, ddof=1, rf=0, simple": 1.0870128350862691,
+        "ppy=365, arithmetic, ddof=1, rf=0, log": 1.023050238451889,
+        "ppy=365, arithmetic, ddof=1, rf=0.02, simple": 0.932836981544728,
+        "ppy=365, arithmetic, ddof=1, rf=0.04, simple": 0.7786611280031871,
+        "ppy=365, arithmetic, ddof=1, rf=0.05, simple": 0.7015732012324167,
+        "ppy=365, arithmetic, ddof=0, rf=0, simple": 1.0914226415709403,
+        "ppy=365, arithmetic, ddof=0, rf=0, log": 1.0272005607204493,
+        "ppy=365, arithmetic, ddof=0, rf=0.02, simple": 0.936621325609102,
+        "ppy=365, arithmetic, ddof=0, rf=0.04, simple": 0.7818200096472638,
+        "ppy=365, arithmetic, ddof=0, rf=0.05, simple": 0.7044193516663447,
+        "ppy=365, geometric, ddof=1, rf=0, simple": 1.0934424995971164,
+        "ppy=365, geometric, ddof=1, rf=0.02, simple": 0.9392666460555754,
+        "ppy=365, geometric, ddof=1, rf=0.04, simple": 0.7850907925140344,
+        "ppy=365, geometric, ddof=1, rf=0.05, simple": 0.7080028657432639,
+        "ppy=365, geometric, ddof=0, rf=0, simple": 1.0978783900205775,
+        "ppy=365, geometric, ddof=0, rf=0.02, simple": 0.9430770740587393,
+        "ppy=365, geometric, ddof=0, rf=0.04, simple": 0.788275758096901,
+        "ppy=365, geometric, ddof=0, rf=0.05, simple": 0.7108751001159819,
+        "ppy=360, arithmetic, ddof=1, rf=0, simple": 1.0795418679645012,
+        "ppy=360, arithmetic, ddof=1, rf=0, log": 1.0160188820146079,
+        "ppy=360, arithmetic, ddof=1, rf=0.02, simple": 0.9242990407677827,
+        "ppy=360, arithmetic, ddof=1, rf=0.04, simple": 0.7690562135710639,
+        "ppy=360, arithmetic, ddof=1, rf=0.05, simple": 0.6914347999727047,
+        "ppy=360, arithmetic, ddof=0, rf=0, simple": 1.083921366141674,
+        "ppy=360, arithmetic, ddof=0, rf=0, log": 1.0201406793934777,
+        "ppy=360, arithmetic, ddof=0, rf=0.02, simple": 0.928048748013355,
+        "ppy=360, arithmetic, ddof=0, rf=0.04, simple": 0.7721761298850356,
+        "ppy=360, arithmetic, ddof=0, rf=0.05, simple": 0.6942398208208762,
+        "ppy=360, geometric, ddof=1, rf=0, simple": 1.0849195664647602,
+        "ppy=360, geometric, ddof=1, rf=0.02, simple": 0.9296767392680415,
+        "ppy=360, geometric, ddof=1, rf=0.04, simple": 0.7744339120713228,
+        "ppy=360, geometric, ddof=1, rf=0.05, simple": 0.6968124984729636,
+        "ppy=360, geometric, ddof=0, rf=0, simple": 1.089320880952609,
+        "ppy=360, geometric, ddof=0, rf=0.02, simple": 0.9334482628242897,
+        "ppy=360, geometric, ddof=0, rf=0.04, simple": 0.7775756446959705,
+        "ppy=360, geometric, ddof=0, rf=0.05, simple": 0.6996393356318109
+      },
+      "annual_return": {
+        "geometric, ppy=252": 0.09590328651921176,
+        "arithmetic, ppy=252": 0.09735448925026066,
+        "geometric, ppy=260": 0.09909400698168658,
+        "arithmetic, ppy=260": 0.10044510795661815,
+        "geometric, ppy=365": 0.14184354741418703,
+        "arithmetic, ppy=365": 0.1410094784775601,
+        "geometric, ppy=360": 0.13977065298997493,
+        "arithmetic, ppy=360": 0.13907784178608668,
+        "geometric, calendar days/365": 0.09458238329059343
+      },
+      "max_drawdown": {
+        "nav (negative)": -0.06655134098103255,
+        "nav (positive)": 0.06655134098103255,
+        "worst single period return": -0.016513198417314245,
+        "sum of returns, not compounded": -0.0682576868082988
+      }
+    },
+    "rules": {
+      "column": "signal",
+      "order": "desc",
+      "top_n": 3,
+      "frequency": "monthly",
+      "timing": "first_day",
+      "sizing": "equal_weight",
+      "rebalance_dates": [
+        "2024-01-02",
+        "2024-02-01",
+        "2024-03-01",
+        "2024-04-01",
+        "2024-05-01",
+        "2024-06-03"
+      ],
+      "trade_dates": [
+        "2024-01-02",
+        "2024-02-01",
+        "2024-03-01",
+        "2024-04-01",
+        "2024-05-01",
+        "2024-06-03"
+      ],
+      "dates_ok": 6,
+      "dates_with_differences": 0,
+      "trades_off_schedule": []
+    },
+    "statistics": {
+      "source": "NAV reconstructed from trades",
+      "periods_per_year": 252,
+      "declared_n_trials": null,
+      "trials_in_matrix": 0,
+      "significance": {
+        "source": "NAV reconstructed from trades",
+        "T": 124,
+        "years": 0.492,
+        "sharpe_per_period": 0.056896852204676406,
+        "sharpe_annualised_sqrt_rule": 0.9032095278958251,
+        "se_iid_per_period": 0.08987530007556349,
+        "se_nonnormal_per_period": 0.09009394584949464,
+        "ci95_annualised": [
+          -1.899976694223499,
+          3.7063957500151496
+        ],
+        "t_stat": 0.633576532124808,
+        "skewness": 0.05227671717083254,
+        "kurtosis": 2.674787655951736,
+        "psr_vs_0": 0.7361523364128881,
+        "min_track_record_periods": 835.400127053642,
+        "min_track_record_years": 3.315079869260484
+      },
+      "autocorrelation": {
+        "T": 124,
+        "periods_per_year": 252,
+        "max_lag": 10,
+        "autocorrelations": [
+          0.0742,
+          -0.0635,
+          -0.0487,
+          -0.0523,
+          -0.0477,
+          -0.0516,
+          -0.0638,
+          -0.0489,
+          -0.1174,
+          0.0974
+        ],
+        "rho1_band_95": 0.1760131959862394,
+        "ljung_box_Q": 6.568386860281991,
+        "ljung_box_p": 0.7666675730142055,
+        "eta_q": 26.089930534909897,
+        "sqrt_q": 15.874507866387544,
+        "sharpe_annualised_naive": 0.9032095278958251,
+        "sharpe_annualised_lo": 1.4844349216750423,
+        "naive_over_adjusted": 0.6084534355178332
+      },
+      "strategy_column_in_trials": null
+    }
+  },
+  "transformations": [
+    {
+      "input": "prices",
+      "operation": "sort(ticker, date)",
+      "reason": "working table sorted for the checks",
+      "before": {
+        "order": "file"
+      },
+      "after": {
+        "order": "ticker, date"
+      },
+      "applied": true,
+      "rows": [],
+      "n_rows": 0,
+      "kind": "applied"
+    }
+  ],
+  "limitations": [
+    "The review judges the internal coherence of the inputs delivered. It does not query external sources: a wrong price that is coherent with everything else is not detected (unless reference_prices.csv is provided).",
+    "The reconstruction starts from the initial cash, values at the close and uses the trades as delivered (executed price and commission of trades.csv). Declared costs are not imputed in the main reconstruction: they are contrasted in omitted_costs. Dividends, splits and other corporate actions are not modelled unless they are in adjusted prices; large jumps are flagged.",
+    "A results curve alone does not validate the code, the execution or the absence of look-ahead: reproducing the declared NAV only proves the delivered trades are coherent with that NAV.",
+    "rules_vs_implementation re-ranks the signal column delivered: it verifies the selection, not how the signal was computed. lookahead trusts the declared data_date; the hint test (correlation with the subsequent return) only detects gross cases.",
+    "Rule re-execution supports only: ranking on one signal column, top N, periodic rebalance (monthly, weekly, daily) and equal weights. Any other rule is NOT_EXECUTABLE and needs a manual review.",
+    "Statistical checks (PSR, deflated Sharpe, haircut, PBO) are conditional on the declared number of trials and on the data being correct; they say nothing about broken data or look-ahead.",
+    "The LLM look-ahead score rests on declarations; memorisation is not tested.",
+    "What is missing from the inputs (history, availability timestamps, universe, identity master) is a scope finding: it is never repaired or imputed.",
+    "Thresholds and tolerances are documented choices, not laws; they are listed in docs/CONVENTIONS.md and can be changed in rules.yaml.",
+    "corporate_actions: not executable (missing required inputs: corporate_actions).",
+    "reference_accuracy: not executable (missing required inputs: reference_prices).",
+    "pit_fundamentals: not executable (missing required inputs: fundamentals).",
+    "survivorship: not executable (missing required inputs: universe).",
+    "ticker_identity: not executable (missing security_master.csv (ticker -> entity_id); the price heuristic found no gap with a level shift, which does not prove identity).",
+    "trials_declared: not executable (neither declared_results.n_trials nor trials.csv: the number of configurations tried is unknown, so the Sharpe cannot be deflated for selection).",
+    "deflated_sharpe: not executable (number of trials unknown (declared_results.n_trials or trials.csv); with N = 1 the DSR equals the PSR (0.736), the most optimistic possible case).",
+    "multiple_testing: not executable (number of trials unknown (declared_results.n_trials or trials.csv)).",
+    "pbo: not executable (missing required inputs: trials (at least 2 configurations)).",
+    "llm_lookahead_risk: not executable (missing required inputs: llm_checklist)."
+  ]
+}
