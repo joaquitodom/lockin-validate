@@ -1,0 +1,47 @@
+{
+  "total_return": 0.03914,
+  "annual_return": 0.17188,
+  "sharpe": 1.606412,
+  "max_drawdown": 0.054391,
+  "n_trades": 33,
+  "final_nav": 51957.009025,
+  "convention": {
+    "periods_per_year": 252,
+    "sharpe": "arithmetic",
+    "std_ddof": 1,
+    "risk_free_annual": 0.0,
+    "annual_return": "geometric",
+    "max_drawdown": "nav",
+    "returns": "simple"
+  },
+  "curve": [
+    {
+      "date": "2025-01-31",
+      "nav": 50000.0
+    },
+    {
+      "date": "2025-02-14",
+      "nav": 50984.5241
+    },
+    {
+      "date": "2025-03-03",
+      "nav": 53181.8174
+    },
+    {
+      "date": "2025-03-17",
+      "nav": 54331.7166
+    },
+    {
+      "date": "2025-03-31",
+      "nav": 53078.6206
+    },
+    {
+      "date": "2025-04-14",
+      "nav": 52184.4264
+    },
+    {
+      "date": "2025-04-29",
+      "nav": 52254.109
+    }
+  ]
+}

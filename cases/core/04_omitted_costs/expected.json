@@ -1,0 +1,151 @@
+{
+  "description": "The rules declare 25 bps of commission, the trades carry no commission and the declared result was computed without costs.",
+  "origin": "core",
+  "must_include": [
+    {
+      "check": "omitted_costs",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    },
+    {
+      "check": "reconstruction",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "results_reconciliation",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "metrics",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "duplicates",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "duplicates",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "duplicates",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "dates",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "dates",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "dates",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "stale_prices",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "stale_prices",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "stale_prices",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "lookahead",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "lookahead",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "lookahead",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "reconstruction",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "reconstruction",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "reconstruction",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "metrics",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "metrics",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "metrics",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "positions_reconciliation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "positions_reconciliation",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "positions_reconciliation",
+      "status": "NOT_EXECUTABLE"
+    }
+  ],
+  "errors_only_from": [
+    "omitted_costs"
+  ],
+  "comment": "Derived from the planted problem (one problem -> one error). By docs/CONVENTIONS.md 1.3 the main reconstruction uses the trades as delivered (no commission), so: reconstruction PASS (no negative cash with those trades), results_reconciliation PASS (the declared result is the one of those trades), metrics PASS (same series). The problem is that the declared costs are neither in the trades nor in the result: omitted_costs CONFIRMED_ERROR, because the declared return is reproduced only in the no-cost scenario. Derived effect expected INSIDE that finding, not as a separate error: with 25 bps imputed on trades sized without costs and a 1% buffer, cash turns negative in the declared-cost scenario.",
+  "prediction_note": "2026-10-21: written when the case was redesigned (review cycle 2), before running the tool on the regenerated case.",
+  "text_must_contain": [
+    {
+      "check": "omitted_costs",
+      "text": "Consequence of the same problem"
+    }
+  ]
+}

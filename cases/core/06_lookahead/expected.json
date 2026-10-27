@@ -1,0 +1,65 @@
+{
+  "description": "At the 2024-04-01 rebalance the signals (decision 09:30) use the close of that same day, available only at 17:00.",
+  "origin": "core",
+  "must_include": [
+    {
+      "check": "lookahead",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "signal_data_after_decision",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "signal_data_after_decision",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "signal_data_after_decision",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "duplicates",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "duplicates",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "duplicates",
+      "status": "NOT_EXECUTABLE"
+    }
+  ],
+  "errors_only_from": [
+    "lookahead"
+  ]
+}

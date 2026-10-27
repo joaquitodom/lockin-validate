@@ -1,0 +1,65 @@
+{
+  "description": "rules.yaml says monthly top 5 with equal weights; the trades buy the top 3.",
+  "origin": "core",
+  "must_include": [
+    {
+      "check": "rules_vs_implementation",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "results_reconciliation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "metrics",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "metrics",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "metrics",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "omitted_costs",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "omitted_costs",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "omitted_costs",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "duplicates",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "duplicates",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "duplicates",
+      "status": "NOT_EXECUTABLE"
+    }
+  ],
+  "errors_only_from": [
+    "rules_vs_implementation"
+  ]
+}

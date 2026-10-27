@@ -1,0 +1,47 @@
+{
+  "description": "Same case as 06 but prices.csv has no available_from and there are no fundamentals: future information cannot be proven.",
+  "origin": "core",
+  "must_include": [
+    {
+      "check": "lookahead",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "lookahead",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "lookahead",
+      "status": "PASS"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "NOT_EXECUTABLE"
+    }
+  ],
+  "errors_only_from": []
+}

@@ -1,0 +1,76 @@
+[build-system]
+requires = ["hatchling>=1.18"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lockin-validate"
+version = "0.1.0"
+description = "Offline toolkit to validate quantitative investment strategies and their backtests: data audit, reconstruction and reconciliation from trades, look-ahead, costs, metric errors, rules vs implementation, statistical significance and overfitting. Every finding links to its evidence."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [
+    { name = "Joaquín Domínguez" },
+    { name = "Mateo Domínguez" },
+]
+keywords = ["backtest", "validation", "quant", "audit", "deflated-sharpe", "pbo", "look-ahead", "reconciliation"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+mcp = ["mcp>=1.2"]
+dev = [
+    "pytest>=8",
+    "empyrical-reloaded>=0.5.9",
+    "ruff>=0.5",
+]
+
+[project.scripts]
+lockin-validate = "lockin_validate.cli:main"
+lockin-validate-mcp = "lockin_validate.mcp_server:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "empyrical-reloaded>=0.5.9",
+    "ruff>=0.5",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lockin_validate"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "tests", "cases", "docs", "examples", "README.md", "README.es.md", "LICENSE", "NOTICE", "CHANGELOG.md", "CITATION.cff"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+src = ["src", "tests"]
+extend-exclude = ["cases"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501", "B008", "UP038"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["B"]

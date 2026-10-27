@@ -1,0 +1,53 @@
+{
+  "description": "Price of BBB frozen for 12 sessions from 2024-02-23; the strategy buys it on 2024-03-01 at that stale price.",
+  "origin": "core",
+  "must_include": [
+    {
+      "check": "stale_prices",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "duplicates",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "duplicates",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "duplicates",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "NOT_EXECUTABLE"
+    }
+  ],
+  "errors_only_from": [
+    "stale_prices"
+  ]
+}

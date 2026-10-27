@@ -1,0 +1,279 @@
+{
+  "description": "Everything correct: measures false positives. Every original check must PASS.",
+  "origin": "core",
+  "must_include": [
+    {
+      "check": "schema_and_types",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "duplicates",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "dates",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "essential_fields",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "coverage",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "trade_before_signal",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "signal_data_after_decision",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "stale_prices",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "reconstruction",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "positions_reconciliation",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "results_reconciliation",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "lookahead",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "omitted_costs",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "metrics",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "schema_and_types",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "schema_and_types",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "schema_and_types",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "duplicates",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "duplicates",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "duplicates",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "dates",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "dates",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "dates",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "essential_fields",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "essential_fields",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "essential_fields",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "coverage",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "coverage",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "coverage",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "trade_before_signal",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "trade_before_signal",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "trade_before_signal",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "signal_data_after_decision",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "signal_data_after_decision",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "signal_data_after_decision",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "stale_prices",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "stale_prices",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "stale_prices",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "reconstruction",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "reconstruction",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "reconstruction",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "positions_reconciliation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "positions_reconciliation",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "positions_reconciliation",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "lookahead",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "lookahead",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "lookahead",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "omitted_costs",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "omitted_costs",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "omitted_costs",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "metrics",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "metrics",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "metrics",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "NOT_EXECUTABLE"
+    }
+  ],
+  "errors_only_from": []
+}

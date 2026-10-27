@@ -1,0 +1,39 @@
+strategy: ranking on signal, top N, equal weights
+universe:
+- AAA
+- BBB
+- CCC
+- DDD
+- EEE
+- FFF
+- GGG
+- HHH
+period:
+  start: '2024-01-02'
+  end: '2024-06-28'
+signal:
+  column: signal
+  order: desc
+  description: score computed with data of the previous close
+selection:
+  top_n: 5
+rebalance:
+  frequency: monthly
+  timing: first_day
+sizing: equal_weight
+costs:
+  commission_rate: 0.001
+  slippage_rate: 0.0
+conventions:
+  initial_cash: 100000.0
+  valuation: close
+  leverage: false
+  short_selling: false
+  calendar: nyse
+  review_date: '2026-10-20'
+  end_date: '2024-06-28'
+  periods_per_year: 252
+  sharpe: arithmetic
+  std_ddof: 1
+  risk_free_annual: 0.0
+  annual_return: geometric

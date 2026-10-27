@@ -1,0 +1,129 @@
+{
+  "description": "Unrelated to LockIn. Planted error: declared position of COPPER on 2025-03-31 with 7 extra units. Max drawdown declared as a positive number (convention, not an error).",
+  "origin": "core",
+  "must_include": [
+    {
+      "check": "positions_reconciliation",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    },
+    {
+      "check": "omitted_costs",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "omitted_costs",
+      "status": "PASS"
+    },
+    {
+      "check": "omitted_costs",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "duplicates",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "duplicates",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "duplicates",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "dates",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "dates",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "dates",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "stale_prices",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "stale_prices",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "stale_prices",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "reconstruction",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "reconstruction",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "reconstruction",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "results_reconciliation",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "metrics",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "metrics",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "metrics",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "lookahead",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "lookahead",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "lookahead",
+      "status": "NOT_EXECUTABLE"
+    }
+  ],
+  "errors_only_from": [
+    "positions_reconciliation"
+  ],
+  "comment": "omitted_costs: 5 bps over a turnover of ~9 times the capital add up to ~0.47% of capital, less than the total return tolerance (0.5 pp): the test cannot tell with and without costs apart, and by the conclusion rule (docs/CONVENTIONS.md section 5) it must be NEEDS_REVIEW, not PASS.",
+  "prediction_note": "2026-10-21, review cycle 2, before running the tool on the regenerated case."
+}

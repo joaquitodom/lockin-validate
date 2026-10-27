@@ -1,0 +1,75 @@
+{
+  "description": "Declared convention 252 periods per year, but the declared Sharpe was annualised with sqrt(365).",
+  "origin": "core",
+  "must_include": [
+    {
+      "check": "metrics",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    },
+    {
+      "check": "results_reconciliation",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "results_reconciliation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "reconstruction",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "reconstruction",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "reconstruction",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "omitted_costs",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "omitted_costs",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "omitted_costs",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "rules_vs_implementation",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "positions_reconciliation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "positions_reconciliation",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "positions_reconciliation",
+      "status": "NOT_EXECUTABLE"
+    }
+  ],
+  "errors_only_from": [
+    "metrics"
+  ]
+}

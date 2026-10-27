@@ -1,0 +1,17 @@
+{
+  "total_return": 0.101633,
+  "annual_return": 0.217391,
+  "sharpe": 1.975238,
+  "max_drawdown": -0.034825,
+  "n_trades": 25,
+  "final_nav": 110163.32377,
+  "convention": {
+    "periods_per_year": 252,
+    "sharpe": "arithmetic",
+    "std_ddof": 1,
+    "risk_free_annual": 0.0,
+    "annual_return": "geometric",
+    "max_drawdown": "nav",
+    "returns": "simple"
+  }
+}
