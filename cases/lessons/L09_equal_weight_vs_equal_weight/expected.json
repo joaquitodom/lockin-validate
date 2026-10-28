@@ -1,0 +1,23 @@
+{
+  "description": "Equal-weight book compared with the equal-weight benchmark of its own universe.",
+  "origin": "lessons",
+  "must_include": [
+    {
+      "check": "benchmark_fit",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "benchmark_fit",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "benchmark_fit",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": []
+}

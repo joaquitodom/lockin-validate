@@ -1,0 +1,27 @@
+{
+  "description": "The test window was used once, but diagnostic runs over 2024-07 to 2025-06 touched the window reserved as the next fresh holdout (fresh_2025) before it was opened (LockIn: diagnostics over a later window contaminated the proposed fresh window).",
+  "origin": "lessons",
+  "must_include": [
+    {
+      "check": "protocol_integrity",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "protocol_integrity",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "protocol_integrity"
+  ],
+  "text_must_contain": [
+    {
+      "check": "protocol_integrity",
+      "text": "fresh_2025"
+    }
+  ]
+}

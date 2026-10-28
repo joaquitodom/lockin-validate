@@ -1,0 +1,27 @@
+{
+  "description": "From 2022-Q1 six of thirty universe members have no fundamentals: coverage falls from about 97% to 80% (the LockIn holdout database had ~21% of members without fundamentals).",
+  "origin": "lessons",
+  "must_include": [
+    {
+      "check": "coverage_drift",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "coverage_drift",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "coverage_drift"
+  ],
+  "text_must_contain": [
+    {
+      "check": "coverage_drift",
+      "text": "2022"
+    }
+  ]
+}

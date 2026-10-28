@@ -1,0 +1,37 @@
+{
+  "description": "LQ5 trades about 20,000 shares a day while the book buys about 40% of that per order; on 2023-04-03 the order is larger than the whole day's volume. Gross return is positive but the declared commission consumes 60% of it, so the excess return is gone at 2x declared costs.",
+  "origin": "lessons",
+  "must_include": [
+    {
+      "check": "liquidity_participation",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    },
+    {
+      "check": "cost_sensitivity",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "liquidity_participation",
+      "status": "PASS"
+    },
+    {
+      "check": "cost_sensitivity",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "liquidity_participation"
+  ],
+  "text_must_contain": [
+    {
+      "check": "liquidity_participation",
+      "text": "LQ5"
+    }
+  ]
+}

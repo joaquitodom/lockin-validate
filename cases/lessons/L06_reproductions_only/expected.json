@@ -1,0 +1,23 @@
+{
+  "description": "One look at the test window by c07; afterwards only reproductions of the same config over it and a diagnostic over the training window.",
+  "origin": "lessons",
+  "must_include": [
+    {
+      "check": "protocol_integrity",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "protocol_integrity",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "protocol_integrity",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": []
+}

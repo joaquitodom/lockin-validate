@@ -1,0 +1,37 @@
+{
+  "description": "rules.yaml requires 10 inputs with a minimum share of 0.8; during 2024 (the reserved window) inputs f06-f10 are empty but every name is still scored (5 of 10 inputs). LockIn ran a reserved window with 13 of 27 inputs while existing preflight checks passed.",
+  "origin": "lessons",
+  "must_include": [
+    {
+      "check": "input_sufficiency",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    },
+    {
+      "check": "coverage_drift",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "input_sufficiency",
+      "status": "PASS"
+    },
+    {
+      "check": "coverage_drift",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "input_sufficiency"
+  ],
+  "text_must_contain": [
+    {
+      "check": "input_sufficiency",
+      "text": "2024"
+    }
+  ]
+}

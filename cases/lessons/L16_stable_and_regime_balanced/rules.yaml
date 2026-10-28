@@ -1,0 +1,6 @@
+strategy: steady daily strategy with a conditional volatility rule
+conditional_rules:
+  - {name: high_vol_rule, column: high_vol}
+conventions:
+  calendar: none
+  review_date: '2026-10-28'

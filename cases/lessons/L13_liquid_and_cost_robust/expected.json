@@ -1,0 +1,37 @@
+{
+  "description": "Every order is below 1% of ADV; declared costs consume about 10% of the gross return, so the result survives 3x declared costs.",
+  "origin": "lessons",
+  "must_include": [
+    {
+      "check": "liquidity_participation",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "cost_sensitivity",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "liquidity_participation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "liquidity_participation",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "cost_sensitivity",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "cost_sensitivity",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": []
+}

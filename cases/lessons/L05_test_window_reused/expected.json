@@ -1,0 +1,33 @@
+{
+  "description": "Single-use test window (2022-2024) looked at by c07, then a diagnostic run over 2023-2024, a new config c21 developed after the look and tested on the same window, and a 'reproduction' with a config that never ran on it (c99). 13 validation configs vs 3 declared trials.",
+  "origin": "lessons",
+  "must_include": [
+    {
+      "check": "protocol_integrity",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    },
+    {
+      "check": "trials_declared",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "protocol_integrity",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "protocol_integrity"
+  ],
+  "text_must_contain": [
+    {
+      "check": "protocol_integrity",
+      "text": "c21"
+    }
+  ]
+}

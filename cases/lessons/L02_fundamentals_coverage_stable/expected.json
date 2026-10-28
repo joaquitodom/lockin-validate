@@ -1,0 +1,23 @@
+{
+  "description": "Fundamentals coverage stable between 97% and 100% of the universe in every quarter.",
+  "origin": "lessons",
+  "must_include": [
+    {
+      "check": "coverage_drift",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "coverage_drift",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "coverage_drift",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": []
+}

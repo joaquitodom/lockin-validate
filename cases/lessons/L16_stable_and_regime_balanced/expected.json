@@ -1,0 +1,37 @@
+{
+  "description": "Five years of a steady daily series (annual Sharpe about 1.6), no year or day carrying the result; the conditional rule is active in 40% of months both in and out of sample.",
+  "origin": "lessons",
+  "must_include": [
+    {
+      "check": "stability_and_concentration",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "conditional_rule_activation",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "stability_and_concentration",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "stability_and_concentration",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "conditional_rule_activation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "conditional_rule_activation",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": []
+}

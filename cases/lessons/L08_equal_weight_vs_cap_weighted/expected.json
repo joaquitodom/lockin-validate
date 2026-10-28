@@ -1,0 +1,25 @@
+{
+  "description": "Equal-weight book compared with a cap-weighted benchmark of the same universe; the smaller half of the universe earns ~6%/yr more, so part of the gap is the benchmark choice (LockIn: ~3 pp/yr of the gap came from comparing an equal-weight book with a cap-weighted index).",
+  "origin": "lessons",
+  "must_include": [
+    {
+      "check": "benchmark_fit",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "benchmark_fit",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "benchmark_fit",
+      "text": "benchmark-choice"
+    }
+  ]
+}

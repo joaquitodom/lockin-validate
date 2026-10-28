@@ -1,0 +1,4 @@
+strategy: quality screen on quarterly fundamentals (no trades)
+conventions:
+  calendar: none
+  review_date: '2026-10-28'

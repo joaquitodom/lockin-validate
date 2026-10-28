@@ -1,0 +1,5 @@
+strategy: research log of a ranking model
+research: {n_trials: 3}
+conventions:
+  calendar: none
+  review_date: '2026-10-28'

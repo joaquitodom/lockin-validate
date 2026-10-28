@@ -1,0 +1,7 @@
+strategy: multi-input score (10 declared inputs) ranked monthly
+universe: [S01, S02, S03, S04, S05, S06, S07, S08, S09, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19, S20]
+required_inputs: [f01, f02, f03, f04, f05, f06, f07, f08, f09, f10]
+min_input_share: 0.8
+conventions:
+  calendar: none
+  review_date: '2026-10-28'

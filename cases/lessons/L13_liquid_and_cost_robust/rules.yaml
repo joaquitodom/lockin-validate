@@ -1,0 +1,6 @@
+strategy: monthly rotation into three of five names, equal weight
+costs: {commission_rate: 0.001169, slippage_rate: 0.0}
+conventions:
+  calendar: none
+  review_date: '2026-10-28'
+  initial_cash: 100000

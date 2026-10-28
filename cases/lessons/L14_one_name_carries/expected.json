@@ -1,0 +1,25 @@
+{
+  "description": "Five names held all year; CN1 more than doubles while the other four drift down: without CN1 the book loses money.",
+  "origin": "lessons",
+  "must_include": [
+    {
+      "check": "stability_and_concentration",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "stability_and_concentration",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "stability_and_concentration",
+      "text": "CN1"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "description": "Adjusted series consistent with the declared dividends and the as-traded prices.",
+  "origin": "lessons",
+  "must_include": [
+    {
+      "check": "dividend_corporate_actions",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "dividend_corporate_actions",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "dividend_corporate_actions",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": []
+}

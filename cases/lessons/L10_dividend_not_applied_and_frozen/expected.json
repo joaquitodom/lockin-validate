@@ -1,0 +1,27 @@
+{
+  "description": "DV2's 2023-06-15 dividend is missing from the adjusted series; DV3's adjusted close stays frozen for four sessions from its 2023-09-15 ex-date while the as-traded price moves (LockIn paper trading: ex-dividend rows loaded before the vendor applied the dividend froze two holdings' prices).",
+  "origin": "lessons",
+  "must_include": [
+    {
+      "check": "dividend_corporate_actions",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "dividend_corporate_actions",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "dividend_corporate_actions"
+  ],
+  "text_must_contain": [
+    {
+      "check": "dividend_corporate_actions",
+      "text": "DV2"
+    }
+  ]
+}
