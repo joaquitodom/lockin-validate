@@ -23,6 +23,13 @@ Tables (CSV, UTF-8, comma separator, ISO 8601 dates, dot decimal):
   declared_results.json  total_return, annual_return, sharpe, max_drawdown, n_trades, final_nav
                          [convention, curve, n_trials]
   llm_checklist.json     look-ahead risk checklist when an LLM is part of the strategy
+  benchmark_returns.csv  date, return (or nav / close)            (declared benchmark, 0.2.0)
+  universe_returns.csv   date, return (or nav / close)            (equal-weight universe, 0.2.0)
+  unadjusted_prices.csv  date, ticker, close [volume]             (as-traded prices, 0.2.0)
+  dividends.csv          ticker, ex_date, amount [pay_date]       (cash dividends, 0.2.0)
+  run_log.csv            timestamp, run_id, window_start, window_end, config_hash, purpose (0.2.0)
+  regimes.csv            date, <one column per conditional rule: 1/true = active> (0.2.0)
+  protocol.yaml          train / validation / test windows, reserved windows (0.2.0)
   version.txt            code / strategy version (optional; alias code_version.txt)
 """
 
@@ -60,10 +67,19 @@ FILES: dict[str, str] = {
     "rules": "rules.yaml",
     "declared_results": "declared_results.json",
     "llm_checklist": "llm_checklist.json",
+    "benchmark_returns": "benchmark_returns.csv",
+    "universe_returns": "universe_returns.csv",
+    "unadjusted_prices": "unadjusted_prices.csv",
+    "dividends": "dividends.csv",
+    "run_log": "run_log.csv",
+    "regimes": "regimes.csv",
+    "protocol": "protocol.yaml",
     "version": "version.txt",
 }
-FILE_ALIASES = {"version": ["code_version.txt"], "rules": ["rules.yml"]}
-NON_TABLE = {"rules", "declared_results", "llm_checklist", "version"}
+FILE_ALIASES = {"version": ["code_version.txt"], "rules": ["rules.yml"], "protocol": ["protocol.yml"],
+                "benchmark_returns": ["benchmark.csv"]}
+NON_TABLE = {"rules", "declared_results", "llm_checklist", "version", "protocol"}
+RETURN_TABLES = ("returns", "benchmark_returns", "universe_returns")  # need `return` or `nav`
 
 SCHEMA: dict[str, dict[str, list[str]]] = {
     "prices": {"required": ["date", "ticker", "close"],
@@ -80,6 +96,13 @@ SCHEMA: dict[str, dict[str, list[str]]] = {
     "reference_prices": {"required": ["date", "ticker", "close"], "optional": []},
     "returns": {"required": ["date"], "optional": ["return", "nav"]},
     "trials": {"required": ["date"], "optional": []},
+    "benchmark_returns": {"required": ["date"], "optional": ["return", "nav"]},
+    "universe_returns": {"required": ["date"], "optional": ["return", "nav"]},
+    "unadjusted_prices": {"required": ["date", "ticker", "close"], "optional": ["volume"]},
+    "dividends": {"required": ["ticker", "ex_date", "amount"], "optional": ["pay_date"]},
+    "run_log": {"required": ["timestamp", "window_start", "window_end", "config_hash", "purpose"],
+                "optional": ["run_id"]},
+    "regimes": {"required": ["date"], "optional": []},
 }
 
 ALIASES: dict[str, dict[str, list[str]]] = {
@@ -107,16 +130,33 @@ ALIASES: dict[str, dict[str, list[str]]] = {
     "returns": {"date": ["datetime", "timestamp"], "return": ["ret", "returns", "strategy_return", "r"],
                 "nav": ["equity", "value", "portfolio_value"]},
     "trials": {"date": ["datetime", "timestamp"]},
+    "benchmark_returns": {"date": ["datetime", "timestamp"], "return": ["ret", "returns", "benchmark_return", "r"],
+                          "nav": ["close", "level", "value", "index"]},
+    "universe_returns": {"date": ["datetime", "timestamp"], "return": ["ret", "returns", "universe_return", "r"],
+                         "nav": ["close", "level", "value", "index"]},
+    "unadjusted_prices": {"date": ["datetime", "timestamp"], "ticker": ["symbol"],
+                          "close": ["raw_close", "unadjusted_close", "price"]},
+    "dividends": {"ticker": ["symbol"], "ex_date": ["date", "exdate", "ex_dividend_date"],
+                  "amount": ["dividend", "cash_amount", "value"]},
+    "run_log": {"timestamp": ["run_at", "time", "date"], "window_start": ["start", "from"],
+                "window_end": ["end", "to"], "config_hash": ["config", "config_id", "configuration"],
+                "purpose": ["kind", "type", "role"]},
+    "regimes": {"date": ["datetime", "timestamp"]},
 }
 
 DATE_COLUMNS = {"prices": ["date", "available_from"], "signals": ["decision_time", "data_date"],
                 "trades": ["timestamp"], "positions": ["date"],
                 "fundamentals": ["period_end", "filing_date", "available_from"],
                 "universe": ["start_date", "end_date"], "security_master": ["start_date", "end_date"],
-                "corporate_actions": ["date"], "reference_prices": ["date"], "returns": ["date"], "trials": ["date"]}
+                "corporate_actions": ["date"], "reference_prices": ["date"], "returns": ["date"], "trials": ["date"],
+                "benchmark_returns": ["date"], "universe_returns": ["date"], "unadjusted_prices": ["date"],
+                "dividends": ["ex_date", "pay_date"], "run_log": ["timestamp", "window_start", "window_end"],
+                "regimes": ["date"]}
 NUMERIC_COLUMNS = {"prices": ["close", "open", "high", "low", "volume"], "signals": ["signal"],
                    "trades": ["quantity", "price", "commission"], "positions": ["quantity"], "costs": ["value"],
-                   "corporate_actions": ["ratio"], "reference_prices": ["close"], "returns": ["return", "nav"]}
+                   "corporate_actions": ["ratio"], "reference_prices": ["close"], "returns": ["return", "nav"],
+                   "benchmark_returns": ["return", "nav"], "universe_returns": ["return", "nav"],
+                   "unadjusted_prices": ["close", "volume"], "dividends": ["amount"]}
 
 SIDES = {"buy": "buy", "sell": "sell", "b": "buy", "s": "sell", "long": "buy", "short": "sell"}
 
@@ -155,6 +195,22 @@ REQUIREMENTS: dict[str, dict[str, list[str]]] = {
                          "optional": []},
     "pbo": {"required": ["trials (at least 2 configurations)"], "optional": []},
     "llm_lookahead_risk": {"required": ["llm_checklist"], "optional": ["returns"]},
+    # 0.2.0 check families (every input stays optional for the package; this is what each check needs to run)
+    "coverage_drift": {"required": ["fundamentals or signals"],
+                       "optional": ["universe", "rules(universe)", "rules(required_inputs)"]},
+    "input_sufficiency": {"required": ["rules(required_inputs)", "signals"],
+                          "optional": ["fundamentals", "rules(min_input_share)"]},
+    "dividend_corporate_actions": {"required": ["prices", "unadjusted_prices or dividends"],
+                                   "optional": ["corporate_actions", "trades", "declared_results(return_basis)"]},
+    "protocol_integrity": {"required": ["run_log", "protocol"],
+                           "optional": ["declared_results(n_trials)", "rules(research.n_trials)"]},
+    "benchmark_fit": {"required": ["trades and prices, or returns", "benchmark_returns"],
+                      "optional": ["universe_returns", "universe", "prices", "rules(benchmark)", "rules(sizing)"]},
+    "liquidity_participation": {"required": ["trades", "prices(volume)"], "optional": ["rules"]},
+    "cost_sensitivity": {"required": ["trades", "prices"], "optional": ["rules", "costs", "benchmark_returns"]},
+    "stability_and_concentration": {"required": ["trades and prices, or returns"], "optional": ["rules"]},
+    "conditional_rule_activation": {"required": ["regimes", "protocol(test) or rules(conventions.oos_start)"],
+                                    "optional": ["rules(conditional_rules)"]},
 }
 
 # Extension point: callables (Package) -> list[Finding] to plug Pandera / Great Expectations later.
@@ -182,6 +238,7 @@ class Package:
     rules: dict[str, Any] | None = None
     declared: dict[str, Any] | None = None
     llm_checklist: dict[str, Any] | None = None
+    protocol: dict[str, Any] | None = None
     version: str | None = None
     manifest: dict[str, Any] = field(default_factory=dict)
     log: TransformationLog = field(default_factory=TransformationLog)
@@ -192,7 +249,7 @@ class Package:
     def has(self, name: str) -> bool:
         if name in NON_TABLE:
             return {"rules": self.rules, "declared_results": self.declared, "llm_checklist": self.llm_checklist,
-                    "version": self.version}[name] is not None
+                    "version": self.version, "protocol": self.protocol}[name] is not None
         t = self.tables.get(name)
         if t is None:
             return False
@@ -206,6 +263,13 @@ class Package:
     def has_column(self, table: str, column: str) -> bool:
         if table == "declared_results":
             return bool(self.declared) and self.declared.get(column) is not None
+        if table in ("rules", "protocol"):  # dotted keys: research.n_trials, conventions.oos_start
+            node: Any = self.rules if table == "rules" else self.protocol
+            for part in column.split("."):
+                if not isinstance(node, dict) or node.get(part) is None:
+                    return False
+                node = node[part]
+            return True
         d = self.df(table)
         return d is not None and column in d.columns and bool(d[column].notna().any())
 
@@ -370,6 +434,11 @@ def read_package(folder: str | Path, profile: str | None = None) -> Package:
                 if not isinstance(pkg.rules, dict):
                     raise InputError("rules.yaml is not a mapping")
                 entry["keys"] = sorted(pkg.rules)
+            elif name == "protocol":
+                pkg.protocol = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+                if not isinstance(pkg.protocol, dict):
+                    raise InputError("protocol.yaml is not a mapping")
+                entry["keys"] = sorted(pkg.protocol)
             elif name in ("declared_results", "llm_checklist"):
                 obj = json.loads(p.read_text(encoding="utf-8"))
                 if not isinstance(obj, dict):
@@ -424,7 +493,7 @@ def validate_schema(pkg: Package, res: AuditResult) -> None:
         df = t.work
         fname = t.path.name if t.path else name
         miss = [c for c in sch["required"] if c not in df.columns]
-        if name == "returns" and not ({"return", "nav"} & set(df.columns)):
+        if name in RETURN_TABLES and not ({"return", "nav"} & set(df.columns)):
             miss.append("return or nav")
         if miss:
             res.add("schema_and_types", "input", CONFIRMED_ERROR, f"{fname}: required columns missing",

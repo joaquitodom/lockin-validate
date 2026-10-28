@@ -278,7 +278,9 @@ def run_statistics(pkg: Package, res: AuditResult, rec: Reconstruction | None) -
                     + (f"; the strategy matches column {strat_col}" if strat_col else "") + ".", ev,
                     "Declared n_trials compared with trials.csv.", inputs=["declared_results", "trials"])
 
-    n_eff = max(n_decl or 0, n_cols) or None
+    n_proto = int((res.metrics.get("protocol") or {}).get("validation_configs") or 0)
+    info["protocol_validation_configs"] = n_proto
+    n_eff = max(n_decl or 0, n_cols, n_proto) or None  # validation looks of run_log.csv count as trials
     # ------------------------------------------------------------------ deflated Sharpe
     title = "Deflated Sharpe ratio (selection among trials)"
     if series is None or mom is None:

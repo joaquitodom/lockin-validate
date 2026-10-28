@@ -10,8 +10,10 @@ HEADER = """# Check catalogue
 Generated from `src/lockin_validate/catalog.py` by `docs/generate_checks_md.py`. The same text is available offline
 with `lockin-validate explain <check_id>` and through the MCP tool `explain_check`.
 
-Every check returns findings with one status: CONFIRMED_ERROR, NEEDS_REVIEW, NOT_EXECUTABLE (with the reason) or
-PASS (within its scope). Thresholds and formulas are in docs/CONVENTIONS.md.
+Every check returns findings with one status: CONFIRMED_ERROR, NEEDS_REVIEW, NOT_EXECUTABLE (with the reason), INFO
+(a note that is not an alert, see docs/ALERT_POLICY.md) or PASS (within its scope). Thresholds and formulas are in
+docs/CONVENTIONS.md; the inputs of the 0.2.0 checks are in docs/INPUT_SPEC.md. Checks added in 0.2.0 carry a
+"Motivation" line: the failure of the LockIn case study that each one would have caught.
 
 Blocks run in this order: input, data, reconstruction, strategy, statistics. Statistics are conditional on the data
 being correct ("data first, reconstruction second, statistics third").
@@ -41,7 +43,10 @@ def main() -> None:
         req = REQUIREMENTS.get(k, {})
         lines += ["", f"## {k}", "", f"**{v['title']}** (block: {v['block']})", "",
                   f"- What it checks: {v['what']}", f"- Why it matters: {v['why']}", f"- How to fix: {v['fix']}",
-                  f"- Allows concluding: {v['allows']}", f"- Does not allow: {v['does_not_allow']}",
+                  f"- Allows concluding: {v['allows']}", f"- Does not allow: {v['does_not_allow']}"]
+        if v.get("motivation"):
+            lines.append(f"- Motivation (LockIn case study): {v['motivation']}")
+        lines += [
                   "- Required inputs: " + (", ".join(req.get("required", [])) or "none"),
                   "- Optional inputs: " + (", ".join(req.get("optional", [])) or "none")]
         if v["refs"]:

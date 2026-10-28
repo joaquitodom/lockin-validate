@@ -12,9 +12,15 @@ from pathlib import Path
 from typing import Any
 
 from . import __version__
+from .checks.benchmark import check_benchmark_fit
+from .checks.coverage_inputs import check_coverage_drift, check_input_sufficiency
 from .checks.data_integrity import run_data_checks
+from .checks.dividends import check_dividends
+from .checks.liquidity import check_cost_sensitivity, check_liquidity
 from .checks.llm_lookahead import check_llm_lookahead
 from .checks.point_in_time import check_lookahead, check_pit_fundamentals
+from .checks.protocol import check_protocol
+from .checks.stability import check_conditional_rules, check_stability
 from .checks.statistics import run_statistics, strategy_returns
 from .checks.strategy import check_metrics, check_omitted_costs, check_rules
 from .checks.universe import check_survivorship, check_ticker_identity
@@ -84,14 +90,23 @@ def audit(input_dir: str | Path, profile: str | None = None, today: date | None 
     check_pit_fundamentals(pkg, res, today)
     check_survivorship(pkg, res)
     check_ticker_identity(pkg, res)
+    check_coverage_drift(pkg, res)
+    check_input_sufficiency(pkg, res)
     rec = check_reconstruction(pkg, res)
+    check_dividends(pkg, res, rec)
     check_positions(pkg, res, rec)
     calc = check_results(pkg, res, rec)
     check_lookahead(pkg, res)
     check_omitted_costs(pkg, res, rec)
     check_metrics(pkg, res, rec, calc)
     check_rules(pkg, res, rec)
+    check_benchmark_fit(pkg, res, rec)
+    check_liquidity(pkg, res)
+    check_cost_sensitivity(pkg, res, rec)
+    check_protocol(pkg, res)  # before the statistics: validation looks feed the number of trials
     run_statistics(pkg, res, rec)
+    check_stability(pkg, res, rec)
+    check_conditional_rules(pkg, res)
     series = strategy_returns(pkg, rec)
     check_llm_lookahead(pkg, res, series.returns if series else None, series.dates if series else None)
 

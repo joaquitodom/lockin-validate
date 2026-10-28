@@ -481,7 +481,7 @@ def concentration_case():
             p *= math.exp(rng.normal(drift, 0.012))
             s.append(round(p, 2))
         prices[t] = s
-    rate, cash = 0.001, 100_000.0
+    rate = 0.001
     trades = []
     for k, t in enumerate(tickers, 1):
         px = prices[t][0]

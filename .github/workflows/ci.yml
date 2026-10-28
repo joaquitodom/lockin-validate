@@ -29,7 +29,7 @@ jobs:
       - name: Cases are reproducible
         shell: bash
         run: |
-          for g in core_cases adversarial_cases lockin_style_case statistical_cases data_cases; do
+          for g in core_cases adversarial_cases lockin_style_case statistical_cases data_cases lessons_cases; do
             uv run python cases/_generators/$g.py > /dev/null
           done
           git add --renormalize cases && git diff --cached --exit-code --stat -- cases

@@ -21,9 +21,8 @@ import shutil
 from datetime import date, timedelta
 from pathlib import Path
 
-import yaml
-
 import expectation_changes  # noqa: E402  (sibling module: docs/CASE_CHANGES.md, 0.2.0)
+import yaml
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE.parent / "adversarial"

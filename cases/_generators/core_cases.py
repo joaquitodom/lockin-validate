@@ -20,10 +20,9 @@ import shutil
 from datetime import date, timedelta
 from pathlib import Path
 
+import expectation_changes  # noqa: E402  (sibling module: docs/CASE_CHANGES.md, 0.2.0)
 import numpy as np
 import yaml
-
-import expectation_changes  # noqa: E402  (sibling module: docs/CASE_CHANGES.md, 0.2.0)
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE.parent / "core"
