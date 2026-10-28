@@ -8,8 +8,10 @@ It contains no third-party source code. The statistical methods it implements
 Probability of Backtest Overfitting via CSCV, the multiple-testing haircut, and the
 Lo (2002) autocorrelation adjustment) are re-implemented from the published papers
 cited in docs/CHECKS.md. The NYSE trading calendar rules are written from the
-exchange's published holiday rules. The BYMA 2024 holiday list is a compilation of
-public dates and must be checked against the official BYMA calendar before use.
+exchange's published holiday rules. The BYMA holiday list (2015-2026) is a compilation
+of public dates; the source and verification status of each date are documented in
+docs/CALENDAR_BYMA.md, and partially or not verified dates must be checked against the
+official BYMA calendar before use.
 
 empyrical-reloaded (Apache-2.0) is used only as an independent test oracle in the
 development dependencies; it is not imported at runtime and not redistributed.

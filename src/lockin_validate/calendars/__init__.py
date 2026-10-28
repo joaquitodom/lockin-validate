@@ -4,8 +4,8 @@
 
 ``nyse``  hand-written NYSE rules (calendars/nyse.py).
 ``byma``  weekends plus the holidays of a CSV (columns ``date, reason, note``). Default:
-          the packaged ``data/byma_holidays.csv`` (2024 only, to be checked against the official
-          BYMA calendar); override with ``conventions.holidays_file`` (path relative to the
+          the packaged ``data/byma_holidays.csv`` (2015-2026; provenance and the
+          verification status of every date in docs/CALENDAR_BYMA.md); override with ``conventions.holidays_file`` (path relative to the
           input folder). Years not covered by the file are only checked for weekends (and the
           report says so).
 ``none``  no trading-day requirement (e.g. crypto 24x7).

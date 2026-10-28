@@ -1,16 +1,207 @@
-date,reason,note
-2024-01-01,New Year's Day,
-2024-02-12,Carnival,
-2024-02-13,Carnival,
-2024-03-28,Holy Thursday (non-working day),BYMA closed; verify against the official BYMA calendar
-2024-03-29,Good Friday,
-2024-04-01,Tourism bridge holiday,verify against the official BYMA calendar
-2024-04-02,Malvinas Veterans and Fallen Day,
-2024-05-01,Labour Day,
-2024-06-17,Death of General Guemes (moved),
-2024-06-20,Death of General Belgrano (Flag Day),
-2024-06-21,Tourism bridge holiday,
-2024-07-09,Independence Day,
-2024-10-11,Tourism bridge holiday,
-2024-11-18,National Sovereignty Day (moved),
-2024-12-25,Christmas,
+date,name,type,market_closed,source_url,verified,notes
+2015-01-01,New Year's Day,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2015-02-16,Carnival Monday,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1; date computed from Easter
+2015-02-17,Carnival Tuesday,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1; date computed from Easter
+2015-03-23,Tourism bridge day,bridge_non_working_day,yes,https://aldiaargentina.microjuris.com/2013/11/13/decreto-n-17682013-feriados-nacionales-se-establecen-los-dias-feriados-con-fines-turisticos-para-los-anos-2014-2015-y-2016/,partial,Decreto 1768/2013 'feriado con fines turisticos' (full holiday); decree text read from a third-party reproduction; market closed per XBUE and Yahoo
+2015-03-24,Day of Remembrance for Truth and Justice,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2015-04-02,Malvinas Veterans and Fallen Day,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2015-04-03,Good Friday,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1; date computed from Easter
+2015-05-01,Labour Day,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2015-05-25,May Revolution Day,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2015-07-09,Independence Day,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2015-08-17,Death of General San Martin (17 August),national_movable,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,partial,Decreto 1584/2010 (3rd Monday of August); market closed per XBUE and Yahoo
+2015-10-12,Cultural Diversity Day (12 October),national_movable,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,partial,Decreto 1584/2010 (2nd Monday of October); market closed per XBUE and Yahoo
+2015-11-06,Bank Employees' Day,market_specific,yes,https://www.rava.com/cotizaciones/historico/ggal/2015/11,no,no GGAL quote (Rava ) and no volume in Yahoo; BYMA notice not located; XBUE agrees
+2015-11-27,National Sovereignty Day (20 November),national_movable,yes,https://www.rava.com/cotizaciones/historico/ggal/2015/11,partial,moved to Friday 27 November 2015 (runoff election weekend); moving decree not located; GGAL traded on 23 November and not on 27 November (Rava); XBUE agrees
+2015-12-07,Tourism bridge day,bridge_non_working_day,yes,https://aldiaargentina.microjuris.com/2013/11/13/decreto-n-17682013-feriados-nacionales-se-establecen-los-dias-feriados-con-fines-turisticos-para-los-anos-2014-2015-y-2016/,partial,Decreto 1768/2013 'feriado con fines turisticos' (full holiday); decree text read from a third-party reproduction; market closed per XBUE and Yahoo
+2015-12-08,Immaculate Conception Day,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2015-12-24,Christmas Eve,market_specific,yes,https://www.rava.com/cotizaciones/historico/ggal/2015/12,no,no GGAL quote (Rava ) and no volume in Yahoo; BYMA notice not located
+2015-12-25,Christmas Day,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2015-12-31,New Year's Eve,market_specific,yes,https://www.rava.com/cotizaciones/historico/ggal/2015/12,no,no GGAL quote (Rava ) and no volume in Yahoo; BYMA notice not located
+2016-01-01,New Year's Day,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2016-02-08,Carnival Monday,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1; date computed from Easter
+2016-02-09,Carnival Tuesday,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1; date computed from Easter
+2016-03-24,Day of Remembrance for Truth and Justice,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2016-03-25,Good Friday,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1; date computed from Easter
+2016-05-25,May Revolution Day,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2016-06-17,Death of General Guemes (17 June),national_movable,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,partial,holiday created by Ley 27.258 (2016); market closed per XBUE and Yahoo
+2016-06-20,Flag Day (General Belgrano),national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2016-07-08,Tourism bridge day,bridge_non_working_day,yes,https://aldiaargentina.microjuris.com/2013/11/13/decreto-n-17682013-feriados-nacionales-se-establecen-los-dias-feriados-con-fines-turisticos-para-los-anos-2014-2015-y-2016/,partial,Decreto 1768/2013 'feriado con fines turisticos'; decree text read from a third-party reproduction; market closed per XBUE and Yahoo
+2016-08-15,Death of General San Martin (17 August),national_movable,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,partial,Decreto 1584/2010 (3rd Monday of August); market closed per XBUE and Yahoo
+2016-10-10,Cultural Diversity Day (12 October),national_movable,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,partial,Decreto 1584/2010 (2nd Monday of October); market closed per XBUE and Yahoo
+2016-11-28,National Sovereignty Day (20 November),national_movable,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,partial,Decreto 1584/2010 (4th Monday of November); market closed per XBUE and Yahoo
+2016-12-08,Immaculate Conception Day,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2016-12-09,Tourism bridge day,bridge_non_working_day,yes,https://aldiaargentina.microjuris.com/2013/11/13/decreto-n-17682013-feriados-nacionales-se-establecen-los-dias-feriados-con-fines-turisticos-para-los-anos-2014-2015-y-2016/,partial,Decreto 1768/2013 'feriado con fines turisticos'; decree text read from a third-party reproduction; market closed per XBUE and Yahoo
+2016-12-30,Last business day of the year,market_specific,yes,https://www.rava.com/cotizaciones/historico/ggal/2016/12,no,no GGAL quote (Rava) and zero volume in Yahoo; reason and BYMA notice not located; XBUE lists a session
+2017-02-27,Carnival Monday,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1; date computed from Easter
+2017-02-28,Carnival Tuesday,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1; date computed from Easter
+2017-03-24,Day of Remembrance for Truth and Justice,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2017-04-13,Holy Thursday (non-working day),market_specific,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,partial,national 'dia no laborable' (optional for the private sector); BYMA does not trade: no GGAL/YPFD/PAMP volume in Yahoo and XBUE agrees; BYMA notice not located
+2017-04-14,Good Friday,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1; date computed from Easter
+2017-05-01,Labour Day,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2017-05-25,May Revolution Day,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2017-06-20,Flag Day (General Belgrano),national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2017-08-21,Death of General San Martin (17 August),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/norma-271094/texto,partial,DNU 52/2017 (Thursday to next Monday); market closed per XBUE and Yahoo
+2017-10-16,Cultural Diversity Day (12 October),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/norma-271382/texto,partial,DNU 52/2017 as amended by DNU 80/2017; GGAL traded on 9 October and not on 16 October (Rava https://www.rava.com/cotizaciones/historico/ggal/2017/10); XBUE agrees
+2017-11-06,Bank Employees' Day,market_specific,yes,https://www.rava.com/cotizaciones/historico/ggal/2017/11,no,no BYMA or GGAL quote (Rava); XBUE agrees; BYMA notice not located
+2017-11-20,National Sovereignty Day (20 November),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/norma-271094/texto,partial,falls on Monday; market closed per XBUE and Yahoo
+2017-12-08,Immaculate Conception Day,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2017-12-25,Christmas Day,national_fixed,yes,https://biblioteca.afip.gob.ar/dcp/DEC_C_001584_2010_11_02,yes,Decreto 1584/2010 art. 1
+2018-01-01,New Year's Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2018-02-12,Carnival Monday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2018-02-13,Carnival Tuesday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2018-03-29,Holy Thursday (non-working day),market_specific,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,partial,national 'dia no laborable' (optional for the private sector); BYMA does not trade: no GGAL/YPFD/PAMP volume in Yahoo and XBUE agrees; BYMA notice not located
+2018-03-30,Good Friday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2018-04-02,Malvinas Veterans and Fallen Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2018-04-30,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-287145/texto,partial,"Decreto 923/2017 'dia no laborable con fines turisticos' (optional for the private sector); BYMA did not trade (Rava, Yahoo, XBUE); BYMA notice not located"
+2018-05-01,Labour Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2018-05-25,May Revolution Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2018-06-20,Flag Day (General Belgrano),national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2018-07-09,Independence Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2018-08-20,Death of General San Martin (17 August),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,"Ley 27.399 art. 6 rule (Tue/Wed to previous Monday, Thu/Fri to next Monday)"
+2018-10-15,Cultural Diversity Day (12 October),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,"Ley 27.399 art. 6 rule (Tue/Wed to previous Monday, Thu/Fri to next Monday)"
+2018-11-19,National Sovereignty Day (20 November),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,"Ley 27.399 art. 6 rule (Tue/Wed to previous Monday, Thu/Fri to next Monday)"
+2018-11-30,G20 Leaders' Summit (holiday in the City of Buenos Aires),market_specific,yes,https://www.boletinoficial.gob.ar/detalleAviso/primera/194810/20181030,partial,"DNU 967/2018: holiday only in CABA (BYMA's seat), BCRA bank holiday; no GGAL quote (Rava https://www.rava.com/cotizaciones/historico/ggal/2018/11); XBUE agrees"
+2018-12-24,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-287145/texto,partial,"Decreto 923/2017 'dia no laborable con fines turisticos' (optional for the private sector); BYMA did not trade (Rava, Yahoo, XBUE); BYMA notice not located"
+2018-12-25,Christmas Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2018-12-31,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-287145/texto,partial,"Decreto 923/2017 'dia no laborable con fines turisticos' (optional for the private sector); BYMA did not trade (Rava, Yahoo, XBUE); BYMA notice not located"
+2019-01-01,New Year's Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2019-03-04,Carnival Monday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2019-03-05,Carnival Tuesday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2019-04-02,Malvinas Veterans and Fallen Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2019-04-18,Holy Thursday (non-working day),market_specific,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,partial,national 'dia no laborable' (optional for the private sector); BYMA does not trade: no GGAL/YPFD/PAMP volume in Yahoo and XBUE agrees; BYMA notice not located
+2019-04-19,Good Friday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2019-05-01,Labour Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2019-06-17,Death of General Guemes (17 June),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,falls on Monday
+2019-06-20,Flag Day (General Belgrano),national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2019-07-08,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-287145/texto,partial,"Decreto 923/2017 'dia no laborable con fines turisticos'; BYMA did not trade (Yahoo, XBUE); BYMA notice not located"
+2019-07-09,Independence Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2019-08-19,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-287145/texto,partial,"Decreto 923/2017 'dia no laborable con fines turisticos'; BYMA did not trade (Yahoo, XBUE); BYMA notice not located"
+2019-10-14,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-287145/texto,partial,"Decreto 923/2017 'dia no laborable con fines turisticos'; BYMA did not trade (Yahoo, XBUE); BYMA notice not located"
+2019-11-18,National Sovereignty Day (20 November),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,"Ley 27.399 art. 6 rule (Tue/Wed to previous Monday, Thu/Fri to next Monday)"
+2019-12-24,Christmas Eve,market_specific,yes,https://www.rava.com/cotizaciones/historico/ggal/2019/12,no,no GGAL quote (Rava ) and no volume in Yahoo; BYMA notice not located
+2019-12-25,Christmas Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2019-12-31,New Year's Eve,market_specific,yes,https://www.rava.com/cotizaciones/historico/ggal/2019/12,no,no GGAL quote (Rava ) and no volume in Yahoo; BYMA notice not located
+2020-01-01,New Year's Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2020-02-24,Carnival Monday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2020-02-25,Carnival Tuesday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2020-03-23,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-330204/texto,yes,Decreto 717/2019 'feriado con fines turisticos' (full holiday)
+2020-03-24,Day of Remembrance for Truth and Justice,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2020-03-31,Malvinas Day moved from 2 April (COVID-19 lockdown),national_fixed,yes,https://www.byma.com.ar/newsroom/byma-lunes30-martes31,yes,"BYMA: 'feriado bursatil', no trading, settlement or administration (DNU 297/2020); XBUE lacks it"
+2020-04-09,Holy Thursday (non-working day),market_specific,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,partial,national 'dia no laborable' (optional for the private sector); BYMA does not trade: no GGAL/YPFD/PAMP volume in Yahoo and XBUE agrees; BYMA notice not located
+2020-04-10,Good Friday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2020-05-01,Labour Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2020-05-25,May Revolution Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2020-06-15,Death of General Guemes (17 June),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,"Ley 27.399 art. 6 rule (Tue/Wed to previous Monday, Thu/Fri to next Monday); XBUE wrongly keeps 17 June"
+2020-07-09,Independence Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2020-07-10,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-330204/texto,yes,Decreto 717/2019 'feriado con fines turisticos' (full holiday)
+2020-08-17,Death of General San Martin (17 August),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,falls on Monday
+2020-10-12,Cultural Diversity Day (12 October),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,falls on Monday
+2020-11-23,National Sovereignty Day (20 November),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,"Ley 27.399 art. 6 rule (Tue/Wed to previous Monday, Thu/Fri to next Monday)"
+2020-12-07,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-330204/texto,yes,Decreto 717/2019 'feriado con fines turisticos' (full holiday)
+2020-12-08,Immaculate Conception Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2020-12-24,Christmas Eve,market_specific,yes,https://www.rava.com/cotizaciones/historico/ggal/2020/12,no,no GGAL quote (Rava ) and no volume in Yahoo; BYMA notice not located
+2020-12-25,Christmas Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2020-12-31,New Year's Eve,market_specific,yes,https://www.rava.com/cotizaciones/historico/ggal/2020/12,no,no GGAL quote (Rava ) and no volume in Yahoo; BYMA notice not located
+2021-01-01,New Year's Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2021-02-15,Carnival Monday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2021-02-16,Carnival Tuesday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2021-03-24,Day of Remembrance for Truth and Justice,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2021-04-01,Holy Thursday (non-working day),market_specific,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,partial,national 'dia no laborable' (optional for the private sector); BYMA does not trade: no GGAL/YPFD/PAMP volume in Yahoo and XBUE agrees; BYMA notice not located
+2021-04-02,Malvinas Veterans and Fallen Day and Good Friday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2021-05-24,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-344620/texto,yes,Decreto 947/2020 'feriado con fines turisticos' (full holiday)
+2021-05-25,May Revolution Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2021-06-21,Death of General Guemes (17 June),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,"Ley 27.399 art. 6 rule (Tue/Wed to previous Monday, Thu/Fri to next Monday); XBUE wrongly keeps 17 June"
+2021-07-09,Independence Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2021-08-16,Death of General San Martin (17 August),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,"Ley 27.399 art. 6 rule (Tue/Wed to previous Monday, Thu/Fri to next Monday)"
+2021-10-08,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-344620/texto,yes,Decreto 947/2020 'feriado con fines turisticos' (full holiday)
+2021-10-11,Cultural Diversity Day (12 October),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,"Ley 27.399 art. 6 rule (Tue/Wed to previous Monday, Thu/Fri to next Monday)"
+2021-11-22,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-344620/texto,yes,Decreto 947/2020 'feriado con fines turisticos' (full holiday)
+2021-12-08,Immaculate Conception Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2021-12-24,Christmas Eve,market_specific,yes,https://www.rava.com/cotizaciones/historico/ggal/2021/12,no,no GGAL quote (Rava ) and no volume in Yahoo; BYMA notice not located
+2021-12-31,New Year's Eve,market_specific,yes,https://www.rava.com/cotizaciones/historico/ggal/2021/12,no,no GGAL quote (Rava ) and no volume in Yahoo; BYMA notice not located
+2022-02-28,Carnival Monday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2022-03-01,Carnival Tuesday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2022-03-24,Day of Remembrance for Truth and Justice,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2022-04-14,Holy Thursday (non-working day),market_specific,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,partial,national 'dia no laborable' (optional for the private sector); BYMA does not trade: no GGAL/YPFD/PAMP volume in Yahoo and XBUE agrees; BYMA notice not located
+2022-04-15,Good Friday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2022-05-18,National Census Day,national_fixed,yes,https://www.bcra.gob.ar/archivos/Pdfs/comytexord/C92108.pdf,partial,"Decreto 42/2022 under Ley 24.254 (one-off national holiday), cited by BCRA; market closed per Yahoo; XBUE lacks it"
+2022-05-25,May Revolution Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2022-06-17,Death of General Guemes (17 June),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/norma-356678/texto,yes,Decreto 789/2021 keeps it on Friday 17 June (Monday 20 is Flag Day)
+2022-06-20,Flag Day (General Belgrano),national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2022-08-15,Death of General San Martin (17 August),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,"Ley 27.399 art. 6 rule (Tue/Wed to previous Monday, Thu/Fri to next Monday)"
+2022-09-02,One-off national holiday (DNU 573/2022),national_fixed,yes,https://www.byma.com.ar/newsroom/actividad-byma-negociacin-y-liquidacin-2-de-septiembre-2022,yes,BYMA: no trading or settlement; decree text https://www.argentina.gob.ar/normativa/nacional/decreto-573-2022-370795/texto; XBUE lacks it
+2022-10-07,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-356678/texto,yes,Decreto 789/2021 'feriado con fines turisticos' (full holiday)
+2022-10-10,Cultural Diversity Day (12 October),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,"Ley 27.399 art. 6 rule (Tue/Wed to previous Monday, Thu/Fri to next Monday)"
+2022-11-21,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-356678/texto,yes,Decreto 789/2021 'feriado con fines turisticos' (full holiday)
+2022-12-08,Immaculate Conception Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2022-12-09,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-356678/texto,yes,Decreto 789/2021 'feriado con fines turisticos' (full holiday)
+2023-02-20,Carnival Monday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2023-02-21,Carnival Tuesday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2023-03-24,Day of Remembrance for Truth and Justice,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2023-04-06,Holy Thursday (non-working day),market_specific,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,partial,national 'dia no laborable' (optional for the private sector); BYMA does not trade: no GGAL/YPFD/PAMP volume in Yahoo and XBUE agrees; BYMA notice not located
+2023-04-07,Good Friday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2023-05-01,Labour Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2023-05-25,May Revolution Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2023-05-26,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-375264/texto,yes,Decreto 764/2022 'feriado con fines turisticos' (full holiday)
+2023-06-19,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-375264/texto,yes,Decreto 764/2022 'feriado con fines turisticos' (full holiday)
+2023-06-20,Flag Day (General Belgrano),national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2023-08-21,Death of General San Martin (17 August),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,"Ley 27.399 art. 6 rule (Tue/Wed to previous Monday, Thu/Fri to next Monday)"
+2023-10-13,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-375264/texto,yes,Decreto 764/2022 'feriado con fines turisticos' (full holiday)
+2023-10-16,Cultural Diversity Day (12 October),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,"Ley 27.399 art. 6 rule (Tue/Wed to previous Monday, Thu/Fri to next Monday)"
+2023-11-06,Bank Employees' Day,market_specific,yes,https://www.rava.com/cotizaciones/historico/ggal/2023/11,no,no GGAL quote (Rava ) and no volume in Yahoo; BYMA notice not located
+2023-11-20,National Sovereignty Day (20 November),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,falls on Monday
+2023-12-08,Immaculate Conception Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2023-12-25,Christmas Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2024-01-01,New Year's Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2024-02-12,Carnival Monday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2024-02-13,Carnival Tuesday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2024-03-28,Holy Thursday (non-working day),market_specific,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,partial,national 'dia no laborable' (optional for the private sector); BYMA does not trade: no GGAL/YPFD/PAMP volume in Yahoo and XBUE agrees; BYMA notice not located
+2024-03-29,Good Friday,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1; date computed from Easter
+2024-04-01,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-395689/texto,yes,Decreto 106/2023 'feriado con fines turisticos' (full holiday)
+2024-04-02,Malvinas Veterans and Fallen Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2024-05-01,Labour Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2024-06-17,Death of General Guemes (17 June),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,falls on Monday
+2024-06-20,Flag Day (General Belgrano),national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2024-06-21,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-395689/texto,yes,Decreto 106/2023 'feriado con fines turisticos' (full holiday)
+2024-07-09,Independence Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2024-10-11,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/normativa/nacional/norma-395689/texto,yes,Decreto 106/2023 'feriado con fines turisticos' (full holiday)
+2024-11-18,National Sovereignty Day (20 November),national_movable,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,"Ley 27.399 art. 6 rule (Tue/Wed to previous Monday, Thu/Fri to next Monday)"
+2024-12-25,Christmas Day,national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/ley-27399-281835,yes,Ley 27.399 art. 1
+2024-12-31,New Year's Eve,market_specific,yes,https://www.byma.com.ar/newsroom/actividad-de-byma-durante-el-24-y-31-de-diciembre,yes,BYMA: no trading or settlement; XBUE lacks it
+2025-01-01,New Year's Day,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2025-es.json,yes,argentina.gob.ar official 2025 holiday list
+2025-03-03,Carnival Monday,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2025-es.json,yes,argentina.gob.ar official 2025 holiday list; date computed from Easter
+2025-03-04,Carnival Tuesday,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2025-es.json,yes,argentina.gob.ar official 2025 holiday list; date computed from Easter
+2025-03-24,Day of Remembrance for Truth and Justice,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2025-es.json,yes,argentina.gob.ar official 2025 holiday list
+2025-04-02,Malvinas Veterans and Fallen Day,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2025-es.json,yes,argentina.gob.ar official 2025 holiday list
+2025-04-17,Holy Thursday (non-working day),market_specific,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2025-es.json,partial,national 'dia no laborable' (optional for the private sector); BYMA does not trade: no GGAL/YPFD/PAMP volume in Yahoo and XBUE agrees; BYMA notice not located
+2025-04-18,Good Friday,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2025-es.json,yes,argentina.gob.ar official 2025 holiday list; date computed from Easter
+2025-05-01,Labour Day,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2025-es.json,yes,argentina.gob.ar official 2025 holiday list
+2025-05-02,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2025-es.json,partial,Decreto 1027/2024 'dia no laborable con fines turisticos'; no GGAL quote (Rava https://www.rava.com/cotizaciones/historico/ggal/2025/05); BYMA notice not located; XBUE lacks it
+2025-06-16,Death of General Guemes (17 June),national_movable,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2025-es.json,yes,"Ley 27.399 art. 6 rule (Tue/Wed to previous Monday, Thu/Fri to next Monday); XBUE wrongly keeps 17 June"
+2025-06-20,Flag Day (General Belgrano),national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2025-es.json,yes,argentina.gob.ar official 2025 holiday list
+2025-07-09,Independence Day,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2025-es.json,yes,argentina.gob.ar official 2025 holiday list
+2025-08-15,Tourism bridge day,bridge_non_working_day,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2025-es.json,partial,Decreto 1027/2024 'dia no laborable con fines turisticos'; no GGAL quote (Rava https://www.rava.com/cotizaciones/historico/ggal/2025/08); BYMA notice not located; XBUE lacks it
+2025-10-10,Cultural Diversity Day (12 October),national_movable,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2025-es.json,yes,moved to Friday 10 October (Decreto 614/2025); XBUE has 13 October
+2025-11-24,National Sovereignty Day (20 November),national_movable,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2025-es.json,yes,"Ley 27.399 art. 6 rule (Tue/Wed to previous Monday, Thu/Fri to next Monday); XBUE has 17 November"
+2025-12-08,Immaculate Conception Day,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2025-es.json,yes,argentina.gob.ar official 2025 holiday list
+2025-12-25,Christmas Day,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2025-es.json,yes,argentina.gob.ar official 2025 holiday list
+2025-12-31,New Year's Eve,market_specific,yes,https://www.byma.com.ar/newsroom/24-y-31-de-diciembre-en-byma,yes,BYMA: no activity in BYMA nor Caja de Valores
+2026-01-01,New Year's Day,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2026-es.json,yes,argentina.gob.ar official 2026 holiday list
+2026-02-16,Carnival Monday,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2026-es.json,yes,argentina.gob.ar official 2026 holiday list; date computed from Easter
+2026-02-17,Carnival Tuesday,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2026-es.json,yes,argentina.gob.ar official 2026 holiday list; date computed from Easter
+2026-03-24,Day of Remembrance for Truth and Justice,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2026-es.json,yes,argentina.gob.ar official 2026 holiday list
+2026-04-02,Malvinas Veterans and Fallen Day,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2026-es.json,yes,argentina.gob.ar official 2026 holiday list
+2026-04-03,Good Friday,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2026-es.json,yes,argentina.gob.ar official 2026 holiday list; date computed from Easter
+2026-05-01,Labour Day,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2026-es.json,yes,argentina.gob.ar official 2026 holiday list
+2026-05-25,May Revolution Day,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2026-es.json,yes,argentina.gob.ar official 2026 holiday list
+2026-06-15,Death of General Guemes (17 June),national_movable,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2026-es.json,yes,"Ley 27.399 art. 6 rule (Tue/Wed to previous Monday, Thu/Fri to next Monday); BYMA calendar agrees; XBUE wrongly keeps 17 June"
+2026-07-09,Independence Day,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2026-es.json,yes,argentina.gob.ar official 2026 holiday list
+2026-08-17,Death of General San Martin (17 August),national_movable,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2026-es.json,yes,falls on Monday; BYMA calendar agrees
+2026-10-12,Cultural Diversity Day (12 October),national_movable,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2026-es.json,yes,falls on Monday; BYMA calendar agrees
+2026-11-09,Visit of Pope Leo XIV (national holiday),national_fixed,yes,https://www.argentina.gob.ar/normativa/nacional/norma-430580/texto,yes,Decreto 1103/2026; listed in the BYMA calendar
+2026-11-10,Visit of Pope Leo XIV (holiday in CABA and Cordoba),market_specific,yes,https://byma.com.ar/mercado/calendario-bursatil,partial,Decreto 1103/2026: holiday only in CABA (BYMA's seat) and Cordoba; listed in the BYMA calendar under the decree criterion without saying explicitly that there is no trading
+2026-11-23,National Sovereignty Day (20 November),national_movable,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2026-es.json,yes,"Ley 27.399 art. 6 rule (Tue/Wed to previous Monday, Thu/Fri to next Monday); BYMA calendar agrees"
+2026-12-08,Immaculate Conception Day,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2026-es.json,yes,argentina.gob.ar official 2026 holiday list
+2026-12-25,Christmas Day,national_fixed,yes,https://www.argentina.gob.ar/sites/default/files/holidays-2026-es.json,yes,argentina.gob.ar official 2026 holiday list
+2026-12-31,New Year's Eve,market_specific,yes,https://byma.com.ar/mercado/calendario-bursatil,yes,BYMA calendar: no trading and no settlement (Comunicado 18897 criterion)

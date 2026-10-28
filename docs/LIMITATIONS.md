@@ -21,8 +21,10 @@ relying on any report. The same list (plus every NOT_EXECUTABLE reason of the ru
   dividends, splits or other corporate actions unless they are already in adjusted prices; no intraday, no
   margin interest, no borrow fees, no FX. Large jumps and declared splits are checked, not repaired.
 - **Calendars**: NYSE rules are hand-written from 2000 onwards (special closures listed in the code). The packaged
-  BYMA holiday file covers 2024 only and some dates are flagged "verify against the official BYMA calendar";
-  provide your own file with `conventions.holidays_file` for other years or markets.
+  BYMA holiday file covers 2015-2026 (206 closed days: 160 verified, 34 partially verified, 12 not verified; see
+  docs/CALENDAR_BYMA.md). Open item: 2026-11-10 (papal visit, holiday only in CABA and Córdoba) is included as
+  closed with `verified = partial` because BYMA has not said whether there is trading; check BYMA's notice before
+  that date. Provide your own file with `conventions.holidays_file` for other years or markets.
 - **Look-ahead**: proven only when availability timestamps (`available_from`, `filing_date`) and `data_date` are
   delivered, and only as declared: if `data_date` is wrong the check trusts it. The rank-correlation hint only
   catches gross cases (a signal almost perfectly correlated with the subsequent return); subtle leakage, leakage

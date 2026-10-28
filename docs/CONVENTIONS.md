@@ -56,8 +56,8 @@ and is resolved by the `metrics` check.
 ## 3. Calendar and point-in-time
 
 - `conventions.calendar`: `nyse` (hand-written rules, `src/lockin_validate/calendars/nyse.py`), `byma` (weekends
-  plus a holiday file; the packaged `data/byma_holidays.csv` covers 2024 only and must be checked against the
-  official BYMA calendar) or `none`. A profile may set it; rules.yaml always wins. If nothing declares it, no market
+  plus a holiday file; the packaged `data/byma_holidays.csv` covers 2015-2026; sources and the verification status
+  of each date are in docs/CALENDAR_BYMA.md) or `none`. A profile may set it; rules.yaml always wins. If nothing declares it, no market
   is presumed: a review item "calendar not declared" is raised, weekend rows are NEEDS_REVIEW and no day is ever a
   confirmed error for not being a session.
 - With a full calendar (nyse, byma) coverage gaps are measured against the calendar's sessions; otherwise against
