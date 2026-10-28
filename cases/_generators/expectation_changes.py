@@ -3,7 +3,8 @@
 Does NOT import lockin_validate. Each entry adds a must_include item to an existing case; the justification of every
 entry is in docs/CASE_CHANGES.md ("0.2.0: review items that cases now expect") and the policy that classified the
 review item as a genuine signal is in docs/ALERT_POLICY.md. Nothing is removed and no status is relaxed: every
-detection expected before 0.2.0 is still expected.
+detection expected before 0.2.0 is still expected. Every added entry carries ``"post_hoc": true``: it was written after
+the tool's output was seen, so the battery reports it apart from the pre-registered detections (0.2.1).
 """
 
 from __future__ import annotations
@@ -32,9 +33,8 @@ ADDED: dict[str, list[dict]] = {
     "04_omitted_costs": [{"check": "sharpe_significance", "status": REVIEW}],
     "08_rules_vs_implementation": [{"check": "sharpe_significance", "status": REVIEW}],
     "10_independent": [{"check": "sharpe_significance", "status": REVIEW}],
-    # P7: footprints of the planted data problem in other data checks.
-    "05_impossible_dates": [{"check": "coverage", "status": REVIEW}],
-    "D03_recycled_ticker": [{"check": "coverage", "status": REVIEW}, {"check": "price_jumps", "status": REVIEW}],
+    # P7 footprints of core 05 (coverage) and D03 (coverage, price_jumps) were withdrawn in 0.2.1: they are the same
+    # evidence another check already judges (rule 1 of docs/ALERT_POLICY.md), so they are not counted as detections.
     # P4: statistical review items that follow from the planted search.
     "S04_undeclared_trials": [{"check": "deflated_sharpe", "status": REVIEW},
                               {"check": "multiple_testing", "status": REVIEW},
@@ -53,7 +53,7 @@ def apply(root: Path) -> int:
             continue
         exp = json.loads(p.read_text(encoding="utf-8"))
         have = {(d["check"], tuple(d["status"])) for d in exp.get("must_include", [])}
-        add = [e for e in entries if (e["check"], tuple(e["status"])) not in have]
+        add = [{**e, "post_hoc": True} for e in entries if (e["check"], tuple(e["status"])) not in have]
         if not add:
             continue
         exp.setdefault("must_include", []).extend(add)

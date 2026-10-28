@@ -24,7 +24,8 @@
       "check": "multiple_testing",
       "status": [
         "NEEDS_REVIEW"
-      ]
+      ],
+      "post_hoc": true
     }
   ],
   "must_not_include": [

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lockin-validate"
-version = "0.2.0"
+version = "0.2.1"
 description = "Offline toolkit to validate quantitative investment strategies and their backtests: data audit, reconstruction and reconciliation from trades, look-ahead, costs, metric errors, rules vs implementation, statistical significance and overfitting. Every finding links to its evidence."
 readme = "README.md"
 requires-python = ">=3.10"

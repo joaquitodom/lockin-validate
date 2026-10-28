@@ -222,8 +222,9 @@ def test_benchmark_fit_statuses_and_decomposition(tmp_path):
     assert math.isclose(d["gap_vs_benchmark_annual"],
                         d["benchmark_choice_effect_annual"] + d["selection_effect_annual"], abs_tol=1e-12)
     assert statuses(_bench_pkg(tmp_path / "b", None), "benchmark_fit") == ["NEEDS_REVIEW"]  # undeclared
-    # declared equal (even if the file is not): construction matches -> PASS within scope
-    assert statuses(_bench_pkg(tmp_path / "c", "equal"), "benchmark_fit") == ["PASS"]
+    # 0.2.1: declared equal but the file is cap-weighted -> the declaration is contrasted with the data
+    f = findings(_bench_pkg(tmp_path / "c", "equal"), "benchmark_fit")[0]
+    assert f.status == "NEEDS_REVIEW" and "declared equal-weighted but differs" in f.title
 
 
 # ---------------------------------------------------------------------------- dividend_corporate_actions
@@ -385,3 +386,108 @@ def test_single_trial_deflation_is_info(tmp_path):
     res = _returns_pkg(tmp_path, 120, 0.0003, 0.01, 2)
     assert statuses(res, "deflated_sharpe") == [INFO]
     assert statuses(res, "multiple_testing") == [INFO]
+
+
+# ---------------------------------------------------------------------------- 0.2.1: independent review fixes
+
+def test_coverage_period_without_rows_counts_as_zero(tmp_path):
+    tickers = [f"T{i:02d}" for i in range(10)]
+    write(tmp_path, "universe.csv", "ticker,start_date,end_date", [(t, "2015-01-02", "") for t in tickers])
+    rows = [(t, q, q + timedelta(days=40), 0.1) for q in [date(y, 12, 31) for y in range(2016, 2019)]
+            + [date(y, 6, 30) for y in range(2016, 2019)] for t in tickers]
+    write(tmp_path, "fundamentals.csv", "ticker,period_end,filing_date,roe", rows)
+    (tmp_path / "rules.yaml").write_text("period: {start: '2016-01-04', end: '2021-12-31'}\n" + BASE, encoding="utf-8")
+    res = audit(tmp_path)
+    f = findings(res, "coverage_drift")[0]
+    assert f.status == "NEEDS_REVIEW"
+    assert res.metrics["coverage_drift"]["periods_without_rows"]
+
+
+def test_coverage_undeclared_field_is_info(tmp_path):
+    tickers = [f"T{i:02d}" for i in range(10)]
+    write(tmp_path, "universe.csv", "ticker,start_date,end_date", [(t, "2015-01-02", "") for t in tickers])
+    rows = []
+    for y in range(2016, 2022):
+        for m in (3, 6, 9, 12):
+            q = date(y, m, 30 if m in (6, 9) else 31)
+            for t in tickers:
+                rows.append((t, q, q + timedelta(days=40), 0.1, "" if y >= 2021 else 5))
+    write(tmp_path, "fundamentals.csv", "ticker,period_end,filing_date,roe,esg", rows)
+    (tmp_path / "rules.yaml").write_text("required_inputs: [ROE]\n" + BASE, encoding="utf-8")
+    st = statuses(audit(tmp_path), "coverage_drift")
+    assert INFO in st and "NEEDS_REVIEW" not in st
+
+
+def test_input_names_case_insensitive_and_absent_input_not_confirmed(tmp_path):
+    rows = [(date(2024, m, 1), t, 0.5, 1.0, 1.0) for m in range(1, 7) for t in ("X1", "X2")]
+    write(tmp_path / "a", "signals.csv", "decision_time,ticker,signal,ROE,Debt", rows)
+    (tmp_path / "a" / "rules.yaml").write_text("required_inputs: [ROE, Debt]\nmin_input_share: 1.0\n" + BASE,
+                                               encoding="utf-8")
+    assert statuses(audit(tmp_path / "a"), "input_sufficiency") == ["PASS"]
+    # one of three inputs exported in no table: the shortfall may be the package, not the model -> review
+    write(tmp_path / "b", "signals.csv", "decision_time,ticker,signal,roe,debt", rows)
+    (tmp_path / "b" / "rules.yaml").write_text("required_inputs: [roe, debt, fcf]\nmin_input_share: 1.0\n" + BASE,
+                                               encoding="utf-8")
+    assert statuses(audit(tmp_path / "b"), "input_sufficiency") == ["NEEDS_REVIEW"]
+
+
+def test_stale_fundamentals_count_as_missing(tmp_path):
+    write(tmp_path, "fundamentals.csv", "ticker,period_end,filing_date,roe", [("X1", date(2020, 12, 31),
+                                                                             date(2021, 2, 10), 0.1)])
+    write(tmp_path, "signals.csv", "decision_time,ticker,signal",
+          [(date(2021, 3, 1), "X1", 1.0), (date(2023, 3, 1), "X1", 1.0)])
+    (tmp_path / "rules.yaml").write_text("required_inputs: [roe]\nmin_input_share: 1.0\n" + BASE, encoding="utf-8")
+    res = audit(tmp_path)
+    f = findings(res, "input_sufficiency")[0]
+    assert f.status == "CONFIRMED_ERROR" and "2023-03" in f.title and "2021-03" not in f.title
+    assert res.metrics["input_sufficiency"]["rows_with_stale_fundamentals"] == 1
+
+
+def test_protocol_purpose_synonyms_and_unknown(tmp_path):
+    ok = _protocol_pkg(tmp_path / "a", [("2026-02-02T10:00:00", "r5", "2022-01-01", "2024-12-31", "c1", " Holdout ")])
+    assert "CONFIRMED_ERROR" not in statuses(ok, "protocol_integrity")
+    unk = _protocol_pkg(tmp_path / "b", [("2026-02-02T10:00:00", "r5", "2022-01-01", "2024-12-31", "c9", "sanity")])
+    st = statuses(unk, "protocol_integrity")
+    assert "NEEDS_REVIEW" in st and "CONFIRMED_ERROR" not in st
+
+
+def test_dividends_without_as_traded_series_is_not_a_pass(tmp_path):
+    res = _div_pkg(tmp_path, unadjusted=False)
+    assert statuses(res, "dividend_corporate_actions") == ["NOT_EXECUTABLE"]
+
+
+def test_liquidity_sliced_orders_and_unmeasured_trades(tmp_path):
+    days = bdays(date(2023, 1, 2), 40)
+    write(tmp_path / "s", "prices.csv", "date,ticker,close,volume,adjusted",
+          [(d, "L", 10.0, 10_000, "true") for d in days])
+    write(tmp_path / "s", "trades.csv", "trade_id,timestamp,ticker,side,quantity,price",
+          [(k, f"{days[30]}T16:00:00", "L", "buy", 800, 10.0) for k in range(1, 6)])
+    res = audit(tmp_path / "s")
+    assert "NEEDS_REVIEW" in statuses(res, "liquidity_participation")  # 5 x 8% of ADV on one day = 40%
+    assert "NEEDS_REVIEW" not in statuses(res, "duplicates")  # distinct trade ids: partial fills, INFO
+    write(tmp_path / "u", "prices.csv", "date,ticker,close,volume,adjusted",
+          [(d, t, 10.0, 1_000_000 if t == "A" else "", "true") for d in days for t in ("A", "B")])
+    write(tmp_path / "u", "trades.csv", "timestamp,ticker,side,quantity,price",
+          [(f"{days[30]}T16:00:00", "A", "buy", 100, 10.0), (f"{days[30]}T16:00:00", "B", "buy", 5000, 10.0)])
+    st = statuses(audit(tmp_path / "u"), "liquidity_participation")
+    assert "PASS" not in st and "NEEDS_REVIEW" in st
+
+
+def test_rule_never_computed_in_sample_is_reported(tmp_path):
+    months = [date(2010 + m // 12, m % 12 + 1, 28) for m in range(120)]
+    write(tmp_path, "regimes.csv", "date,a,b", [(m, k % 2, "" if m.year < 2018 else 1) for k, m in enumerate(months)])
+    (tmp_path / "rules.yaml").write_text("conditional_rules: [{name: rule_a, column: a}, {name: rule_b, column: b}]\n"
+                                         "conventions:\n  calendar: none\n  oos_start: '2018-01-01'\n",
+                                         encoding="utf-8")
+    fs = findings(audit(tmp_path), "conditional_rule_activation")
+    assert [f.status for f in fs] == ["NEEDS_REVIEW"] and "rule_b" in fs[0].title
+
+
+def test_stability_pass_names_only_tests_that_ran(tmp_path):
+    rng = np.random.default_rng(4)
+    days = bdays(date(2023, 1, 2), 100)
+    write(tmp_path, "returns.csv", "date,return", [(d, round(float(x), 6)) for d, x in
+                                                    zip(days, rng.normal(0.002, 0.005, 100))])
+    (tmp_path / "rules.yaml").write_text(BASE, encoding="utf-8")
+    fs = findings(audit(tmp_path), "stability_and_concentration")
+    assert [f.status for f in fs] == [INFO]  # halves, < 250 periods, no names: no test applicable

@@ -21,11 +21,14 @@ two holdings.
 
 from __future__ import annotations
 
+import math
 from collections import defaultdict
 from datetime import date
 
+import pandas as pd
+
 from .. import metrics
-from ..findings import CONFIRMED_ERROR, NEEDS_REVIEW, PASS, AuditResult
+from ..findings import CONFIRMED_ERROR, NEEDS_REVIEW, NOT_EXECUTABLE, PASS, AuditResult
 from ..inputs import Package
 from ..reconciliation import tolerances
 from ..reconstruction import Reconstruction, price_table
@@ -64,6 +67,8 @@ def check_dividends(pkg: Package, res: AuditResult, rec: Reconstruction | None) 
     for t, d in list(divs) + list(splits):
         events_by_ticker[t].add(d)
     applied, not_applied, mismatch, undiscriminable, breaks, frozen = [], [], [], [], [], []
+    compared = 0  # adjusted / as-traded steps actually compared
+    ex_drops: list[dict] = []  # without the as-traded series: ex-date return of the adjusted series vs -D / C
     for t, (fs, cs) in adj.items():
         a = dict(zip(fs, cs))
         u = dict(zip(*raw[t])) if t in raw else {}
@@ -74,6 +79,7 @@ def check_dividends(pkg: Package, res: AuditResult, rec: Reconstruction | None) 
                 if u[d0] <= 0 or u[d1] <= 0 or a[d0] <= 0:
                     continue
                 step = (a[d1] / u[d1]) / (a[d0] / u[d0])
+                compared += 1
                 exp = 1.0
                 kinds = []
                 if (t, d1) in divs:
@@ -95,27 +101,34 @@ def check_dividends(pkg: Package, res: AuditResult, rec: Reconstruction | None) 
                         mismatch.append(ev)
                 elif abs(step - 1) > tol:
                     breaks.append(ev)
-        # frozen adjusted close from an event date
+        # frozen adjusted close from an event date, or from the session after it (rows loaded one day late)
         idx = {d: i for i, d in enumerate(fs)}
         for e in sorted(events_by_ticker.get(t, ())):
-            i = idx.get(e)
-            if i is None or i == 0:
+            i0 = idx.get(e)
+            if i0 is None or i0 == 0:
                 continue
-            n, j = 0, i
-            while j < len(fs) and cs[j] == cs[j - 1]:
-                n += 1
-                j += 1
-            if n >= stale_n:
-                days = fs[i:i + n]
-                moved = bool(u) and any(u.get(days[q]) is not None and u.get(fs[i + q - 1]) is not None
-                                        and u[days[q]] != u[fs[i + q - 1]] for q in range(n))
-                frozen.append({"ticker": t, "event_date": e, "frozen_sessions": n, "frozen_close": cs[i],
-                               "until": days[-1], "as_traded_moves": moved if u else None})
+            if not u and (t, e) in divs and cs[i0 - 1] > 0:
+                y = divs[(t, e)] / cs[i0 - 1]
+                if y >= 0.005:
+                    ex_drops.append({"ticker": t, "ex_date": e, "dividend_yield": round(y, 5),
+                                     "ex_date_return": round(cs[i0] / cs[i0 - 1] - 1, 5)})
+            for i in (i0, i0 + 1):
+                n, j = 0, i
+                while 0 < j < len(fs) and cs[j] == cs[j - 1]:
+                    n += 1
+                    j += 1
+                if n >= stale_n:
+                    days = fs[i:i + n]
+                    moved = bool(u) and any(u.get(days[q]) is not None and u.get(fs[i + q - 1]) is not None
+                                            and u[days[q]] != u[fs[i + q - 1]] for q in range(n))
+                    frozen.append({"ticker": t, "event_date": e, "frozen_from": fs[i], "frozen_sessions": n,
+                                   "frozen_close": cs[i], "until": days[-1], "as_traded_moves": moved if u else None})
+                    break
     # ratio breaks inside a frozen run are the same problem, reported once (docs/ALERT_POLICY.md, rule 1)
     frozen_days = set()
     for x in frozen:
         fs = adj[x["ticker"]][0]
-        i = fs.index(x["event_date"])
+        i = fs.index(x["frozen_from"])
         frozen_days |= {(x["ticker"], d) for d in fs[i:i + x["frozen_sessions"] + 1]}
     breaks = [x for x in breaks if (x["ticker"], x["date"]) not in frozen_days]
     div_events = [x for x in applied + not_applied + mismatch if "dividend" in x["event"]]
@@ -140,7 +153,7 @@ def check_dividends(pkg: Package, res: AuditResult, rec: Reconstruction | None) 
         findings.append((st, f"Adjusted price frozen from an ex-date ({len(frozen)}: "
                          + ", ".join(f"{x['ticker']} {x['event_date']}" for x in frozen[:4]) + ")",
                          "The adjusted close repeats for at least " + str(stale_n) + " sessions starting on a declared "
-                         "event date" + (" while the as-traded price moves: rows were loaded before the event was "
+                         "event date or the session after it" + (" while the as-traded price moves: rows were loaded before the event was "
                                          "applied and positions are valued at a stale price." if hard else
                                          " (the as-traded series is not available or also flat)."), frozen))
     if mismatch:
@@ -152,6 +165,18 @@ def check_dividends(pkg: Package, res: AuditResult, rec: Reconstruction | None) 
                          "The adjustment factor changes on days with no dividend or split in the inputs: an "
                          "undeclared event or a data error (" + ", ".join(f"{x['ticker']} {x['date']}"
                                                                          for x in breaks[:6]) + ").", breaks))
+    # without the as-traded series: do the "adjusted" prices drop by the dividend on ex-dates?
+    if len(ex_drops) >= 3:
+        allr = [b / a_ - 1 for fs_, cs_ in adj.values() for a_, b in zip(cs_[:-1], cs_[1:]) if a_ > 0]
+        sd = float(pd.Series(allr).std(ddof=1)) if len(allr) > 2 else float("nan")
+        mr = sum(x["ex_date_return"] for x in ex_drops) / len(ex_drops)
+        my = sum(x["dividend_yield"] for x in ex_drops) / len(ex_drops)
+        tstat = mr / (sd / math.sqrt(len(ex_drops))) if math.isfinite(sd) and sd > 0 else float("nan")
+        if mr < -0.5 * my and math.isfinite(tstat) and tstat < -2:
+            findings.append((NEEDS_REVIEW, f"Adjusted prices drop by about the dividend on {len(ex_drops)} ex-dates",
+                             f"Mean ex-date return {mr:+.2%} against a mean dividend yield of {my:.2%} (t = {tstat:.1f} "
+                             "using the daily volatility of the series): the series flagged adjusted behaves like "
+                             "as-traded prices. Deliver unadjusted_prices.csv to confirm.", ex_drops))
     # declared return basis vs dividends held
     basis = str((pkg.declared or {}).get("return_basis") or "").strip().lower()
     if basis in ("total", "price") and rec is not None and divs and pkg.declared.get("total_return") is not None:
@@ -193,11 +218,27 @@ def check_dividends(pkg: Package, res: AuditResult, rec: Reconstruction | None) 
                 action="Reload the affected rows after the vendor applies the event and re-adjust the history; "
                        "value positions with the corrected series.",
                 priority="high" if st == CONFIRMED_ERROR else "medium", inputs=ins)
-    if not findings:
-        res.add("dividend_corporate_actions", BLOCK, PASS, "Adjusted series consistent with the declared events",
-                f"{len(applied)} declared events applied with the expected step, no unexplained ratio break and no "
-                f"price frozen after an event ({len(div_events)} dividend events checked"
-                + (f", {len(undiscriminable)} too small to discriminate" if undiscriminable else "") + ")."
-                + ("" if raw else " Ex-day application not verifiable without unadjusted_prices.csv."),
-                [{"applied": len(applied), "undiscriminable": len(undiscriminable)}] + applied[:10], proc, inputs=ins)
+    n_events = len(divs) + len(splits)
+    verified = len(applied) + len(not_applied) + len(mismatch)
+    if not findings and (not raw or compared == 0):
+        # no PASS without verification (docs/CONVENTIONS.md section 5): application could not be compared
+        res.add("dividend_corporate_actions", BLOCK, NOT_EXECUTABLE,
+                "Application of the declared events not verifiable", "",
+                [{"declared_events": n_events, "ex_date_drop_test_events": len(ex_drops)}], proc,
+                reason=("no unadjusted_prices.csv: the adjusted / as-traded ratio cannot be compared; only the "
+                        "frozen-after-event test (nothing frozen) and the ex-date drop test (needs 3 dividends of at "
+                        "least 0.5%) ran" if not raw else
+                        "no common dates between prices.csv and unadjusted_prices.csv"),
+                action="Deliver unadjusted_prices.csv (as-traded closes) for the same tickers and dates.", inputs=ins)
+    elif not findings:
+        unpriced = n_events - verified - len(undiscriminable)
+        res.add("dividend_corporate_actions", BLOCK, PASS,
+                f"No adjustment inconsistency in {compared} compared sessions ({verified} of {n_events} declared "
+                "events verifiable)",
+                f"{len(applied)} declared events applied with the expected step, no unexplained ratio break, no price "
+                f"frozen after an event; {len(div_events)} dividend events checked"
+                + (f", {len(undiscriminable)} too small to discriminate" if undiscriminable else "")
+                + (f", {unpriced} without prices on both series" if unpriced > 0 else "") + ".",
+                [{"compared_sessions": compared, "applied": len(applied), "undiscriminable": len(undiscriminable),
+                  "declared_events": n_events}] + applied[:10], proc, inputs=ins)
 

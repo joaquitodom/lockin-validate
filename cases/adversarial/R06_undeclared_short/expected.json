@@ -12,13 +12,15 @@
       "check": "omitted_costs",
       "status": [
         "NEEDS_REVIEW"
-      ]
+      ],
+      "post_hoc": true
     },
     {
       "check": "sharpe_significance",
       "status": [
         "NEEDS_REVIEW"
-      ]
+      ],
+      "post_hoc": true
     }
   ],
   "must_not_include": [],

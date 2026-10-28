@@ -146,11 +146,13 @@ def check_benchmark_fit(pkg: Package, res: AuditResult, rec: Reconstruction | No
     ev: list[dict[str, Any]] = [{"comparator": f"{b_name} (benchmark_returns.csv)", "weighting": b_w or "not declared",
                                  **{k: round(v, 4) for k, v in vs_b.items()}}]
     decomposition = None
+    te_bu = None
     if ew is not None:
         u = ew.loc[common].to_numpy(dtype=float)
         vs_u = fit(s, u, ppy)
         ev.append({"comparator": f"equal-weight universe ({ew_src})", "weighting": "equal",
                    **{k: round(v, 4) for k, v in vs_u.items()}})
+        te_bu = float(np.std(b - u, ddof=1)) * math.sqrt(ppy)
         gap = float(np.mean(s - b)) * ppy
         choice = float(np.mean(u - b)) * ppy
         selection = float(np.mean(s - u)) * ppy
@@ -158,7 +160,7 @@ def check_benchmark_fit(pkg: Package, res: AuditResult, rec: Reconstruction | No
                          "selection_effect_annual": selection}
         ev.append({"comparator": "decomposition (arithmetic, annualised)", **{k: round(v, 4)
                                                                                for k, v in decomposition.items()}})
-    res.metrics["benchmark_fit"] = {"vs_benchmark": vs_b, "decomposition": decomposition, "n": len(common),
+    res.metrics["benchmark_fit"] = {"benchmark_vs_universe_tracking_error": te_bu, "vs_benchmark": vs_b, "decomposition": decomposition, "n": len(common),
                                     "benchmark_weighting": b_w, "strategy_weighting": s_w, "universe_source": ew_src}
     proc = (f"{len(common)} common dates; beta = cov(s, b) / var(b); tracking error = std(s - b) x sqrt({ppy}); active "
             f"return = mean(s - b) x {ppy}; information ratio = active return / tracking error (Grinold and Kahn). "
@@ -180,6 +182,14 @@ def check_benchmark_fit(pkg: Package, res: AuditResult, rec: Reconstruction | No
         problems.append("the strategy weighting (rules.yaml sizing or benchmark.strategy_weighting) is not declared")
     elif b_w != s_w:
         problems.append(f"the benchmark is {b_w}-weighted while the strategy is {s_w}-weighted")
+    te_max = float(pkg.conv("benchmark_universe_tracking_error", 0.01))
+    contrasted = False
+    if b_w == "equal" and te_bu is not None and decomposition is not None:
+        contrasted = True
+        if te_bu > te_max or abs(decomposition["benchmark_choice_effect_annual"]) > te_max / 2:
+            problems.append(f"the benchmark is declared equal-weighted but differs from the equal-weight universe "
+                            f"computed from the prices (tracking error {te_bu:.1%} > {te_max:.0%} or |benchmark-choice "
+                            f"effect| {abs(decomposition['benchmark_choice_effect_annual']):.2%} > {te_max / 2:.1%})")
     if math.isfinite(vs_b["r2"]) and vs_b["r2"] < R2_MIN:
         problems.append(f"the benchmark explains only {vs_b['r2']:.0%} of the strategy's variance (R2 < {R2_MIN:.0%})")
     if problems:
@@ -195,5 +205,7 @@ def check_benchmark_fit(pkg: Package, res: AuditResult, rec: Reconstruction | No
         res.add("benchmark_fit", BLOCK, PASS, "Benchmark built like the strategy",
                 f"Both {s_w}-weighted. Against {b_name}: beta {vs_b['beta']:.2f}, R2 {vs_b['r2']:.2f}, tracking error "
                 f"{vs_b['tracking_error']:.1%}, information ratio {vs_b['information_ratio']:.2f}." + dec_txt
-                + " Scope: construction as declared; the benchmark's own data is not verified.",
+                + (f" The declared equal weighting was contrasted with the equal-weight universe (tracking error "
+                   f"{te_bu:.2%})." if contrasted else
+                   " Scope: construction as declared (it could not be contrasted with the data)."),
                 ev, proc, inputs=["benchmark_returns", "rules"])

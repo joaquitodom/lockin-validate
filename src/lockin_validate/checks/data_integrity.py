@@ -15,7 +15,7 @@ from datetime import date
 import numpy as np
 import pandas as pd
 
-from ..findings import CONFIRMED_ERROR, NEEDS_REVIEW, PASS, AuditResult
+from ..findings import CONFIRMED_ERROR, INFO, NEEDS_REVIEW, PASS, AuditResult
 from ..inputs import Package, review_date
 from . import missing_inputs, not_executable
 
@@ -77,8 +77,11 @@ def check_duplicates(pkg: Package, res: AuditResult) -> None:
                    "rows": [int(x) for x in g["row"]]}
                   for k, g in dup.groupby(keys)]
             same_id = "trade_id" in d.columns and bool(d[mask].duplicated(keys + ["trade_id"], keep=False).any())
-            status = CONFIRMED_ERROR if same_id or "trade_id" not in d.columns else NEEDS_REVIEW
-            res.add("duplicates", BLOCK, status, "trades.csv: repeated trades",
+            status = CONFIRMED_ERROR if same_id or "trade_id" not in d.columns else INFO
+            # distinct trade ids are what legitimate partial fills look like: a note, not an alert
+            # (docs/ALERT_POLICY.md, 0.2.1)
+            res.add("duplicates", BLOCK, status, "trades.csv: repeated trades" + (
+                    " with distinct trade ids (partial fills?)" if status == INFO else ""),
                     f"{len(ev)} trades appear more than once with the same timestamp, ticker, side, quantity and "
                     "price. Two legitimate partial fills should have different trade ids; otherwise the "
                     "reconstruction counts the trade twice.",

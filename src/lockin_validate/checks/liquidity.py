@@ -59,6 +59,8 @@ def check_liquidity(pkg: Package, res: AuditResult) -> None:
     rows, over_day, unmeasured = [], [], 0
     impact_cost = 0.0
     notional = 0.0
+    unmeasured_notional = 0.0
+    unmeasured_rows: list[dict[str, Any]] = []
     for r in tr.itertuples():
         d = r.timestamp.date()
         q = abs(float(r.quantity))
@@ -66,6 +68,9 @@ def check_liquidity(pkg: Package, res: AuditResult) -> None:
         notional += n
         if r.ticker not in by_t or d not in by_t[r.ticker][3]:
             unmeasured += 1
+            unmeasured_notional += n
+            unmeasured_rows.append({"row": int(r.row), "date": d, "ticker": r.ticker, "quantity": q,
+                                    "why": "no price row that day"})
             continue
         dates, vol, rets, idx = by_t[r.ticker]
         i = idx[d]
@@ -73,17 +78,21 @@ def check_liquidity(pkg: Package, res: AuditResult) -> None:
         prev = prev[np.isfinite(prev)]
         if len(prev) < 5 or prev.mean() <= 0:
             unmeasured += 1
+            unmeasured_notional += n
+            unmeasured_rows.append({"row": int(r.row), "date": d, "ticker": r.ticker, "quantity": q,
+                                    "why": f"{len(prev)} previous sessions with volume (5 needed)"})
             continue
         adv = float(prev.mean())
-        part = q / adv
+        # participation of the ticker-day total: child fills of one parent order are judged together
+        part = day_qty[(r.ticker, d)] / adv
         rr = rets[max(1, i - 60):i]
         rr = rr[np.isfinite(rr)]
         sigma = float(np.std(rr, ddof=1)) if len(rr) >= 20 else float("nan")
         imp = y * sigma * math.sqrt(part) if math.isfinite(sigma) else float("nan")
         if math.isfinite(imp):
             impact_cost += imp * n
-        row = {"row": int(r.row), "date": d, "ticker": r.ticker, "quantity": q, "adv": round(adv, 1),
-               "participation": round(part, 4), "day_volume": vol[i] if np.isfinite(vol[i]) else None,
+        row = {"row": int(r.row), "date": d, "ticker": r.ticker, "quantity": q,
+               "day_quantity": day_qty[(r.ticker, d)], "adv": round(adv, 1), "participation": round(part, 4), "day_volume": vol[i] if np.isfinite(vol[i]) else None,
                "impact_estimate": round(imp, 5) if math.isfinite(imp) else None}
         rows.append(row)
         dv = vol[i]
@@ -93,9 +102,20 @@ def check_liquidity(pkg: Package, res: AuditResult) -> None:
         not_executable(res, "liquidity_participation", BLOCK, title,
                        f"no trade has a volume history of at least 5 sessions ({unmeasured} trades unmeasured)")
         return
-    high = [x for x in rows if x["participation"] > max_p]
+    seen_days: set[tuple[str, Any]] = set()
+    high = []
+    for x in sorted(rows, key=lambda x: -x["participation"]):
+        if x["participation"] > max_p and (x["ticker"], x["date"]) not in seen_days:
+            seen_days.add((x["ticker"], x["date"]))
+            high.append(x)
+    seen_days = set()
+    over_day = [x for x in over_day if (x["ticker"], x["date"]) not in seen_days
+                and not seen_days.add((x["ticker"], x["date"]))]
+    min_cov = float(pkg.conv("min_volume_coverage", 0.90))
+    coverage = 1 - unmeasured_notional / notional if notional else 0.0
     cap = float(pkg.conv("initial_cash", 100000.0)) or 1.0
     ctx = {"trades_measured": len(rows), "trades_unmeasured": unmeasured,
+           "measured_notional_share": round(coverage, 4),
            "max_participation": max(x["participation"] for x in rows),
            "median_participation": float(np.median([x["participation"] for x in rows])),
            "impact_cost_estimate": round(impact_cost, 2), "impact_over_capital": round(impact_cost / cap, 6),
@@ -103,7 +123,10 @@ def check_liquidity(pkg: Package, res: AuditResult) -> None:
            "impact_coefficient": y}
     res.metrics["liquidity_participation"] = ctx
     proc = (f"ADV = mean volume of the {win} previous sessions of the ticker (at least 5; conventions.adv_window); "
-            f"participation = |quantity| / ADV, review above {max_p:.0%} (conventions.max_participation). An order "
+            "participation = |quantity traded by the strategy in the ticker that day| / ADV (fills of the same day "
+            f"are added, so a sliced order is judged as a whole), review above {max_p:.0%} "
+            "(conventions.max_participation); trades without a volume history are unmeasured and below "
+            f"{min_cov:.0%} of notional measured (conventions.min_volume_coverage) there is no PASS. An order "
             "is impossible as filled when the strategy's quantity of the day exceeds the day's volume. Context: "
             f"square-root impact Y sigma sqrt(Q / ADV), Y = {y:g}, sigma = std of the previous 60 daily returns "
             "(Almgren et al. 2005; Toth et al. 2011): an order of magnitude only.")
@@ -118,17 +141,31 @@ def check_liquidity(pkg: Package, res: AuditResult) -> None:
                 "those fills cannot have happened at that size and price." + ctx_txt, over_day, proc,
                 action="Cap orders at a fraction of volume and spread large orders over several days; rerun.",
                 priority="high", inputs=ins)
+    if unmeasured:
+        st = NEEDS_REVIEW if coverage < min_cov else INFO
+        res.add("liquidity_participation", BLOCK, st,
+                f"Volume missing for {unmeasured} of {unmeasured + len(rows)} trades ({1 - coverage:.0%} of notional)",
+                "These trades cannot be compared with traded volume: "
+                + ("too much of the notional is unmeasured to conclude on liquidity." if st == NEEDS_REVIEW else
+                   f"not an alert, more than {min_cov:.0%} of the notional is measured.")
+                + " Volume must be consolidated volume in shares (docs/INPUT_SPEC.md).",
+                unmeasured_rows, proc, action="Deliver volume for every traded ticker and date.",
+                priority="medium", inputs=ins)
     if high:
         res.add("liquidity_participation", BLOCK, NEEDS_REVIEW,
-                f"{len(high)} trades above {max_p:.0%} of ADV (max {ctx['max_participation']:.0%}; "
+                f"{len(high)} ticker-days above {max_p:.0%} of ADV (max {ctx['max_participation']:.0%}; "
                 + ", ".join(sorted({x['ticker'] for x in high})) + ")",
                 "Orders of this size move the price against the strategy; the backtest assumes they fill at the "
                 "close." + ctx_txt, sorted(high, key=lambda x: -x["participation"]), proc,
                 action="Model market impact or reduce the size; check capacity at the intended capital.",
                 priority="high" if ctx["max_participation"] > 0.25 else "medium", inputs=ins)
-    if not over_day and not high:
-        res.add("liquidity_participation", BLOCK, PASS, f"Every trade below {max_p:.0%} of ADV",
-                f"{len(rows)} trades measured, maximum participation {ctx['max_participation']:.2%}." + ctx_txt,
+    if not over_day and not high and coverage >= min_cov:
+        scope = (f"Every trade-day below {max_p:.0%} of ADV" if not unmeasured else
+                 f"All {len(rows)} measured trades (of {len(rows) + unmeasured}; {coverage:.0%} of notional) below "
+                 f"{max_p:.0%} of ADV")
+        res.add("liquidity_participation", BLOCK, PASS, scope,
+                f"{len(rows)} trades measured, maximum participation of a ticker-day "
+                f"{ctx['max_participation']:.2%}." + ctx_txt,
                 [ctx] + sorted(rows, key=lambda x: -x["participation"])[:5], proc, inputs=ins)
 
 

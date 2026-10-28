@@ -6,13 +6,15 @@
       "check": "omitted_costs",
       "status": [
         "NEEDS_REVIEW"
-      ]
+      ],
+      "post_hoc": true
     },
     {
       "check": "dates",
       "status": [
         "NEEDS_REVIEW"
-      ]
+      ],
+      "post_hoc": true
     }
   ],
   "must_not_include": [],

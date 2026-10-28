@@ -7,12 +7,6 @@
       "status": [
         "CONFIRMED_ERROR"
       ]
-    },
-    {
-      "check": "coverage",
-      "status": [
-        "NEEDS_REVIEW"
-      ]
     }
   ],
   "must_not_include": [
@@ -67,6 +61,5 @@
   ],
   "errors_only_from": [
     "dates"
-  ],
-  "expectation_changes": "0.2.0: coverage added (docs/CASE_CHANGES.md, docs/ALERT_POLICY.md)"
+  ]
 }

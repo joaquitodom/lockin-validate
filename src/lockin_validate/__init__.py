@@ -11,7 +11,7 @@ Statuses: CONFIRMED_ERROR, NEEDS_REVIEW, NOT_EXECUTABLE, INFO (a note, not an al
 
 from __future__ import annotations
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 from .auditor import DISCLAIMER, audit, run  # noqa: E402
 from .findings import (  # noqa: E402

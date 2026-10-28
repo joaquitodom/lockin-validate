@@ -46,7 +46,7 @@ def compare(res: AuditResult, exp: dict[str, Any]) -> dict[str, Any]:
     for d in exp.get("must_include", []):
         allowed = d["status"] if isinstance(d["status"], list) else [d["status"]]
         ok = any(_match(f, d["check"]) and f.status in allowed for f in res.findings)
-        kind = "pass" if allowed == [PASS] else "detection"
+        kind = "pass" if allowed == [PASS] else ("post_hoc" if d.get("post_hoc") else "detection")
         detections.append({"check": d["check"], "kind": kind, "ok": ok, "allowed": allowed})
         if not ok:
             got = sorted({f.status for f in res.findings if _match(f, d["check"])}) or ["(no finding)"]
@@ -102,13 +102,17 @@ def run_battery(root: Path | None = None, out: Path | None = None) -> list[dict[
 def per_check_table(results: list[dict[str, Any]]) -> list[dict[str, Any]]:
     agg: dict[str, dict[str, int]] = defaultdict(lambda: {"expected_detections": 0, "detected": 0,
                                                           "expected_passes": 0, "passes_met": 0,
-                                                          "false_positives": 0, "unexpected_review": 0})
+                                                          "false_positives": 0, "unexpected_review": 0,
+                                                          "post_hoc_expected": 0, "post_hoc_met": 0})
     for r in results:
         for d in r["detections"]:
             a = agg[d["check"]]
             if d["kind"] == "detection":
                 a["expected_detections"] += 1
                 a["detected"] += int(d["ok"])
+            elif d["kind"] == "post_hoc":
+                a["post_hoc_expected"] += 1
+                a["post_hoc_met"] += int(d["ok"])
             else:
                 a["expected_passes"] += 1
                 a["passes_met"] += int(d["ok"])
@@ -132,9 +136,15 @@ def render_battery(results: list[dict[str, Any]]) -> str:
     ok = sum(r["ok"] for r in results)
     n_unexp = sum(len(r["unexpected_review"]) for r in results)
     n_fp = sum(len(r["false_positives"]) for r in results)
+    det = [d for r in results for d in r["detections"]]
+    pre = [d for d in det if d["kind"] == "detection"]
+    post = [d for d in det if d["kind"] == "post_hoc"]
     lines += ["", f"{ok} of {len(results)} cases with all expected outcomes",
-              f"Unexpected NEEDS_REVIEW (case x check): {n_unexp}; false positives: {n_fp}", "",
-              "Per check (detections = expected non-PASS outcomes found; false positives = unexpected CONFIRMED_ERROR or "
+              f"Unexpected NEEDS_REVIEW (case x check): {n_unexp}; false positives: {n_fp}",
+              f"Pre-registered detections met: {sum(d['ok'] for d in pre)} of {len(pre)}; expectations added after "
+              f"seeing the output (post_hoc, not counted as detections): {sum(d['ok'] for d in post)} of {len(post)}",
+              "",
+              "Per check (detections = pre-registered non-PASS outcomes found; post-hoc expectations are excluded; false positives = unexpected CONFIRMED_ERROR or "
               "forbidden review items; unexpected review = NEEDS_REVIEW on checks the case does not mention):", "",
               f"{'check':28} {'detected':>10} {'rate':>6} {'passes':>8} {'false+':>7} {'unexp.review':>13}"]
     for row in per_check_table(results):

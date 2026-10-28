@@ -147,18 +147,41 @@ def check_stability(pkg: Package, res: AuditResult, rec: Reconstruction | None) 
                     "exposure, not evidence of a repeatable rule.", ev, proc,
                     action="Report the result without that name, subperiod or days, and explain the exposure.",
                     priority="medium", inputs=ins)
-    elif not notes:
+    else:
+        ran, skipped = [], []
+        (ran if len(subs) >= 3 else skipped).append(
+            f"subperiods ({len(subs)} {how}" + ("" if len(subs) >= 3 else "; the rule needs >= 3") + ")")
+        (ran if len(pnl) >= MIN_DAYS_FOR_DAY_TEST else skipped).append(
+            f"best 1% of periods ({len(pnl)} periods" + ("" if len(pnl) >= MIN_DAYS_FOR_DAY_TEST else
+                                                         f"; the test needs >= {MIN_DAYS_FOR_DAY_TEST}") + ")")
+        n_names = len(names) if names else 0
+        if names is None:
+            skipped.append("names (no trades: return series only)")
+        else:
+            (ran if n_names >= 3 else skipped).append(
+                f"names ({n_names}" + ("" if n_names >= 3 else "; the test needs >= 3") + ")")
+        if notes:
+            ran = [x for x in ran if not x.startswith("best 1%")]  # judged as an INFO note above
         top_name = ""
         if names:
             tot_n = sum(names.values())
             if tot_n:
                 b = max(names.items(), key=lambda x: x[1])
                 top_name = f" Largest name contribution: {b[0]} {b[1] / tot_n:.0%} of the P&L."
-        res.add("stability_and_concentration", BLOCK, PASS, "No single subperiod, name or handful of days carries the result",
-                f"{len(subs)} {how}; Sharpe by subperiod: " + ", ".join(f"{s['subperiod']} {s['sharpe_annualised']}"
-                                                                       for s in subs[:8])
-                + (f" (dispersion {dispersion:.2f})" if dispersion is not None else "") + "." + top_name,
-                subs + ([{"name_pnl_top": info["name_pnl"][:5]}] if names else []), proc, inputs=ins)
+        desc = (f"{len(subs)} {how}; Sharpe by subperiod: " + ", ".join(f"{s['subperiod']} {s['sharpe_annualised']}"
+                                                                      for s in subs[:8])
+                + (f" (dispersion {dispersion:.2f})" if dispersion is not None else "") + "." + top_name
+                + (" Not run: " + "; ".join(skipped) + "." if skipped else ""))
+        evd = subs + ([{"name_pnl_top": info["name_pnl"][:5]}] if names else [])
+        if ran:
+            # the title names only the tests that ran (reviewer finding M6)
+            res.add("stability_and_concentration", BLOCK, PASS,
+                    "No concentration found by the tests that ran: " + "; ".join(ran), desc, evd, proc, inputs=ins)
+        elif not notes:
+            res.add("stability_and_concentration", BLOCK, INFO,
+                    "Subperiods and contributions described; no concentration test applicable",
+                    desc + " Not an alert and not a PASS: the series is too short or too narrow for the tests.",
+                    evd, proc, inputs=ins)
 
 
 def _active(v: Any) -> bool | None:
@@ -207,10 +230,23 @@ def check_conditional_rules(pkg: Package, res: AuditResult) -> None:
     rare = float(pkg.conv("regime_rare_in_sample", 0.10))
     dom = float(pkg.conv("regime_dominant_out_of_sample", 0.50))
     ev, flagged = [], []
+    declared_missing = []
+    if isinstance(decl, list):
+        cols = {c for _, c in rules}
+        for x in decl:
+            c = str(x.get("column") if isinstance(x, dict) else x).strip().lower()
+            if c not in cols:
+                declared_missing.append({"rule": str(x.get("name") if isinstance(x, dict) else x), "column": c,
+                                         "problem": "column not in regimes.csv"})
+    never_in, no_oos = [], []
     for name, col in rules:
         a = reg[col].map(_active)
         ai, ao = a[ins_mask].dropna(), a[oos_mask].dropna()
         if not len(ai) or not len(ao):
+            row = {"rule": name, "column": col, "in_sample_periods": int(len(ai)),
+                   "out_of_sample_active": int(ao.sum()) if len(ao) else 0, "out_of_sample_periods": int(len(ao)),
+                   "out_of_sample_share": round(float(ao.mean()), 4) if len(ao) else None}
+            (never_in if not len(ai) else no_oos).append(row)
             continue
         row = {"rule": name, "column": col, "in_sample_active": int(ai.sum()), "in_sample_periods": int(len(ai)),
                "in_sample_share": round(float(ai.mean()), 4), "out_of_sample_active": int(ao.sum()),
@@ -218,13 +254,33 @@ def check_conditional_rules(pkg: Package, res: AuditResult) -> None:
         ev.append(row)
         if row["in_sample_share"] < rare and row["out_of_sample_share"] > dom:
             flagged.append(row)
-    res.metrics["conditional_rule_activation"] = {"oos_start": str(start), "source": src, "rules": ev}
+    res.metrics["conditional_rule_activation"] = {"oos_start": str(start), "source": src, "rules": ev,
+                                                  "never_computed_in_sample": never_in,
+                                                  "not_computed_out_of_sample": no_oos,
+                                                  "declared_not_found": declared_missing}
     proc = (f"Out-of-sample start {start} ({src}). Per rule: share of regimes.csv rows where the rule is active "
             f"(1/true) before and from that date. Review when the in-sample share is below {rare:.0%} "
             f"(conventions.regime_rare_in_sample) and the out-of-sample share above {dom:.0%} "
             "(conventions.regime_dominant_out_of_sample).")
+    if never_in:
+        # a declared rule with no in-sample values was never exercised where the model was fitted: every rule is
+        # reported, none is dropped (reviewer finding M5)
+        res.add("conditional_rule_activation", BLOCK, NEEDS_REVIEW,
+                "Conditional rule never computed in sample: " + ", ".join(x["rule"] for x in never_in),
+                "; ".join(f"{x['rule']} has no in-sample value and is active in {x['out_of_sample_active']} of "
+                          f"{x['out_of_sample_periods']} out-of-sample periods" for x in never_in)
+                + ". The out-of-sample window tests a rule the in-sample period never exercised.",
+                never_in + ev, proc, action="Compute the rule over the in-sample period or report results without it.",
+                priority="high", inputs=["regimes", "rules"])
+    if no_oos or declared_missing:
+        not_executable(res, "conditional_rule_activation", BLOCK, title + " (some declared rules)",
+                       "declared rules that cannot be compared: "
+                       + ", ".join(f"{x['rule']} ({x.get('problem', 'no out-of-sample value')})"
+                                   for x in no_oos + declared_missing),
+                       evidence=no_oos + declared_missing)
     if not ev:
-        not_executable(res, "conditional_rule_activation", BLOCK, title, "no parseable activation values")
+        if not never_in and not no_oos and not declared_missing:
+            not_executable(res, "conditional_rule_activation", BLOCK, title, "no parseable activation values")
         return
     if flagged:
         res.add("conditional_rule_activation", BLOCK, NEEDS_REVIEW,
@@ -236,7 +292,7 @@ def check_conditional_rules(pkg: Package, res: AuditResult) -> None:
                 + ". The out-of-sample result mostly measures a rule calibrated on a handful of in-sample periods.",
                 ev, proc, action="Report out-of-sample results with and without the rule; do not count the window as a "
                                  "test of the in-sample model.", priority="high", inputs=["regimes", "rules", "protocol"])
-    else:
+    elif not never_in and not no_oos and not declared_missing:
         res.add("conditional_rule_activation", BLOCK, PASS, "Conditional rules active comparably in and out of sample",
                 "; ".join(f"{x['rule']}: {x['in_sample_share']:.0%} in sample, {x['out_of_sample_share']:.0%} out of "
                           "sample" for x in ev) + ".", ev, proc, inputs=["regimes", "rules"])

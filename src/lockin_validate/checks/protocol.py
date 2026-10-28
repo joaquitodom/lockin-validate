@@ -28,7 +28,26 @@ from . import missing_inputs, not_executable
 
 BLOCK = "statistics"
 PURPOSES = {"train", "validation", "test", "reproduction", "diagnostic"}
-CONTAMINATING = {"train", "validation", "diagnostic", "other"}
+# explicit synonyms (case and surrounding spaces ignored); anything else is "unknown" and never a confirmed error
+PURPOSE_ALIASES = {
+    "training": "train", "fit": "train", "in_sample": "train", "is": "train",
+    "val": "validation", "valid": "validation", "cv": "validation", "cross_validation": "validation",
+    "holdout": "test", "hold_out": "test", "oos": "test", "out_of_sample": "test", "final_test": "test",
+    "testing": "test",
+    "repro": "reproduction", "reproduce": "reproduction", "rerun": "reproduction", "re_run": "reproduction",
+    "replication": "reproduction",
+    "diag": "diagnostic", "diagnostics": "diagnostic", "analysis": "diagnostic", "debug": "diagnostic",
+}
+CONTAMINATING = {"train", "validation", "diagnostic"}
+
+
+def normalise_purpose(v) -> tuple[str, str]:
+    """(canonical purpose or 'unknown', the label as written)."""
+    raw = str(v or "").strip()
+    k = raw.lower().replace("-", "_").replace(" ", "_")
+    if k in PURPOSES:
+        return k, raw
+    return PURPOSE_ALIASES.get(k, "unknown"), raw
 
 
 def _d(x: Any) -> date | None:
@@ -91,10 +110,16 @@ def check_protocol(pkg: Package, res: AuditResult) -> None:
     log = pkg.df("run_log").dropna(subset=["timestamp", "window_start", "window_end"]).sort_values(["timestamp", "row"])
     runs = []
     for r in log.itertuples():
-        purpose = str(r.purpose or "").strip().lower()
+        purpose, label = normalise_purpose(r.purpose)
         runs.append({"row": int(r.row), "timestamp": r.timestamp, "run_id": getattr(r, "run_id", None),
                      "start": r.window_start.date(), "end": r.window_end.date(),
-                     "config": str(r.config_hash), "purpose": purpose if purpose in PURPOSES else "other"})
+                     "config": str(r.config_hash), "purpose": purpose, "label": label})
+    renamed = sorted({f"{x['label']} -> {x['purpose']}" for x in runs
+                      if x["purpose"] not in ("unknown",) and x["label"].strip().lower() != x["purpose"]})
+    if renamed:
+        pkg.log.applied("run_log", "normalise_purpose", "purpose synonyms mapped to the protocol vocabulary",
+                        {"labels": renamed}, {"purposes": sorted(PURPOSES)})
+    unknown_touch: list[dict[str, Any]] = []
     violations: list[dict[str, Any]] = []
     first_test_look = None
     for name, w in reserved.items():
@@ -105,6 +130,9 @@ def check_protocol(pkg: Package, res: AuditResult) -> None:
             ev = {"window": name, "row": x["row"], "run_id": x["run_id"], "timestamp": x["timestamp"],
                   "config_hash": x["config"], "purpose": x["purpose"],
                   "run_window": f"{x['start']} to {x['end']}", "reserved_window": f"{w['start']} to {w['end']}"}
+            if x["purpose"] == "unknown":
+                unknown_touch.append({**ev, "label": x["label"]})
+                continue
             if x["purpose"] in CONTAMINATING:
                 violations.append({**ev, "violation": f"{x['purpose']} run touches the reserved window {name}"})
                 looks.append(x["config"])
@@ -139,7 +167,8 @@ def check_protocol(pkg: Package, res: AuditResult) -> None:
                                "first_test_look": first_test_look, "violations": len(violations)}
     proc = ("Each run of run_log.csv is matched to the windows of protocol.yaml by overlap of [window_start, "
             "window_end]. On a reserved window (test, single-use by default, and every `reserved` entry): a train, "
-            "validation, diagnostic or unknown-purpose run is contamination; a test run of a second configuration is "
+            "validation or diagnostic run is contamination (purpose synonyms such as holdout / oos -> test are mapped; an "
+            "unrecognised purpose is a review item); a test run of a second configuration is "
             "selection on the window; a 'reproduction' is accepted only if its config_hash was already tested on that "
             "window. Development after the first test look = train or validation runs of configurations not seen "
             "before it. Validation looks = distinct configurations with purpose validation.")
@@ -149,7 +178,7 @@ def check_protocol(pkg: Package, res: AuditResult) -> None:
         cfgs = sorted({v["config_hash"] for v in violations})
         status = CONFIRMED_ERROR if single else NEEDS_REVIEW
         res.add("protocol_integrity", BLOCK, status,
-                f"Reserved window(s) {', '.join(wins)} used more than once ({len(violations)} runs)",
+                f"Reserved window(s) {', '.join(wins)} not used once: {len(violations)} runs break the protocol",
                 f"Configurations involved: {', '.join(cfgs)}. "
                 + ("The protocol declares these windows single-use: " if single else "")
                 + "after these runs the window no longer measures out-of-sample performance; any result on it is "
@@ -157,6 +186,14 @@ def check_protocol(pkg: Package, res: AuditResult) -> None:
                 violations, proc,
                 action="Declare a new, untouched window for the final test and log every run with its purpose; "
                        "report the contaminated window as in-sample.", priority="high",
+                inputs=["run_log", "protocol"])
+    if unknown_touch:
+        res.add("protocol_integrity", BLOCK, NEEDS_REVIEW,
+                f"Runs with an unrecognised purpose touch a reserved window ({len(unknown_touch)})",
+                "Purposes not recognised: " + ", ".join(sorted({x['label'] for x in unknown_touch})) + ". They are "
+                "neither counted as the single test look nor as contamination; declare one of train, validation, "
+                "test, reproduction, diagnostic (synonyms such as holdout or oos are accepted).",
+                unknown_touch, proc, action="Relabel the runs with the protocol vocabulary.", priority="medium",
                 inputs=["run_log", "protocol"])
     if changed:
         res.add("protocol_integrity", BLOCK, NEEDS_REVIEW,
@@ -178,7 +215,7 @@ def check_protocol(pkg: Package, res: AuditResult) -> None:
                 "The deflated Sharpe and the multiple-testing haircut use N = max(declared, trials.csv columns, "
                 "validation configurations of run_log.csv).", [{"validation_configs": n_val}], proc,
                 inputs=["run_log"])
-    if not violations and not changed and not (n_decl is not None and n_val > n_decl):
+    if not violations and not changed and not unknown_touch and not (n_decl is not None and n_val > n_decl):
         res.add("protocol_integrity", BLOCK, PASS, "Reserved windows used once according to the run log",
                 f"{len(runs)} runs; reserved windows: "
                 + "; ".join(f"{k} ({v['start']} to {v['end']}): configs {', '.join(v['distinct_configs_looked']) or 'none'}"
