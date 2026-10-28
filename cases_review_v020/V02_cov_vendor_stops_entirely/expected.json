@@ -1,0 +1,28 @@
+{
+  "description": "Fundamentals for EVERY member stop after 2021-Q4 while the universe is active and the model keeps scoring every month until 2024-12 (declared period 2016-2024). Coverage of 2022-2024 is 0%: the extreme case of drift. A period with no rows at all must not be invisible.",
+  "origin": "review_v020",
+  "kind": "planted_gap",
+  "target_checks": [
+    "coverage_drift"
+  ],
+  "must_include": [
+    {
+      "check": "coverage_drift",
+      "status": [
+        "CONFIRMED_ERROR",
+        "NEEDS_REVIEW",
+        "NOT_EXECUTABLE"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "coverage_drift",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "coverage_drift"
+  ],
+  "reviewer_note": "Firm: PASS here would be the LockIn failure in its purest form (the holdout years have no inputs)."
+}

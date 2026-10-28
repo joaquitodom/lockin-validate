@@ -1,0 +1,27 @@
+{
+  "description": "The number of rows falls by 27% from 2022 because 8 of 30 members LEFT the universe (end_date 2021-12-31 in universe.csv). Coverage of the members that remain is unchanged (~97%).",
+  "origin": "review_v020",
+  "kind": "clean_tempting",
+  "target_checks": [
+    "coverage_drift"
+  ],
+  "must_include": [
+    {
+      "check": "coverage_drift",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "coverage_drift",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "coverage_drift",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": []
+}

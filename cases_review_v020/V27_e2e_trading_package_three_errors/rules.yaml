@@ -1,0 +1,8 @@
+strategy: two-name dividend book
+costs: {commission_rate: 0.001, slippage_rate: 0.0}
+required_inputs: [roe, margin, growth, leverage]
+min_input_share: 0.75
+conventions:
+  calendar: none
+  review_date: '2026-10-28'
+  initial_cash: 1000000

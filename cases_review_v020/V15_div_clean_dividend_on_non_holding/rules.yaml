@@ -1,0 +1,5 @@
+strategy: buy and hold DH1
+costs: {commission_rate: 0.001, slippage_rate: 0.0}
+conventions:
+  calendar: none
+  review_date: '2026-10-28'

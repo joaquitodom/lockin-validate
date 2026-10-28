@@ -1,0 +1,55 @@
+{
+  "description": "LockIn's central failure: fundamentals cover ~97% of the 100 members through 2021 and ~79% in the single-use test years 2022-2024, while every member is still scored every month. Row-level preflight checks (point-in-time lag 40 days, schema, protocol: one clean test look) pass.",
+  "origin": "review_v020",
+  "kind": "lockin_holdout",
+  "target_checks": [
+    "coverage_drift",
+    "input_sufficiency",
+    "pit_fundamentals",
+    "protocol_integrity"
+  ],
+  "must_include": [
+    {
+      "check": "coverage_drift",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "pit_fundamentals",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "protocol_integrity",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "input_sufficiency",
+      "status": [
+        "CONFIRMED_ERROR",
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "coverage_drift",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "coverage_drift",
+    "input_sufficiency"
+  ],
+  "text_must_contain": [
+    {
+      "check": "coverage_drift",
+      "text": "2022"
+    }
+  ],
+  "reviewer_note": "coverage_drift NEEDS_REVIEW is the firm expectation. input_sufficiency is a STRETCH expectation: the 18 members are scored in 2024 from fundamentals filed in early 2022 (as-of lookup without a staleness limit); a reviewer would call those inputs missing."
+}

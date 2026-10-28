@@ -1,0 +1,29 @@
+{
+  "description": "Four calendar years with summed returns +5%, +30%, -4%, -2%: 2021 alone is 103% of the total; the other three years together are net -1% (barely negative, near the rule's edge).",
+  "origin": "review_v020",
+  "kind": "planted_subtle",
+  "target_checks": [
+    "stability_and_concentration"
+  ],
+  "must_include": [
+    {
+      "check": "stability_and_concentration",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "stability_and_concentration",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "stability_and_concentration",
+      "text": "2021"
+    }
+  ]
+}

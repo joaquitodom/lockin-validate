@@ -1,0 +1,4 @@
+strategy: declared daily returns
+conventions:
+  calendar: none
+  review_date: '2026-10-28'

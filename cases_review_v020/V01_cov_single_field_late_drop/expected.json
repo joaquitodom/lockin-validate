@@ -1,0 +1,31 @@
+{
+  "description": "Only ONE of three fields drifts, and only in the last three quarters (2023-Q2..Q4): gross_margin coverage falls from 97.5% to 85% (-12.5 pp, just above the 10 pp threshold). roe and debt_to_equity are stable, so the rows still exist for every member.",
+  "origin": "review_v020",
+  "kind": "planted_subtle",
+  "target_checks": [
+    "coverage_drift"
+  ],
+  "must_include": [
+    {
+      "check": "coverage_drift",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "coverage_drift",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "coverage_drift"
+  ],
+  "text_must_contain": [
+    {
+      "check": "coverage_drift",
+      "text": "gross_margin"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "description": "Gross ~+22%, turnover ~11x, costs declared in costs.csv as 10 bps (unit bps, not a fraction), charged in trades.csv: 3x costs take ~3 pp. Must PASS (and must read 10 bps as 0.001, not 10).",
+  "origin": "review_v020",
+  "kind": "clean_tempting",
+  "target_checks": [
+    "cost_sensitivity"
+  ],
+  "must_include": [
+    {
+      "check": "cost_sensitivity",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "cost_sensitivity",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "cost_sensitivity",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": []
+}

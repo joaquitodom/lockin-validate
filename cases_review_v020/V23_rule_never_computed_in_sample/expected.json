@@ -1,0 +1,32 @@
+{
+  "description": "Two declared rules. high_vol is balanced (~40% in and out). credit_stress was never computed in sample (empty in all 144 in-sample months) and is active in 29 of 36 out-of-sample months (81%): the test window measures a rule the training period never exercised.",
+  "origin": "review_v020",
+  "kind": "planted_gap",
+  "target_checks": [
+    "conditional_rule_activation"
+  ],
+  "must_include": [
+    {
+      "check": "conditional_rule_activation",
+      "status": [
+        "CONFIRMED_ERROR",
+        "NEEDS_REVIEW",
+        "NOT_EXECUTABLE"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "conditional_rule_activation",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "conditional_rule_activation",
+      "text": "credit_stress"
+    }
+  ],
+  "reviewer_note": "Firm on 'not PASS': a declared rule with no in-sample value cannot be reported as 'active comparably in and out of sample'. NEEDS_REVIEW is the right answer."
+}

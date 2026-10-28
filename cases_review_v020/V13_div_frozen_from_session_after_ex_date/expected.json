@@ -1,0 +1,32 @@
+{
+  "description": "All dividends are applied correctly, but DA2's adjusted close is frozen for 4 sessions starting the session AFTER its 2023-09-15 ex-date (the vendor applied the dividend, then stopped updating) while the as-traded price moves.",
+  "origin": "review_v020",
+  "kind": "planted_subtle",
+  "target_checks": [
+    "dividend_corporate_actions"
+  ],
+  "must_include": [
+    {
+      "check": "dividend_corporate_actions",
+      "status": [
+        "CONFIRMED_ERROR",
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "dividend_corporate_actions",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "dividend_corporate_actions"
+  ],
+  "text_must_contain": [
+    {
+      "check": "dividend_corporate_actions",
+      "text": "DA2"
+    }
+  ]
+}

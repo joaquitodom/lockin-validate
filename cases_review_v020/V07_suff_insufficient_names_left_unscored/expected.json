@@ -1,0 +1,27 @@
+{
+  "description": "Two names have only 2 of 8 inputs every month, but the model correctly leaves them UNSCORED (empty signal). Every scored row has at least 7 of 8.",
+  "origin": "review_v020",
+  "kind": "clean_tempting",
+  "target_checks": [
+    "input_sufficiency"
+  ],
+  "must_include": [
+    {
+      "check": "input_sufficiency",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "input_sufficiency",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "input_sufficiency",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": []
+}

@@ -1,0 +1,9 @@
+strategy: allocation with two conditional rules
+conditional_rules:
+  - {name: crisis_rule, column: crisis}
+  - {name: trend_rule, column: uptrend}
+conventions:
+  calendar: none
+  review_date: '2026-10-28'
+  periods_per_year: 12
+  oos_start: '2022-01-01'

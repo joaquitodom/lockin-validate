@@ -1,0 +1,8 @@
+strategy: bond allocation with an inverted-curve rule
+conditional_rules:
+  - {name: inverted_curve_rule, column: inverted_curve}
+conventions:
+  calendar: none
+  review_date: '2026-10-28'
+  periods_per_year: 12
+  oos_start: '2022-01-01'

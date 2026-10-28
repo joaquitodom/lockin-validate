@@ -1,0 +1,6 @@
+strategy: periodic trades
+costs: {commission_rate: 0.0005, slippage_rate: 0.0}
+conventions:
+  calendar: none
+  review_date: '2026-10-28'
+  initial_cash: 1000000

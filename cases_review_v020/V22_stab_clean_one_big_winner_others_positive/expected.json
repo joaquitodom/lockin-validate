@@ -1,0 +1,27 @@
+{
+  "description": "Three years, five names all with positive drift; BG1 contributes well over half of the P&L but the other four are positive too, every year is positive and no handful of days carries the result.",
+  "origin": "review_v020",
+  "kind": "clean_tempting",
+  "target_checks": [
+    "stability_and_concentration"
+  ],
+  "must_include": [
+    {
+      "check": "stability_and_concentration",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "stability_and_concentration",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "stability_and_concentration",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": []
+}

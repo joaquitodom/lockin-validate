@@ -1,0 +1,65 @@
+{
+  "description": "Four problems at once: fundamentals coverage 95% -> 75% from 2022; a second config (c09) evaluated on the single-use test window; equal-weight book vs a cap-weighted benchmark; defensive rule active in 5% of in-sample months and 78% of test months.",
+  "origin": "review_v020",
+  "kind": "end_to_end",
+  "target_checks": [
+    "coverage_drift",
+    "protocol_integrity",
+    "benchmark_fit",
+    "conditional_rule_activation"
+  ],
+  "must_include": [
+    {
+      "check": "coverage_drift",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "protocol_integrity",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    },
+    {
+      "check": "benchmark_fit",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "conditional_rule_activation",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "coverage_drift",
+      "status": "PASS"
+    },
+    {
+      "check": "protocol_integrity",
+      "status": "PASS"
+    },
+    {
+      "check": "benchmark_fit",
+      "status": "PASS"
+    },
+    {
+      "check": "conditional_rule_activation",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "protocol_integrity",
+    "coverage_drift"
+  ],
+  "text_must_contain": [
+    {
+      "check": "protocol_integrity",
+      "text": "c09"
+    }
+  ]
+}

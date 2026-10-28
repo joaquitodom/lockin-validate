@@ -1,0 +1,21 @@
+{
+  "description": "The vendor stopped an OPTIONAL field (esg_score) in 2022. rules.yaml declares required_inputs [roe, debt_to_equity], both ~97% throughout. docs/INPUT_SPEC.md lists rules(required_inputs) as an input of coverage_drift, so a drop in an undeclared field should at most be a note.",
+  "origin": "review_v020",
+  "kind": "clean_tempting",
+  "target_checks": [
+    "coverage_drift"
+  ],
+  "must_include": [],
+  "must_not_include": [
+    {
+      "check": "coverage_drift",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "coverage_drift",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "reviewer_note": "Reviewer judgement (disputable): an INFO about esg_score is fine; a NEEDS_REVIEW is noise when the owner declared the inputs the model uses."
+}

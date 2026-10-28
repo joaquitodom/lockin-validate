@@ -1,0 +1,7 @@
+strategy: ten-input score
+universe: [S01, S02, S03, S04, S05, S06, S07, S08, S09, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19, S20]
+required_inputs: [x01, x02, x03, x04, x05, x06, x07, x08, x09, x10]
+min_input_share: 0.7
+conventions:
+  calendar: none
+  review_date: '2026-10-28'

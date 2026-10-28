@@ -1,0 +1,4 @@
+strategy: one-name book, monthly round trip
+conventions:
+  calendar: none
+  review_date: '2026-10-28'

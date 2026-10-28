@@ -1,0 +1,31 @@
+{
+  "description": "Declared minimum 0.7 of 10 inputs. In ONE month (2023-07) four of twenty names are scored with 6 of 10 (0.6, one input below the minimum); every other row has 9 or 10.",
+  "origin": "review_v020",
+  "kind": "planted_subtle",
+  "target_checks": [
+    "input_sufficiency"
+  ],
+  "must_include": [
+    {
+      "check": "input_sufficiency",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "input_sufficiency",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "input_sufficiency"
+  ],
+  "text_must_contain": [
+    {
+      "check": "input_sufficiency",
+      "text": "2023-07"
+    }
+  ]
+}

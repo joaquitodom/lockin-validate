@@ -1,0 +1,26 @@
+{
+  "description": "Half of the trades (all UM2, ~60% of the traded notional, 120,000 shares of a small cap) have no volume at all, so their participation is unmeasurable; the measured half (UM1) is tiny. A PASS 'every trade below 10% of ADV' would claim what was not verified.",
+  "origin": "review_v020",
+  "kind": "planted_gap",
+  "target_checks": [
+    "liquidity_participation"
+  ],
+  "must_include": [
+    {
+      "check": "liquidity_participation",
+      "status": [
+        "CONFIRMED_ERROR",
+        "NEEDS_REVIEW",
+        "NOT_EXECUTABLE"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "liquidity_participation",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "reviewer_note": "Firm on 'not PASS' for the claim 'every trade'; a PASS scoped explicitly to the measured trades with an alert for the rest would also be acceptable but is not what the vocabulary allows."
+}

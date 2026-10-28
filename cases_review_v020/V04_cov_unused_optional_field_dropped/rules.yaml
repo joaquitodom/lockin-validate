@@ -1,0 +1,5 @@
+strategy: two-input quality screen (no trades)
+required_inputs: [roe, debt_to_equity]
+conventions:
+  calendar: none
+  review_date: '2026-10-28'

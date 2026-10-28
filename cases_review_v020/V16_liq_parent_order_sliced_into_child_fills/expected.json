@@ -1,0 +1,31 @@
+{
+  "description": "Each SL1 child fill is 8,000 shares (~8% of an ADV of ~100,000: below the 10% threshold), but five fills on the same day add up to 40,000 shares, ~40% of ADV (below the day's volume, so the 'larger than the day' rule does not fire). Participation must be judged per ticker-day.",
+  "origin": "review_v020",
+  "kind": "planted_subtle",
+  "target_checks": [
+    "liquidity_participation"
+  ],
+  "must_include": [
+    {
+      "check": "liquidity_participation",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "liquidity_participation",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "liquidity_participation"
+  ],
+  "text_must_contain": [
+    {
+      "check": "liquidity_participation",
+      "text": "SL1"
+    }
+  ]
+}

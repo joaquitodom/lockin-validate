@@ -1,0 +1,29 @@
+{
+  "description": "Active in 13 of 144 in-sample months (9.0%, just below 10%) and 19 of 36 out-of-sample months (52.8%, just above 50%).",
+  "origin": "review_v020",
+  "kind": "planted_subtle",
+  "target_checks": [
+    "conditional_rule_activation"
+  ],
+  "must_include": [
+    {
+      "check": "conditional_rule_activation",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "conditional_rule_activation",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "conditional_rule_activation",
+      "text": "inverted_curve_rule"
+    }
+  ]
+}

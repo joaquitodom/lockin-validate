@@ -1,0 +1,27 @@
+{
+  "description": "crisis_rule is rare in sample (~5%) AND rare out of sample (~6%); trend_rule is common in both (~60% and ~72%). Neither is 'rare in sample but dominant out of sample'.",
+  "origin": "review_v020",
+  "kind": "clean_tempting",
+  "target_checks": [
+    "conditional_rule_activation"
+  ],
+  "must_include": [
+    {
+      "check": "conditional_rule_activation",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "conditional_rule_activation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "conditional_rule_activation",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": []
+}

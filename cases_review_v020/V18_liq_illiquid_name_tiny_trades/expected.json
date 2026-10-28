@@ -1,0 +1,27 @@
+{
+  "description": "IL1 is illiquid (zero volume four days in five, ADV ~200 shares) but every IL1 trade is 10 shares (~5% of ADV, 1% of its day's volume) and happens on a day with volume.",
+  "origin": "review_v020",
+  "kind": "clean_tempting",
+  "target_checks": [
+    "liquidity_participation"
+  ],
+  "must_include": [
+    {
+      "check": "liquidity_participation",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "liquidity_participation",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "liquidity_participation",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": []
+}

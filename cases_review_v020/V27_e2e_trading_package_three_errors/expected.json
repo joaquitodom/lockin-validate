@@ -1,0 +1,54 @@
+{
+  "description": "Three confirmed errors at once: EX1's 2023-06-15 dividend is not applied while its other three are; the 2023-05-02 EX2 buy (5,000 shares) exceeds that day's whole volume (4,000); in Nov-Dec 2023 names are scored with 2 of 4 inputs against a declared minimum of 0.75.",
+  "origin": "review_v020",
+  "kind": "end_to_end",
+  "target_checks": [
+    "dividend_corporate_actions",
+    "liquidity_participation",
+    "input_sufficiency"
+  ],
+  "must_include": [
+    {
+      "check": "dividend_corporate_actions",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    },
+    {
+      "check": "liquidity_participation",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    },
+    {
+      "check": "input_sufficiency",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "dividend_corporate_actions",
+      "status": "PASS"
+    },
+    {
+      "check": "liquidity_participation",
+      "status": "PASS"
+    },
+    {
+      "check": "input_sufficiency",
+      "status": "PASS"
+    }
+  ],
+  "text_must_contain": [
+    {
+      "check": "dividend_corporate_actions",
+      "text": "EX1"
+    },
+    {
+      "check": "liquidity_participation",
+      "text": "EX2"
+    }
+  ]
+}

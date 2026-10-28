@@ -1,0 +1,2 @@
+trade_id,timestamp,ticker,side,quantity,price,commission
+1,2023-01-02T16:00:00,DH1,buy,1016,37.4972,38.1

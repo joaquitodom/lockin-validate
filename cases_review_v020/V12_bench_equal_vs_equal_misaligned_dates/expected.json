@@ -1,0 +1,27 @@
+{
+  "description": "Equal-weight book vs the equal-weight index of its own universe, declared with the alias '1/N'. The benchmark file misses ~10 dates and has two holiday rows the strategy does not have.",
+  "origin": "review_v020",
+  "kind": "clean_tempting",
+  "target_checks": [
+    "benchmark_fit"
+  ],
+  "must_include": [
+    {
+      "check": "benchmark_fit",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "benchmark_fit",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "benchmark_fit",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": []
+}

@@ -1,0 +1,31 @@
+{
+  "description": "One clean test look (c07). Four days later a run LABELLED 'validation' of a new config c13 uses 2018-01 to 2022-06: it spills six months into the single-use test window, after the test was seen. n_trials (13) covers the validation configs, so the trial-count rule does not fire.",
+  "origin": "review_v020",
+  "kind": "planted_subtle",
+  "target_checks": [
+    "protocol_integrity"
+  ],
+  "must_include": [
+    {
+      "check": "protocol_integrity",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "protocol_integrity",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "protocol_integrity"
+  ],
+  "text_must_contain": [
+    {
+      "check": "protocol_integrity",
+      "text": "c13"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+strategy: research log
+research: {n_trials: 13}
+conventions:
+  calendar: none
+  review_date: '2026-10-28'

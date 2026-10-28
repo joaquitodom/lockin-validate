@@ -1,0 +1,9 @@
+strategy: monthly allocation with two conditional rules
+conditional_rules:
+  - {name: high_vol_rule, column: high_vol}
+  - {name: credit_stress_rule, column: credit_stress}
+conventions:
+  calendar: none
+  review_date: '2026-10-28'
+  periods_per_year: 12
+  oos_start: '2022-01-01'

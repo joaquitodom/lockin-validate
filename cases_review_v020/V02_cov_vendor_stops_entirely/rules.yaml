@@ -1,0 +1,5 @@
+strategy: quarterly quality screen, monthly scores 2016-2024
+period: {start: '2016-01-04', end: '2024-12-31'}
+conventions:
+  calendar: none
+  review_date: '2026-10-28'

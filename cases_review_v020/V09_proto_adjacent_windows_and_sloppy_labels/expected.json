@@ -1,0 +1,27 @@
+{
+  "description": "A diagnostic run ends on 2021-12-31, the day BEFORE the test window starts (adjacent, not overlapping). One test look by c07 (purpose written 'Test'); then reproductions of the same c07 (one written ' Reproduction ' with spaces, one on a sub-window). 12 validation configs, 12 trials declared.",
+  "origin": "review_v020",
+  "kind": "clean_tempting",
+  "target_checks": [
+    "protocol_integrity"
+  ],
+  "must_include": [
+    {
+      "check": "protocol_integrity",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "protocol_integrity",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "protocol_integrity",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": []
+}

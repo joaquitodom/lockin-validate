@@ -1,0 +1,29 @@
+{
+  "description": "Gross +19.98%, turnover 50.2x, benchmark +15.48%. Net of 1x declared costs the book beats the benchmark (+16.74%); at 2x (+13.59%) it does not. Against a zero hurdle the result survives even 3x, so the fragility is visible only against the benchmark.",
+  "origin": "review_v020",
+  "kind": "planted_subtle",
+  "target_checks": [
+    "cost_sensitivity"
+  ],
+  "must_include": [
+    {
+      "check": "cost_sensitivity",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "cost_sensitivity",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "cost_sensitivity",
+      "text": "2x"
+    }
+  ]
+}

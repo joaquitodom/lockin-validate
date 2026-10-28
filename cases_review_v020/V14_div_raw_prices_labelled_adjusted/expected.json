@@ -1,0 +1,26 @@
+{
+  "description": "prices.csv is flagged adjusted=true but is the AS-TRADED series: each 3% quarterly dividend shows as a 3% drop on the ex-date. unadjusted_prices.csv is not delivered, so the ratio test cannot run. The check cannot verify that dividends are applied and must not report the series as consistent.",
+  "origin": "review_v020",
+  "kind": "planted_gap",
+  "target_checks": [
+    "dividend_corporate_actions"
+  ],
+  "must_include": [
+    {
+      "check": "dividend_corporate_actions",
+      "status": [
+        "CONFIRMED_ERROR",
+        "NEEDS_REVIEW",
+        "NOT_EXECUTABLE"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "dividend_corporate_actions",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "reviewer_note": "Firm on 'not PASS'. A strong tool could even detect the ex-date drops (price falls by ~the dividend on every ex-date) and raise NEEDS_REVIEW."
+}

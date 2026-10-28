@@ -1,0 +1,17 @@
+{
+  "description": "The ONLY run on the test window is c07 with purpose 'holdout' (a common synonym of test, not in the documented vocabulary). Nothing proves a second look. Unknown purpose may be a review item; it is not unambiguous evidence of contamination.",
+  "origin": "review_v020",
+  "kind": "clean_tempting",
+  "target_checks": [
+    "protocol_integrity"
+  ],
+  "must_include": [],
+  "must_not_include": [
+    {
+      "check": "protocol_integrity",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "reviewer_note": "Firm on CONFIRMED_ERROR (the conclusion rule requires unambiguous evidence); NEEDS_REVIEW ('unknown purpose') would be the right answer."
+}

@@ -1,0 +1,11 @@
+strategy: equal-weight quality book, monthly
+universe: [E01, E02, E03, E04, E05, E06, E07, E08, E09, E10, E11, E12, E13, E14, E15, E16, E17, E18, E19, E20]
+sizing: equal_weight
+benchmark: {name: CAPIDX, weighting: cap_weighted}
+research: {n_trials: 12}
+conditional_rules:
+  - {name: defensive_rule, column: defensive}
+conventions:
+  calendar: none
+  review_date: '2026-10-28'
+  periods_per_year: 12

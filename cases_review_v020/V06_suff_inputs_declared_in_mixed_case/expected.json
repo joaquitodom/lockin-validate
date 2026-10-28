@@ -1,0 +1,27 @@
+{
+  "description": "Every row has all four inputs. rules.yaml names them exactly as the CSV header does, in mixed case (ROE, Debt_To_Equity, ...). The loader lowercases headers; a correct tool must still match them.",
+  "origin": "review_v020",
+  "kind": "clean_tempting",
+  "target_checks": [
+    "input_sufficiency"
+  ],
+  "must_include": [
+    {
+      "check": "input_sufficiency",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "input_sufficiency",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "input_sufficiency",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": []
+}

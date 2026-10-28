@@ -1,0 +1,4 @@
+trade_id,timestamp,ticker,side,quantity,price,commission
+1,2023-01-02T16:00:00,EX1,buy,1000,38.3885,38.39
+2,2023-01-02T16:00:00,EX2,buy,500,45.9128,22.96
+3,2023-05-02T16:00:00,EX2,buy,5000,53.2824,266.41

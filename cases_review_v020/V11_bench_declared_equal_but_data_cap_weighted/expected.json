@@ -1,0 +1,24 @@
+{
+  "description": "rules.yaml DECLARES the benchmark equal-weighted, but benchmark_returns.csv is in fact the cap-weighted index of the universe (the prices and the universe are delivered, so the equal-weight universe can be computed and differs from the benchmark by several pp a year). The declaration is contradicted by data.",
+  "origin": "review_v020",
+  "kind": "planted_subtle",
+  "target_checks": [
+    "benchmark_fit"
+  ],
+  "must_include": [
+    {
+      "check": "benchmark_fit",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "benchmark_fit",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "reviewer_note": "Firm: the check can contrast the declaration (it computes the equal-weight universe itself); docs/CONVENTIONS.md s.5 forbids a PASS that rests only on the owner's declaration when it can."
+}

@@ -1,0 +1,27 @@
+{
+  "description": "Adjusted series consistent with every dividend. dividends.csv also lists a dividend of ZZZ (never priced nor held) and a tiny 0.04% dividend of DH2 (DH2 is priced but not held).",
+  "origin": "review_v020",
+  "kind": "clean_tempting",
+  "target_checks": [
+    "dividend_corporate_actions"
+  ],
+  "must_include": [
+    {
+      "check": "dividend_corporate_actions",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "dividend_corporate_actions",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "dividend_corporate_actions",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": []
+}
