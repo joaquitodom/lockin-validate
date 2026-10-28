@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 
 from .. import stats
-from ..findings import CONFIRMED_ERROR, NEEDS_REVIEW, PASS, AuditResult
+from ..findings import CONFIRMED_ERROR, INFO, NEEDS_REVIEW, PASS, AuditResult
 from ..inputs import Package
 from ..reconciliation import declared_convention
 from ..reconstruction import Reconstruction
@@ -30,6 +30,7 @@ BLOCK = "statistics"
 MIN_OBS_SIGNIFICANCE = 20
 MIN_OBS_AUTOCORR = 30
 AUTOCORR_INFLATION = 1.10  # naive annualised Sharpe more than 10% above the Lo-adjusted one
+RHO1_Z = 2.576  # single-lag band at 99% (docs/ALERT_POLICY.md, P5: the OR with Ljung-Box keeps the size near 5%)
 
 
 class Series:
@@ -165,13 +166,26 @@ def run_statistics(pkg: Package, res: AuditResult, rec: Reconstruction | None) -
                     "selection among several trials is handled by deflated_sharpe." + caveat, [ev], proc,
                     inputs=ins_r)
         else:
-            res.add("sharpe_significance", BLOCK, NEEDS_REVIEW,
+            ratio = float(pkg.conv("significance_review_ratio", 2.0))
+            history_short = sr > 0 and (not math.isfinite(mintrl) or mintrl > ratio * T)
+            # docs/ALERT_POLICY.md, P1: a review item only when a positive Sharpe would need more than `ratio`
+            # times the available history; otherwise an INFO note (weak evidence, not a defect).
+            status = NEEDS_REVIEW if history_short else INFO
+            if sr <= 0:
+                why = " Not an alert: the Sharpe is not positive, so there is no claim of skill to test."
+            elif not history_short:
+                why = (f" Not an alert: the history covers more than 1/{ratio:g} of the minimum track record "
+                       "(docs/ALERT_POLICY.md, P1).")
+            else:
+                why = ""
+            res.add("sharpe_significance", BLOCK, status,
                     f"Sharpe ratio not distinguishable from zero even as a single test (PSR = {psr0:.2f})",
                     f"Annualised Sharpe {sr * k:.2f} over {T / ppy:.2f} years ({series.source}); 95% interval "
                     f"{ev['ci95_annualised'][0]:.2f} to {ev['ci95_annualised'][1]:.2f}. With this Sharpe about "
                     + (f"{mintrl / ppy:.1f} years" if math.isfinite(mintrl) else "an infinite history")
-                    + " of history would be needed for 95% confidence (Minimum Track Record Length)." + caveat,
-                    [ev], proc, action="Do not present the result as statistically significant; extend the track record.",
+                    + " of history would be needed for 95% confidence (Minimum Track Record Length)." + why + caveat,
+                    [ev], proc + f" Review item only if the Sharpe is positive and MinTRL > {ratio:g} x T.",
+                    action="Do not present the result as statistically significant; extend the track record.",
                     priority="medium", inputs=ins_r)
 
     # ------------------------------------------------------------------ autocorrelation (Lo 2002)
@@ -195,17 +209,17 @@ def run_statistics(pkg: Package, res: AuditResult, rec: Reconstruction | None) -
             naive = sr * math.sqrt(ppy)
             adjusted = sr * eta if math.isfinite(eta) else float("nan")
             inflation = naive / adjusted if adjusted and math.isfinite(adjusted) else float("inf")
-            band = 1.96 / math.sqrt(T)
+            band = RHO1_Z / math.sqrt(T)
             significant = (lb["p_value"] < 0.05) or abs(rho[0]) > band
             ev = {"T": T, "periods_per_year": ppy, "max_lag": max_lag,
-                  "autocorrelations": [round(x, 4) for x in rho], "rho1_band_95": band, "ljung_box_Q": lb["Q"],
+                  "autocorrelations": [round(x, 4) for x in rho], "rho1_band_99": band, "ljung_box_Q": lb["Q"],
                   "ljung_box_p": lb["p_value"], "eta_q": eta, "sqrt_q": math.sqrt(ppy),
                   "sharpe_annualised_naive": naive, "sharpe_annualised_lo": adjusted,
                   "naive_over_adjusted": inflation}
             info["autocorrelation"] = ev
             proc = (f"Sample autocorrelations rho_1..rho_{max_lag} of the period returns (rho_k = 0 beyond lag "
                     f"{max_lag}); Lo (2002) factor eta(q) = q / sqrt(q + 2 sum (q - k) rho_k) with q = {ppy}, compared "
-                    "with the naive sqrt(q); Ljung-Box test on the same lags. Review if the naive annualised Sharpe "
+                    "with the naive sqrt(q); Ljung-Box test on the same lags; single-lag band |rho_1| > 2.576 / sqrt(T). Review if the naive annualised Sharpe "
                     f"exceeds the adjusted one by more than {AUTOCORR_INFLATION - 1:.0%} and the autocorrelation is "
                     "statistically significant.")
             if significant and inflation > AUTOCORR_INFLATION:
@@ -307,6 +321,12 @@ def run_statistics(pkg: Package, res: AuditResult, rec: Reconstruction | None) -
                     f"The expected maximum Sharpe by chance among {n_eff} trials is {d['sr0'] * k:.2f} annualised; the "
                     f"strategy has {sr * k:.2f}. Scope: conditional on the declared number of trials being complete."
                     + caveat, [ev], proc, inputs=ins)
+        elif n_eff == 1:
+            res.add("deflated_sharpe", BLOCK, INFO,
+                    f"With one trial the deflated Sharpe equals the PSR ({d['dsr']:.2f}): see sharpe_significance",
+                    "N = 1: there is no selection to deflate, so this number repeats the single-test PSR. Not an alert "
+                    "here (docs/ALERT_POLICY.md, P3); the evidence strength is judged once, in sharpe_significance."
+                    + caveat, [ev], proc, inputs=ins)
         else:
             res.add("deflated_sharpe", BLOCK, NEEDS_REVIEW,
                     f"Deflated Sharpe ratio below threshold: {d['dsr']:.2f} with {n_eff} trials",
@@ -335,7 +355,11 @@ def run_statistics(pkg: Package, res: AuditResult, rec: Reconstruction | None) -
         proc = ("t = SR sqrt(T); two-sided p-value; adjusted with Bonferroni, Holm and Benjamini-Hochberg-Yekutieli over "
                 "the trials (with the other trials' p-values when trials.csv is complete, otherwise assuming the "
                 "strategy is the most significant of N); adjusted p converted back to a Sharpe (Harvey and Liu 2015).")
-        if h["p_bhy"] > 0.05:
+        if h["p_bhy"] > 0.05 and h["n_trials"] <= 1:
+            res.add("multiple_testing", BLOCK, INFO, "With one trial there is no multiple-testing adjustment",
+                    evtxt + " N = 1: the adjusted p-values equal the unadjusted one; the single-test evidence is "
+                    "judged in sharpe_significance (docs/ALERT_POLICY.md, P3)." + caveat, [h], proc, inputs=ins)
+        elif h["p_bhy"] > 0.05:
             res.add("multiple_testing", BLOCK, NEEDS_REVIEW, "Does not survive the multiple-testing adjustment (BHY p > 5%)",
                     evtxt + caveat, [h], proc, action="Treat the result as a candidate, not a discovery.",
                     priority="high" if h["p_bhy"] >= 0.5 else "medium", inputs=ins)

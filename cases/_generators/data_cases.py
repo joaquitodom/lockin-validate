@@ -21,6 +21,8 @@ from pathlib import Path
 
 import numpy as np
 
+import expectation_changes  # noqa: E402  (sibling module: docs/CASE_CHANGES.md, 0.2.0)
+
 HERE = Path(__file__).resolve().parent
 OUT = HERE.parent / "data"
 # NYSE full-day holidays 2022-2024 as published by the exchange (own list, not the package's calendar).
@@ -230,6 +232,7 @@ def main():
     for f in (d01, d02, d03, d04, d05, d06):
         f()
         print("generated", f.__name__)
+    print("0.2.0 expectation changes applied to", expectation_changes.apply(OUT))
 
 
 if __name__ == "__main__":

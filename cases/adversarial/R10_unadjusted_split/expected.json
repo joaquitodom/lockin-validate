@@ -8,10 +8,23 @@
         "NEEDS_REVIEW",
         "CONFIRMED_ERROR"
       ]
+    },
+    {
+      "check": "omitted_costs",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "price_jumps",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
     }
   ],
   "must_not_include": [],
   "errors_only_from": [
     "@data"
-  ]
+  ],
+  "expectation_changes": "0.2.0: omitted_costs, price_jumps added (docs/CASE_CHANGES.md, docs/ALERT_POLICY.md)"
 }

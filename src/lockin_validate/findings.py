@@ -5,11 +5,14 @@ Every check produces one or more findings. A finding has exactly one status:
 ``CONFIRMED_ERROR``  the error is proven with the inputs (reproducible evidence).
 ``NEEDS_REVIEW``     something a person must look at; the inputs are not enough to confirm it.
 ``NOT_EXECUTABLE``   the check could not run; ``reason`` says what is missing.
+``INFO``             the check ran; a note worth reading that is NOT an alert (not counted as a review item;
+                     see docs/ALERT_POLICY.md for why each INFO is not a NEEDS_REVIEW).
 ``PASS``             the check ran and found no problem *within its scope*.
 
 Conclusion rule (docs/CONVENTIONS.md, section 5): a check only says PASS if it could verify
 what it claims. A check that depends only on a declaration it cannot contrast, or whose test
-does not discriminate between hypotheses, says NEEDS_REVIEW or NOT_EXECUTABLE.
+does not discriminate between hypotheses, says NEEDS_REVIEW, NOT_EXECUTABLE or (when the policy in
+docs/ALERT_POLICY.md classifies it as informative) INFO; never PASS.
 
 Privacy: evidence stores row ids, dates, tickers and point values, never whole rows. Log and
 console messages use only counts and check ids.
@@ -24,12 +27,15 @@ from typing import Any
 CONFIRMED_ERROR = "CONFIRMED_ERROR"
 NEEDS_REVIEW = "NEEDS_REVIEW"
 NOT_EXECUTABLE = "NOT_EXECUTABLE"
+INFO = "INFO"
 PASS = "PASS"
-STATUSES = [CONFIRMED_ERROR, NEEDS_REVIEW, NOT_EXECUTABLE, PASS]
+STATUSES = [CONFIRMED_ERROR, NEEDS_REVIEW, NOT_EXECUTABLE, INFO, PASS]  # most severe first
+ALERT_STATUSES = (CONFIRMED_ERROR, NEEDS_REVIEW)  # what counts as an alert
 STATUS_TEXT = {
     CONFIRMED_ERROR: "Confirmed error",
     NEEDS_REVIEW: "Needs human review",
     NOT_EXECUTABLE: "Not executable",
+    INFO: "Information (not an alert)",
     PASS: "Pass (within scope)",
 }
 PRIORITIES = ["high", "medium", "low"]
@@ -122,7 +128,7 @@ class AuditResult:
         return seen
 
     def status_of(self, check: str) -> str | None:
-        """Most severe status recorded for a check (CONFIRMED_ERROR > NEEDS_REVIEW > NOT_EXECUTABLE > PASS)."""
+        """Most severe status recorded for a check (CONFIRMED_ERROR > NEEDS_REVIEW > NOT_EXECUTABLE > INFO > PASS)."""
         st = {f.status for f in self.findings if f.check == check}
         for s in STATUSES:
             if s in st:
@@ -131,6 +137,10 @@ class AuditResult:
 
     def counts(self) -> dict[str, int]:
         return {s: len(self.by_status(s)) for s in STATUSES}
+
+    def n_alerts(self) -> int:
+        """CONFIRMED_ERROR + NEEDS_REVIEW findings (INFO notes are not alerts)."""
+        return sum(len(self.by_status(s)) for s in ALERT_STATUSES)
 
     def to_dict(self) -> dict[str, Any]:
         return {

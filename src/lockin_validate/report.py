@@ -16,6 +16,7 @@ from typing import Any
 
 from .findings import (
     CONFIRMED_ERROR,
+    INFO,
     NEEDS_REVIEW,
     NOT_EXECUTABLE,
     PASS,
@@ -76,13 +77,14 @@ def _evidence_md(ev: list[dict], n_total: int) -> list[str]:
 
 
 def _actions(res: AuditResult) -> list[Finding]:
-    acts = [f for f in res.findings if f.action and f.status != PASS]
+    acts = [f for f in res.findings if f.action and f.status not in (PASS, INFO)]
     acts.sort(key=lambda f: (PRIORITIES.index(f.priority) if f.priority in PRIORITIES else 9, STATUSES.index(f.status)))
     return acts
 
 
 SECTIONS = [(CONFIRMED_ERROR, "Confirmed errors"), (NEEDS_REVIEW, "Items that need human review"),
-            (NOT_EXECUTABLE, "Checks not executable (missing information)")]
+            (NOT_EXECUTABLE, "Checks not executable (missing information)"),
+            (INFO, "Information notes (not alerts)")]
 KEY_METRICS = ("initial_nav", "final_nav", "total_return", "annual_return", "sharpe", "max_drawdown",
                "annual_volatility", "n_trades", "n_periods", "peak_date", "trough_date")
 
@@ -100,6 +102,7 @@ def render_markdown(res: AuditResult) -> str:
                     f"- Confirmed errors: **{c[CONFIRMED_ERROR]}**",
                     f"- Items that need human review: **{c[NEEDS_REVIEW]}**",
                     f"- Checks not executable (missing information): **{c[NOT_EXECUTABLE]}**",
+                    f"- Information notes (not alerts, see docs/ALERT_POLICY.md): **{c[INFO]}**",
                     f"- Passed within scope: **{c[PASS]}**", ""]
     s = res.scope
     L += ["## Scope", "",
@@ -208,12 +211,12 @@ padding:0 1rem;color:#1d1d1f;background:#fff;line-height:1.45}h1,h2,h3{line-heig
 table{border-collapse:collapse;margin:.5rem 0 1rem;font-size:.85rem;display:block;overflow-x:auto}
 th,td{border:1px solid #ccc;padding:.25rem .5rem;text-align:left;vertical-align:top}th{background:#f2f2f2}
 .CONFIRMED_ERROR{color:#a40000;font-weight:600}.NEEDS_REVIEW{color:#8a5a00;font-weight:600}
-.NOT_EXECUTABLE{color:#555;font-weight:600}.PASS{color:#1b6e20;font-weight:600}
+.NOT_EXECUTABLE{color:#555;font-weight:600}.PASS{color:#1b6e20;font-weight:600}.INFO{color:#1a4f8a;font-weight:600}
 .disclaimer{border-left:4px solid #8a5a00;padding:.5rem 1rem;background:#fff8e6}.finding{border:1px solid #ddd;
 border-radius:6px;padding:.25rem 1rem;margin:.75rem 0}code{background:#f4f4f4;padding:0 .2rem}
 @media (prefers-color-scheme: dark){body{background:#161616;color:#e6e6e6}th{background:#262626}
 th,td{border-color:#444}.disclaimer{background:#2b2410}.finding{border-color:#444}code{background:#262626}
-.CONFIRMED_ERROR{color:#ff8a80}.NEEDS_REVIEW{color:#ffd180}.PASS{color:#9be7a0}.NOT_EXECUTABLE{color:#bbb}}"""
+.CONFIRMED_ERROR{color:#ff8a80}.NEEDS_REVIEW{color:#ffd180}.PASS{color:#9be7a0}.NOT_EXECUTABLE{color:#bbb}.INFO{color:#9ecbff}}"""
 
 
 def _h(x: Any) -> str:
@@ -236,7 +239,7 @@ def render_html(res: AuditResult) -> str:
                     f"<code>{_h(m.get('input_folder'))}</code>. Profile: {_h(m.get('profile'))}.</p>",
                     f"<p class='disclaimer'><strong>Disclaimer.</strong> {_h(m.get('disclaimer'))}</p>",
                     "<h2>Summary</h2><ul>"]
-    for s in (CONFIRMED_ERROR, NEEDS_REVIEW, NOT_EXECUTABLE, PASS):
+    for s in (CONFIRMED_ERROR, NEEDS_REVIEW, NOT_EXECUTABLE, INFO, PASS):
         P.append(f"<li><span class='{s}'>{html.escape(STATUS_TEXT[s])}</span>: {c[s]}</li>")
     P.append("</ul><h2>Inputs and versions (manifest)</h2>")
     P.append(_table(["Input", "File", "Present", "Rows", "sha256"],

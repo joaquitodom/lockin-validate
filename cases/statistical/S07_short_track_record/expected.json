@@ -7,6 +7,12 @@
       "status": [
         "NEEDS_REVIEW"
       ]
+    },
+    {
+      "check": "trials_declared",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
     }
   ],
   "must_not_include": [
@@ -15,5 +21,6 @@
       "status": "PASS"
     }
   ],
-  "errors_only_from": []
+  "errors_only_from": [],
+  "expectation_changes": "0.2.0: trials_declared added (docs/CASE_CHANGES.md, docs/ALERT_POLICY.md)"
 }

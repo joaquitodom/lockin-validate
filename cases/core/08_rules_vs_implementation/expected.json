@@ -7,6 +7,12 @@
       "status": [
         "CONFIRMED_ERROR"
       ]
+    },
+    {
+      "check": "sharpe_significance",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
     }
   ],
   "must_not_include": [
@@ -61,5 +67,6 @@
   ],
   "errors_only_from": [
     "rules_vs_implementation"
-  ]
+  ],
+  "expectation_changes": "0.2.0: sharpe_significance added (docs/CASE_CHANGES.md, docs/ALERT_POLICY.md)"
 }

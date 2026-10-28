@@ -15,7 +15,7 @@ from typing import Any
 import pandas as pd
 
 from .. import metrics
-from ..findings import CONFIRMED_ERROR, NEEDS_REVIEW, PASS, AuditResult
+from ..findings import CONFIRMED_ERROR, INFO, NEEDS_REVIEW, PASS, AuditResult
 from ..inputs import Package
 from ..reconciliation import tolerances
 from ..reconstruction import Conventions, Reconstruction, reconstruct
@@ -204,9 +204,10 @@ def check_omitted_costs(pkg: Package, res: AuditResult, rec: Reconstruction | No
                 action="If it matters, ask for net and gross results separately.", priority="low", inputs=ins)
         return
     if decl_total is None:
-        res.add("omitted_costs", BLOCK, NEEDS_REVIEW, "Costs consistent, no declared result to contrast",
+        res.add("omitted_costs", BLOCK, INFO, "Costs consistent, no declared result to contrast",
                 "Declared and effective costs match, but there is no declared total_return to see whether the result "
-                "includes them.", ev, proc, priority="low", inputs=ins)
+                "includes them. Not an alert: the reconstruction already uses the costs present in the trades "
+                "(docs/ALERT_POLICY.md, P2).", ev, proc, priority="low", inputs=ins)
         return
     res.add("omitted_costs", BLOCK, PASS, "Costs consistent",
             f"Declared commission {_fmt(decl_com, '-')}, slippage {_fmt(decl_slip, '-')}; effective commission "

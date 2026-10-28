@@ -13,6 +13,12 @@
       "status": [
         "NEEDS_REVIEW"
       ]
+    },
+    {
+      "check": "sharpe_significance",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
     }
   ],
   "must_not_include": [
@@ -125,5 +131,6 @@
     "positions_reconciliation"
   ],
   "comment": "omitted_costs: 5 bps over a turnover of ~9 times the capital add up to ~0.47% of capital, less than the total return tolerance (0.5 pp): the test cannot tell with and without costs apart, and by the conclusion rule (docs/CONVENTIONS.md section 5) it must be NEEDS_REVIEW, not PASS.",
-  "prediction_note": "2026-10-21, review cycle 2, before running the tool on the regenerated case."
+  "prediction_note": "2026-10-21, review cycle 2, before running the tool on the regenerated case.",
+  "expectation_changes": "0.2.0: sharpe_significance added (docs/CASE_CHANGES.md, docs/ALERT_POLICY.md)"
 }

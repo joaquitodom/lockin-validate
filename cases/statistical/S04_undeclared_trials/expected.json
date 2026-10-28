@@ -7,6 +7,24 @@
       "status": [
         "CONFIRMED_ERROR"
       ]
+    },
+    {
+      "check": "deflated_sharpe",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "multiple_testing",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "pbo",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
     }
   ],
   "must_not_include": [
@@ -17,5 +35,6 @@
   ],
   "errors_only_from": [
     "trials_declared"
-  ]
+  ],
+  "expectation_changes": "0.2.0: deflated_sharpe, multiple_testing, pbo added (docs/CASE_CHANGES.md, docs/ALERT_POLICY.md)"
 }

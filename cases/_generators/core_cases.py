@@ -23,6 +23,8 @@ from pathlib import Path
 import numpy as np
 import yaml
 
+import expectation_changes  # noqa: E402  (sibling module: docs/CASE_CHANGES.md, 0.2.0)
+
 HERE = Path(__file__).resolve().parent
 OUT = HERE.parent / "core"
 
@@ -494,6 +496,7 @@ def main() -> None:
     for f in (c01, c02, c03, c04, c05, c06, c07, c08, c10):
         f(OUT)
         print("generated", f.__name__)
+    print("0.2.0 expectation changes applied to", expectation_changes.apply(OUT))
 
 
 if __name__ == "__main__":

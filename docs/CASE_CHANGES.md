@@ -76,3 +76,41 @@ results). Result: **0 mismatches in the 10 core cases and 0 in the 12 adversaria
    discriminating.
 
 No expected outcome (status of a check in a case) was changed.
+
+## 0.2.0: review items that cases now expect
+
+Release 0.2.0 classified the 40 "unexpected review" items of the 0.1.0 battery (docs/ALERT_POLICY.md). The 23 that
+are genuine signals are now expected by their cases. They are added by `cases/_generators/expectation_changes.py`,
+which every generator calls after writing its cases (so regenerating reproduces them) and which also writes an
+`expectation_changes` note into each touched expected.json. Only `must_include` entries were added; nothing was
+removed, no allowed status was widened and no data file changed (regeneration verified: only expected.json files
+differ).
+
+| Case | Added expectation | Policy | Justification |
+|---|---|---|---|
+| adversarial/R00_clean | omitted_costs NEEDS_REVIEW | P2 | 10 bps over a turnover of ~4: with and without costs are within the 0.5 pp tolerance; the conclusion rule requires a review item (same as core 10). |
+| adversarial/R03_first_day_commission | sharpe_significance NEEDS_REVIEW | P1 | Positive Sharpe over 63 sessions, MinTRL 3.2 x the history. |
+| adversarial/R04_lookahead_fundamentals | omitted_costs NEEDS_REVIEW | P6 | No cost declared or charged, turnover > 0. |
+| adversarial/R05_undeclared_lookahead | omitted_costs NEEDS_REVIEW | P6 | Idem. |
+| adversarial/R06_undeclared_short | omitted_costs NEEDS_REVIEW; sharpe_significance NEEDS_REVIEW | P6, P1 | No costs; MinTRL 2.4 x the history. |
+| adversarial/R07_undeclared_leverage | omitted_costs NEEDS_REVIEW | P6 | No costs. |
+| adversarial/R10_unadjusted_split | omitted_costs NEEDS_REVIEW; price_jumps NEEDS_REVIEW | P6, P7 | No costs; the planted split is the jump (the case already accepted it through `@data`). |
+| adversarial/R11_byma_calendar_undeclared | omitted_costs NEEDS_REVIEW; dates NEEDS_REVIEW | P6, P7 | No costs; the case description itself names "a review item for the undeclared calendar" as the right answer. |
+| adversarial/R13_unrecognised_results | omitted_costs NEEDS_REVIEW | P6 | No costs. |
+| core/04_omitted_costs | sharpe_significance NEEDS_REVIEW | P1 | MinTRL 6.7 x the history. |
+| core/05_impossible_dates | coverage NEEDS_REVIEW | P7 | The planted 2027 row leaves 629 missing sessions in DDD's series. |
+| core/08_rules_vs_implementation | sharpe_significance NEEDS_REVIEW | P1 | MinTRL 2.2 x the history. |
+| core/10_independent | sharpe_significance NEEDS_REVIEW | P1 | MinTRL 4.2 x the history. |
+| data/D03_recycled_ticker | coverage NEEDS_REVIEW; price_jumps NEEDS_REVIEW | P7 | The five-month gap and the level shift at the seam of the two companies. |
+| statistical/S04_undeclared_trials | deflated_sharpe, multiple_testing, pbo NEEDS_REVIEW | P4 | Consequences of the 50 logged configurations. |
+| statistical/S05_overfit_search_undeclared | multiple_testing NEEDS_REVIEW | P4 | Best of 100 noise series. |
+| statistical/S07_short_track_record | trials_declared NEEDS_REVIEW | P4 | One trial declared, no trials log: uncontrastable declaration. |
+
+Items reclassified as INFO (16) or fixed as a bug (1) needed no expectation change; the policy behind each is in
+docs/ALERT_POLICY.md.
+
+## 0.2.0: lesson cases
+
+`cases/lessons/` (16 cases, `cases/_generators/lessons_cases.py`) was added for the six new check families. Their
+expected.json files were committed before the checks were implemented (commit "Pre-register lesson benchmark cases
+for six new check families"); any later change to them is listed here.

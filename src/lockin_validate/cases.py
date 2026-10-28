@@ -74,7 +74,7 @@ def compare(res: AuditResult, exp: dict[str, Any]) -> dict[str, Any]:
     return {"ok": not problems, "problems": problems, "detections": detections, "false_positives": false_pos,
             "unexpected_review": unexpected_review, "counts": c,
             "summary": f"errors {c['CONFIRMED_ERROR']}, review {c['NEEDS_REVIEW']}, not executable "
-                       f"{c['NOT_EXECUTABLE']}, pass {c['PASS']}"}
+                       f"{c['NOT_EXECUTABLE']}, info {c['INFO']}, pass {c['PASS']}"}
 
 
 def available_cases(root: Path | None = None) -> list[Path]:
@@ -130,7 +130,10 @@ def render_battery(results: list[dict[str, Any]]) -> str:
         lines.append(f"{'OK' if r['ok'] else 'FAIL':4} {r['group']}/{r['case']}: {r['summary']}")
         lines += [f"       {p}" for p in r["problems"]]
     ok = sum(r["ok"] for r in results)
-    lines += ["", f"{ok} of {len(results)} cases with all expected outcomes", "",
+    n_unexp = sum(len(r["unexpected_review"]) for r in results)
+    n_fp = sum(len(r["false_positives"]) for r in results)
+    lines += ["", f"{ok} of {len(results)} cases with all expected outcomes",
+              f"Unexpected NEEDS_REVIEW (case x check): {n_unexp}; false positives: {n_fp}", "",
               "Per check (detections = expected non-PASS outcomes found; false positives = unexpected CONFIRMED_ERROR or "
               "forbidden review items; unexpected review = NEEDS_REVIEW on checks the case does not mention):", "",
               f"{'check':28} {'detected':>10} {'rate':>6} {'passes':>8} {'false+':>7} {'unexp.review':>13}"]

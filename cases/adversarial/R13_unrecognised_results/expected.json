@@ -8,6 +8,12 @@
         "NOT_EXECUTABLE",
         "NEEDS_REVIEW"
       ]
+    },
+    {
+      "check": "omitted_costs",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
     }
   ],
   "must_not_include": [
@@ -16,5 +22,6 @@
       "status": "PASS"
     }
   ],
-  "errors_only_from": []
+  "errors_only_from": [],
+  "expectation_changes": "0.2.0: omitted_costs added (docs/CASE_CHANGES.md, docs/ALERT_POLICY.md)"
 }

@@ -13,6 +13,12 @@
       "status": [
         "PASS"
       ]
+    },
+    {
+      "check": "sharpe_significance",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
     }
   ],
   "must_not_include": [
@@ -21,5 +27,6 @@
       "status": "CONFIRMED_ERROR"
     }
   ],
-  "errors_only_from": []
+  "errors_only_from": [],
+  "expectation_changes": "0.2.0: sharpe_significance added (docs/CASE_CHANGES.md, docs/ALERT_POLICY.md)"
 }

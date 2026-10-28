@@ -7,6 +7,18 @@
       "status": [
         "CONFIRMED_ERROR"
       ]
+    },
+    {
+      "check": "coverage",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "price_jumps",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
     }
   ],
   "must_not_include": [
@@ -18,5 +30,6 @@
   "errors_only_from": [
     "ticker_identity"
   ],
-  "comment": "coverage is expected to raise a review item for the 5-month gap in ZZZ (same problem)."
+  "comment": "coverage is expected to raise a review item for the 5-month gap in ZZZ (same problem).",
+  "expectation_changes": "0.2.0: coverage, price_jumps added (docs/CASE_CHANGES.md, docs/ALERT_POLICY.md)"
 }

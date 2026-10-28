@@ -90,7 +90,12 @@ prices exist; otherwise from `returns.csv`, declared and not verified). g3 = ske
   trials in `trials.csv`; without a trials log, V = 1/T (sampling variance under a true Sharpe of zero).
 - Thresholds (profile defaults, overridable in rules.yaml conventions): PSR >= 0.95, DSR >= 0.95, BHY p <= 0.05,
   PBO < 0.25. Autocorrelation is a review item when the naive annualised Sharpe exceeds the Lo-adjusted one by more
-  than 10% and the autocorrelation is significant (Ljung-Box p < 0.05 or |rho_1| > 1.96 / sqrt(T)).
+  than 10% and the autocorrelation is significant (Ljung-Box p < 0.05 or |rho_1| > 2.576 / sqrt(T); the
+  single-lag band is at 99% so that the OR of the two tests keeps a size close to 5%, docs/ALERT_POLICY.md P5).
+- A PSR below its threshold is a review item only when the Sharpe is positive and the MinTRL exceeds
+  `significance_review_ratio` (default 2) times the history; otherwise it is an INFO note. With N = 1 trial the
+  deflated Sharpe and the multiple-testing adjustment repeat the single-test evidence and are INFO notes
+  (docs/ALERT_POLICY.md, P1 and P3).
 - Statistics are conditional on the data being correct: when earlier blocks have confirmed errors every statistical
   finding says so.
 
@@ -99,7 +104,9 @@ prices exist; otherwise from `returns.csv`, declared and not verified). g3 = ske
 A check only says PASS if it could verify what it claims. If it does not recognise the declared data, if the test does
 not discriminate between hypotheses (for example, with and without costs give the same result within tolerance) or if
 it depends only on what the strategy owner declares without being able to contrast it, it says NEEDS_REVIEW or
-NOT_EXECUTABLE with the reason, and the title limits the conclusion. In particular: the LLM look-ahead checklist never
+NOT_EXECUTABLE with the reason, and the title limits the conclusion. INFO (a note that is not an alert) is allowed
+instead of NEEDS_REVIEW only under the three rules of docs/ALERT_POLICY.md (evidence judged by another check,
+strength-of-evidence note below a documented threshold, nothing declared to contrast); INFO is never PASS. In particular: the LLM look-ahead checklist never
 returns PASS; a declared number of trials without a trials log is NEEDS_REVIEW; an empty input folder has no PASS.
 
 ## 6. Statuses
@@ -109,4 +116,5 @@ returns PASS; a declared number of trials without a trials log is NEEDS_REVIEW; 
 | CONFIRMED_ERROR | the error is proven with the inputs (reproducible evidence) |
 | NEEDS_REVIEW | something a person must look at; the inputs are not enough to confirm it |
 | NOT_EXECUTABLE | the check could not run; the reason says what is missing |
+| INFO | the check ran; a note worth reading that is not an alert (not counted as a review item) |
 | PASS | the check ran and found no problem within its scope |

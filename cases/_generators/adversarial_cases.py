@@ -23,6 +23,8 @@ from pathlib import Path
 
 import yaml
 
+import expectation_changes  # noqa: E402  (sibling module: docs/CASE_CHANGES.md, 0.2.0)
+
 HERE = Path(__file__).resolve().parent
 OUT = HERE.parent / "adversarial"
 TICKERS = ["ALPHA", "BETA", "GAMMA", "DELTA"]
@@ -305,7 +307,8 @@ def main():
                     "must_not_include": [mustnot("results_reconciliation", "PASS")], "errors_only_from": []},
           description="declared_results.json with keys the tool does not recognise (profitability, sharpe_ratio), "
                       "one of them false. Concluding 'reconciled' would be a false negative.")
-    print("generated 12 adversarial cases")
+    print("generated 12 adversarial cases; 0.2.0 expectation changes applied to",
+          expectation_changes.apply(OUT))
 
 
 if __name__ == "__main__":

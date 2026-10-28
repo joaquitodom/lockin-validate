@@ -284,5 +284,6 @@ def render_explain(check_id: str) -> str:
              "Optional inputs: " + (", ".join(req.get("optional", [])) or "none")]
     if e["references"]:
         lines += ["References:"] + [f"  - {r}" for r in e["references"]]
-    lines += ["Statuses: CONFIRMED_ERROR, NEEDS_REVIEW, NOT_EXECUTABLE (with reason), PASS (within scope)."]
+    lines += ["Statuses: CONFIRMED_ERROR, NEEDS_REVIEW, NOT_EXECUTABLE (with reason), INFO (note, not an alert), "
+              "PASS (within scope)."]
     return "\n".join(lines)
