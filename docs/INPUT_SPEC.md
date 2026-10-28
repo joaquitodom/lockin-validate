@@ -29,6 +29,13 @@ in `src/lockin_validate/inputs.py`, `ALIASES`); every rename is logged in the tr
 | `declared_results.json` | any of `total_return, annual_return, sharpe, max_drawdown, n_trades, final_nav` | `convention`, `curve` (list of `{date, nav}`), `n_trials` | results reconciliation, metrics, costs, statistics |
 | `llm_checklist.json` | `uses_llm` | `model_name, model_training_cutoff, backtest_start, backtest_end, uses_company_names, uses_tickers, uses_explicit_dates, uses_news_or_filings_text, anonymized_entities, retrieval_pit_filtered, pit_model, post_cutoff_evaluation, memorization_probe_done` | LLM look-ahead risk |
 | `version.txt` (alias `code_version.txt`) | | | strategy / code version, copied to the report |
+| `benchmark_returns.csv` (0.2.0) | `date` and `return` (or `nav` / `close`) | | benchmark_fit (declared benchmark), cost_sensitivity (hurdle) |
+| `universe_returns.csv` (0.2.0) | `date` and `return` (or `nav` / `close`) | | benchmark_fit (equal-weight universe; otherwise computed from prices + membership) |
+| `unadjusted_prices.csv` (0.2.0) | `date, ticker, close` (as traded) | `volume` | dividend_corporate_actions |
+| `dividends.csv` (0.2.0) | `ticker, ex_date, amount` (cash per share) | `pay_date` | dividend_corporate_actions |
+| `run_log.csv` (0.2.0) | `timestamp, window_start, window_end, config_hash, purpose` (`train`, `validation`, `test`, `reproduction`, `diagnostic`) | `run_id` | protocol_integrity; validation looks feed the number of trials |
+| `regimes.csv` (0.2.0) | `date` + one column per conditional rule (1 / true = active) | | conditional_rule_activation |
+| `protocol.yaml` (0.2.0) | `train`, `validation`, `test` windows (`start`, `end`; `test.single_use` default true) | `reserved`: list of `{name, start, end, single_use}` | protocol_integrity; the test start is the out-of-sample start of conditional_rule_activation |
 
 `side` accepts buy / sell (and b / s, long / short). A table without its required columns is reported as a schema
 error and counts as not delivered for the checks that need it.
@@ -45,6 +52,12 @@ rebalance: {frequency: monthly, timing: first_day}   # monthly | weekly | daily 
 sizing: equal_weight
 costs: {commission_rate: 0.001, slippage_rate: 0.0}  # FRACTIONS of notional, separately
 research: {n_trials: 1}            # alternative to declared_results.n_trials
+# 0.2.0 (all optional)
+benchmark: {name: IDX, weighting: cap_weighted, strategy_weighting: equal_weighted}  # strategy_weighting defaults to sizing
+required_inputs: [roe, debt_to_equity]  # inputs each scored name needs (signals.csv columns or fundamentals.csv as of)
+min_input_share: 0.8               # declared minimum: below it is a CONFIRMED_ERROR (default 0.5 -> NEEDS_REVIEW)
+conditional_rules:                 # regimes.csv columns (default: every column of regimes.csv)
+  - {name: inverted_curve_bond_rule, column: inverted_curve}
 conventions:
   initial_cash: 100000
   valuation: close
@@ -69,7 +82,21 @@ conventions:
   pbo_threshold: 0.25
   rebalance_weight_tolerance: 0.10
   tolerances: {total_return: 0.005, sharpe: 0.05}   # optional, override the defaults
+  # 0.2.0 thresholds (defaults shown)
+  significance_review_ratio: 2.0   # PSR review only when MinTRL > ratio x history (else INFO)
+  coverage_drop: 0.10              # coverage drop vs the median of previous periods
+  adjustment_tolerance: 0.001      # adjusted / as-traded ratio step tolerance
+  stale_after_event: 3             # identical adjusted closes from an ex-date that flag a frozen price
+  adv_window: 20                   # sessions in the average daily volume
+  max_participation: 0.10          # participation (quantity / ADV) above which a trade is reviewed
+  impact_coefficient: 1.0          # Y of the square-root impact estimate (context only)
+  oos_start: '2022-01-01'          # out-of-sample start when protocol.yaml has no test window
+  regime_rare_in_sample: 0.10
+  regime_dominant_out_of_sample: 0.50
 ```
+
+`declared_results.json` may also carry `return_basis: total | price` (0.2.0), contrasted with the dividends held
+over ex-dates by dividend_corporate_actions.
 
 ## Profiles
 
@@ -112,11 +139,23 @@ none).
 | `multiple_testing` | a return series + declared_results(n_trials) or trials | |
 | `pbo` | trials with at least 2 configurations | |
 | `llm_lookahead_risk` | llm_checklist | returns |
+| `coverage_drift` | fundamentals or signals | universe, rules(universe), rules(required_inputs) |
+| `input_sufficiency` | rules(required_inputs), signals | fundamentals, rules(min_input_share) |
+| `dividend_corporate_actions` | prices, unadjusted_prices or dividends | corporate_actions, trades, declared_results(return_basis) |
+| `protocol_integrity` | run_log, protocol | declared_results(n_trials), rules(research.n_trials) |
+| `benchmark_fit` | trades and prices, or returns, benchmark_returns | universe_returns, universe, prices, rules(benchmark), rules(sizing) |
+| `liquidity_participation` | trades, prices(volume) | rules |
+| `cost_sensitivity` | trades, prices | rules, costs, benchmark_returns |
+| `stability_and_concentration` | trades and prices, or returns | rules |
+| `conditional_rule_activation` | regimes, protocol(test) or rules(conventions.oos_start) | rules(conditional_rules) |
 
 The same table is in code (`src/lockin_validate/inputs.py`, `REQUIREMENTS`) and travels in the JSON report
 (`scope.requirements_per_check`).
 
+Every input of the 0.2.0 checks is optional: without it the check is NOT_EXECUTABLE and the reason names the missing
+input; the rest of the review runs as before.
+
 ## Statuses
 
 CONFIRMED_ERROR (proven with the inputs), NEEDS_REVIEW (a person must look at it), NOT_EXECUTABLE (with the reason),
-PASS (within the scope of the check). See docs/CONVENTIONS.md, sections 5 and 6.
+INFO (a note that is not an alert, docs/ALERT_POLICY.md), PASS (within the scope of the check). See docs/CONVENTIONS.md, sections 5 and 6.

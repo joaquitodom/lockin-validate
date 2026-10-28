@@ -15,13 +15,14 @@ delisted companies missing, or a Sharpe ratio that is simply the best of many tr
 them explicitly, runs locally without network or remote AI, never fixes data silently, and never says PASS about
 something it could not verify.
 
-Every result has exactly one status:
+Every result has exactly one status (alerts are the first two):
 
 | Status | Meaning |
 |---|---|
 | `CONFIRMED_ERROR` | proven with the inputs (reproducible evidence) |
 | `NEEDS_REVIEW` | a person must look at it; the inputs are not enough to confirm |
 | `NOT_EXECUTABLE` | the check could not run; the reason says which input is missing |
+| `INFO` | a note worth reading that is not an alert ([docs/ALERT_POLICY.md](docs/ALERT_POLICY.md) says when) |
 | `PASS` | the check ran and found no problem *within its scope* |
 
 ## What it checks
@@ -33,6 +34,7 @@ Every result has exactly one status:
 | Reconstruction | positions, cash and NAV rebuilt from trades with explicit conventions (return base = initial cash); reconciliation against declared positions and declared results with explicit tolerances |
 | Strategy | look-ahead (availability timestamps, plus a statistical hint for gross cases), omitted costs (commission and slippage separately; zero cost with turnover is flagged), metric errors (declared convention vs 252/365, arithmetic/geometric, risk-free, log, drawdown variants), rules vs implementation (re-executes rank / top-N / periodic rebalance / equal weight; anything else is NOT_EXECUTABLE) |
 | Statistics | Sharpe standard error, Lo (2002) autocorrelation adjustment, PSR, MinTRL, deflated Sharpe with the declared number of trials, multiple-testing haircut (Bonferroni / Holm / BHY), PBO via CSCV, consistency of the declared number of trials, LLM look-ahead risk checklist |
+| New in 0.2.0 (each motivated by a failure of the LockIn case study) | **coverage drift** of inputs against the strategy's own history and **input sufficiency** (names scored with fewer than the declared minimum of inputs); **protocol integrity** from a run log (single-use test and reserved windows, reproduction vs new look, development after the test look, validation looks as trials); **benchmark fit** (beta, tracking error, information ratio; gap split into benchmark-choice and selection effects); **dividend and corporate-action consistency** between adjusted and as-traded prices (dividends not applied, frozen prices after an ex-date, total vs price return); **liquidity participation** (orders vs ADV and day volume, square-root impact as context) and **cost sensitivity** (break-even cost, 1x/2x/3x costs); **stability and concentration** (subperiods, top names and days) and **conditional-rule activation** in vs out of sample |
 
 Full catalogue with references: [docs/CHECKS.md](docs/CHECKS.md) or `lockin-validate explain <check_id>`.
 
@@ -84,13 +86,15 @@ result have none):
 
 ## Benchmark battery
 
-`cases/` holds 36 synthetic cases, each with an `expected.json` fixed by construction before the tool runs: 11 core
+`cases/` holds 52 synthetic cases, each with an `expected.json` fixed by construction before the tool runs: 11 core
 cases (one problem each, plus a clean case and a synthetic "lockin-style" quality-ranking case), 12 adversarial cases
 written by an independent reviewer role, 7 statistical cases (best-of-200 noise must fail the deflated Sharpe, a
 genuine signal must pass it, autocorrelated returns inflate the naive Sharpe, under-declared trials, short track record,
-LLM before its cutoff...) and 6 data cases (fundamentals before filing, survivorship, recycled ticker, split not
-applied, reference mismatch, clean extended inputs). Current result: all expected outcomes met, no false positive
-(see [docs/VALIDATION_EVIDENCE.md](docs/VALIDATION_EVIDENCE.md)). The cases are regenerated deterministically by
+LLM before its cutoff...), 6 data cases (fundamentals before filing, survivorship, recycled ticker, split not
+applied, reference mismatch, clean extended inputs) and 16 lesson cases for the 0.2.0 checks (a planted positive and
+a clean negative per family, expectations committed before the checks existed). Current result: 52 of 52 cases with
+all expected outcomes, no false positive, and 3 unexpected review items (40 in 0.1.0; see
+[docs/ALERT_POLICY.md](docs/ALERT_POLICY.md) and [docs/VALIDATION_EVIDENCE.md](docs/VALIDATION_EVIDENCE.md)). The cases are regenerated deterministically by
 `cases/_generators/*.py`, which never import the package.
 
 ## Independence of the verification
@@ -131,6 +135,10 @@ More in [docs/LIMITATIONS.md](docs/LIMITATIONS.md).
   of Financial Data Science* 1(1).
 - Board of Governors of the Federal Reserve System (2011). SR 11-7, Guidance on Model Risk Management.
 - CFA Institute (2019). Global Investment Performance Standards (GIPS) 2020.
+- Almgren, R. and Chriss, N. (2001). Optimal Execution of Portfolio Transactions. *Journal of Risk* 3(2).
+- Dwork, C. et al. (2015). The Reusable Holdout: Preserving Validity in Adaptive Data Analysis. *Science* 349(6248).
+- Sensoy, B. (2009). Performance Evaluation and Self-Designated Benchmark Indexes in the Mutual Fund Industry.
+  *Journal of Financial Economics* 92(1).
 - Glasserman, P. and Lin, C. (2023). Assessing Look-Ahead Bias in Stock Return Predictions Generated by GPT Sentiment
   Analysis. arXiv:2309.17322.
 

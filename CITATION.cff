@@ -7,8 +7,8 @@ authors:
     family-names: "Domínguez"
   - given-names: "Mateo"
     family-names: "Domínguez"
-version: "0.1.0"
-date-released: "2026-10-27"
+version: "0.2.0"
+date-released: "2026-10-28"
 license: Apache-2.0
 keywords:
   - backtest

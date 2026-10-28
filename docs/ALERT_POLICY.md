@@ -102,11 +102,32 @@ expect it. R01, whose subject is exactly this, already did.
 - R11 is "BYMA data without a declared calendar"; its own description says the right answer is a review item for
   the undeclared calendar, which `dates` raises.
 
+## INFO in the 0.2.0 checks
+
+The new checks use INFO under the same three rules:
+
+- cost_sensitivity: excess return that survives 2x but not 3x the declared costs (below the materiality threshold of
+  rule 2); no declared costs to scale (rule 3; zero cost is judged by omitted_costs); no gross excess return to
+  protect (rule 3).
+- stability_and_concentration: the result disappears without its best 1% of periods while the Sharpe ratio is not
+  significant (rule 1: for a weak Sharpe this is the same evidence sharpe_significance judges).
+- protocol_integrity: n_trials not declared, so the validation configurations are used as the number of trials
+  (rule 3: a note on how the deflated Sharpe was computed).
+- dividend_corporate_actions does not use INFO; ratio breaks inside a frozen run are folded into the frozen-price
+  finding instead of being reported twice (rule 1).
+
 ## Result
 
-On the 36 cases of 0.1.0: **40 unexpected NEEDS_REVIEW before, 0 after**; every expected detection of 0.1.0 is still
-met (36 of 36 cases with all expected outcomes, detection rate unchanged per check). Figures for the full 0.2.0
-battery, including the lesson cases and the new checks, are in [VALIDATION_EVIDENCE.md](VALIDATION_EVIDENCE.md).
+| Battery | Version | NEEDS_REVIEW findings | Unexpected NEEDS_REVIEW | INFO notes | Expected detections met |
+|---|---|---|---|---|---|
+| 36 cases of 0.1.0 | 0.1.0 | 57 | **40** | - | 40 / 40 |
+| same 36 cases | 0.2.0 | 40 | **0** | 25 | 63 / 63 |
+| all 52 cases | 0.2.0 | 53 | **3** | 33 | 75 / 75 |
+
+Every detection expected in 0.1.0 is still met; 23 genuine review items became expected detections. The 3
+unexpected items left are `sharpe_significance` on lesson cases L08, L09 and L12, genuine under P1 (MinTRL far above
+the history); the lesson cases were pre-registered for other checks and are not edited after the run, so they stay
+visible as unexpected. Commands and full output: [VALIDATION_EVIDENCE.md](VALIDATION_EVIDENCE.md).
 
 ## Rules for future changes
 

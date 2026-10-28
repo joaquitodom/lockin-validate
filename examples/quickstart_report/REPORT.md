@@ -1,6 +1,6 @@
 # Strategy validation report
 
-Tool: lockin-validate 0.1.0. Run: 2026-10-27T11:34:48. Input folder: `quickstart_inputs`. Profile: equities_daily. Declared strategy version: 1.0.
+Tool: lockin-validate 0.2.0. Run: 2026-10-28T14:00:49. Input folder: `quickstart_inputs`. Profile: equities_daily. Declared strategy version: 1.0.
 
 > **Disclaimer.** This is an automated, offline technical review of the inputs delivered. It makes no claim about future or past profitability, it is not a certification or an audit opinion, and it is not an independent professional approval: a qualified person must review the findings, the NEEDS_REVIEW items and the limitations before any decision. It is not investment advice.
 
@@ -10,14 +10,15 @@ Automated, local, offline review: no network and no remote AI were used. Every c
 
 - Confirmed errors: **1**
 - Items that need human review: **1**
-- Checks not executable (missing information): **10**
-- Passed within scope: **16**
+- Checks not executable (missing information): **15**
+- Information notes (not alerts, see docs/ALERT_POLICY.md): **1**
+- Passed within scope: **19**
 
 ## Scope
 
 Inputs present: prices, signals, trades, positions, costs, rules, declared_results, version.
 
-Inputs absent: fundamentals, universe, security_master, corporate_actions, reference_prices, returns, trials, llm_checklist.
+Inputs absent: fundamentals, universe, security_master, corporate_actions, reference_prices, returns, trials, llm_checklist, benchmark_returns, universe_returns, unadjusted_prices, dividends, run_log, regimes, protocol.
 
 Review date used for future dates: 2026-10-20.
 
@@ -31,11 +32,11 @@ Reconstruction conventions: initial_cash=100,000.00; valuation=close; commission
 
 | Input | File | Present | Rows | sha256 |
 |---|---|---|---|---|
-| prices | prices.csv | yes | 1152 | c5af45afe939645ec9cda55f2be505ea45c50faae40367408ef323447ac8d7ba |
-| signals | signals.csv | yes | 48 | 0282d6252e472127911fbdc3f6d59ab9c82bc58527e612df1a9dcbfd1388cc48 |
-| trades | trades.csv | yes | 28 | ac4239b6ab225be85c03ff310135976eb39b9498f3cd21e58f2a452e9eff1712 |
-| positions | positions.csv | yes | 18 | f101c64e1de72a7cb401197d198bf06d977e0c2e8defbfe46e924f2affd3f5f6 |
-| costs | costs.csv | yes | 2 | c5424573b1f273a562eec463e6f50f0e3bdb51f0a041340f2a42d44a60515182 |
+| prices | prices.csv | yes | 1152 | 1e5e12b8b24b7164c6258e768df0acd3809ac8b64df2364a929056e9d8cab4c8 |
+| signals | signals.csv | yes | 48 | d1278d6fc89869f6797ab02af74547f3e3a464c2c6079ceb755aed3dd84318d1 |
+| trades | trades.csv | yes | 28 | b5c9872855247604d3f575801f7c56743c245a4093e9b04a71a6ec05b946d606 |
+| positions | positions.csv | yes | 18 | 85c0b74578eeaede44daa94335ddf0a627b16b6a1e26054e549a1444b3affe88 |
+| costs | costs.csv | yes | 2 | 29460e5a1d4869ec32af8529edfde222efa7812129b947112ce14f95bc54d253 |
 | fundamentals | fundamentals.csv | no | - | - |
 | universe | universe.csv | no | - | - |
 | security_master | security_master.csv | no | - | - |
@@ -43,10 +44,17 @@ Reconstruction conventions: initial_cash=100,000.00; valuation=close; commission
 | reference_prices | reference_prices.csv | no | - | - |
 | returns | returns.csv | no | - | - |
 | trials | trials.csv | no | - | - |
-| rules | rules.yaml | yes | - | 33b8e3417af285e6867b7c6586f2fba27f2483ac6869a98b8eb0335087b54f3f |
-| declared_results | declared_results.json | yes | - | 8054c85448230bdaccac3e5944c8452c827b3600b2d8cfbfd2a3b77235b2a331 |
+| rules | rules.yaml | yes | - | 8e9e0889005e4fb6b43c7d6bf3d577df12381d479c21603370997b9062fdd11c |
+| declared_results | declared_results.json | yes | - | 1fa6a828881bf9479046500aab574ea3d9ed291c589f5ddd4187987da6d281c4 |
 | llm_checklist | llm_checklist.json | no | - | - |
-| version | version.txt | yes | - | 8a4434489576de41f28a2d1d6e9d15e53deac6b48c2a4f416a52b7584a92964f |
+| benchmark_returns | benchmark_returns.csv | no | - | - |
+| universe_returns | universe_returns.csv | no | - | - |
+| unadjusted_prices | unadjusted_prices.csv | no | - | - |
+| dividends | dividends.csv | no | - | - |
+| run_log | run_log.csv | no | - | - |
+| regimes | regimes.csv | no | - | - |
+| protocol | protocol.yaml | no | - | - |
+| version | version.txt | yes | - | 5717e7c840171019a4eeab5b79a7f894a4986eaff93d04ec5b12c9a189f594bf |
 
 ## Checks run
 
@@ -66,19 +74,28 @@ Reconstruction conventions: initial_cash=100,000.00; valuation=close; commission
 | pit_fundamentals | data | Not executable |
 | survivorship | data | Not executable |
 | ticker_identity | data | Not executable |
+| coverage_drift | data | Pass (within scope) |
+| input_sufficiency | data | Not executable |
 | reconstruction | reconstruction | Pass (within scope) |
+| dividend_corporate_actions | data | Not executable |
 | positions_reconciliation | reconstruction | Pass (within scope) |
 | results_reconciliation | reconstruction | Pass (within scope) |
 | lookahead | strategy | Pass (within scope) |
 | omitted_costs | strategy | Confirmed error |
 | metrics | strategy | Pass (within scope) |
 | rules_vs_implementation | strategy | Pass (within scope) |
+| benchmark_fit | strategy | Not executable |
+| liquidity_participation | strategy | Pass (within scope) |
+| cost_sensitivity | strategy | Information (not an alert) |
+| protocol_integrity | statistics | Not executable |
 | sharpe_significance | statistics | Needs human review |
 | sharpe_autocorrelation | statistics | Pass (within scope) |
 | trials_declared | statistics | Not executable |
 | deflated_sharpe | statistics | Not executable |
 | multiple_testing | statistics | Not executable |
 | pbo | statistics | Not executable |
+| stability_and_concentration | statistics | Pass (within scope) |
+| conditional_rule_activation | statistics | Not executable |
 | llm_lookahead_risk | statistics | Not executable |
 
 ## Confirmed errors
@@ -108,7 +125,7 @@ Suggested action (priority high): Recompute the result with the declared costs a
 
 Annualised Sharpe 0.90 over 0.49 years (NAV reconstructed from trades); 95% interval -1.90 to 3.71. With this Sharpe about 3.3 years of history would be needed for 95% confidence (Minimum Track Record Length). Conditional result: earlier blocks have confirmed errors (omitted_costs); these statistics describe the series as delivered, not a corrected one.
 
-Procedure: Per-period Sharpe = mean / std (ddof 1) of the returns; standard error under i.i.d. returns sqrt((1 + SR^2/2) / T) (Lo 2002) and with skewness and kurtosis sqrt((1 - g3 SR + (g4 - 1)/4 SR^2) / (T - 1)); PSR(0) = Phi(SR sqrt(T - 1) / sqrt(1 - g3 SR + (g4 - 1)/4 SR^2)) and Minimum Track Record Length at 95% (Bailey and Lopez de Prado 2012). Threshold PSR >= 0.95.
+Procedure: Per-period Sharpe = mean / std (ddof 1) of the returns; standard error under i.i.d. returns sqrt((1 + SR^2/2) / T) (Lo 2002) and with skewness and kurtosis sqrt((1 - g3 SR + (g4 - 1)/4 SR^2) / (T - 1)); PSR(0) = Phi(SR sqrt(T - 1) / sqrt(1 - g3 SR + (g4 - 1)/4 SR^2)) and Minimum Track Record Length at 95% (Bailey and Lopez de Prado 2012). Threshold PSR >= 0.95. Review item only if the Sharpe is positive and MinTRL > 2 x T.
 
 Evidence:
 
@@ -150,13 +167,37 @@ Reason: missing security_master.csv (ticker -> entity_id); the price heuristic f
 
 Suggested action (priority medium): Provide security_master.csv.
 
-### 6. Declared number of trials (`trials_declared`)
+### 6. Names scored with too few of the declared inputs (`input_sufficiency`)
+
+Reason: missing required inputs: rules(required_inputs).
+
+Suggested action (priority medium): Provide rules(required_inputs) to enable this check.
+
+### 7. Dividends and corporate actions: adjusted vs as-traded prices (`dividend_corporate_actions`)
+
+Reason: missing required inputs: unadjusted_prices or dividends.
+
+Suggested action (priority medium): Provide unadjusted_prices or dividends to enable this check.
+
+### 8. Benchmark fit (`benchmark_fit`)
+
+Reason: missing required inputs: benchmark_returns.
+
+Suggested action (priority medium): Provide benchmark_returns to enable this check.
+
+### 9. Research protocol integrity (single-use windows) (`protocol_integrity`)
+
+Reason: missing required inputs: run_log, protocol.
+
+Suggested action (priority medium): Provide run_log, protocol to enable this check.
+
+### 10. Declared number of trials (`trials_declared`)
 
 Reason: neither declared_results.n_trials nor trials.csv: the number of configurations tried is unknown, so the Sharpe cannot be deflated for selection.
 
 Suggested action (priority medium): Declare n_trials (every configuration tried, including discarded ones) and deliver trials.csv.
 
-### 7. Deflated Sharpe ratio (selection among trials) (`deflated_sharpe`)
+### 11. Deflated Sharpe ratio (selection among trials) (`deflated_sharpe`)
 
 Reason: number of trials unknown (declared_results.n_trials or trials.csv); with N = 1 the DSR equals the PSR (0.736), the most optimistic possible case.
 
@@ -168,21 +209,41 @@ Evidence:
 
 Suggested action (priority medium): Declare n_trials and deliver trials.csv.
 
-### 8. Multiple-testing haircut (`multiple_testing`)
+### 12. Multiple-testing haircut (`multiple_testing`)
 
 Reason: number of trials unknown (declared_results.n_trials or trials.csv).
 
-### 9. Probability of backtest overfitting (CSCV) (`pbo`)
+### 13. Probability of backtest overfitting (CSCV) (`pbo`)
 
 Reason: missing required inputs: trials (at least 2 configurations).
 
 Suggested action (priority medium): Provide trials (at least 2 configurations) to enable this check.
 
-### 10. LLM look-ahead risk (`llm_lookahead_risk`)
+### 14. Activation of conditional rules in and out of sample (`conditional_rule_activation`)
+
+Reason: missing required inputs: regimes, protocol(test) or rules(conventions.oos_start).
+
+Suggested action (priority medium): Provide regimes, protocol(test) or rules(conventions.oos_start) to enable this check.
+
+### 15. LLM look-ahead risk (`llm_lookahead_risk`)
 
 Reason: missing required inputs: llm_checklist.
 
 Suggested action (priority medium): Provide llm_checklist to enable this check.
+
+## Information notes (not alerts)
+
+### 1. The excess return survives 2x but not 3x the declared costs (`cost_sensitivity`)
+
+Gross +4.61%; with 1x / 2x / 3x the declared costs (25 bps per unit of notional, rules.yaml): +2.65% / +0.69% / -1.28%; hurdle +0.00%. Break-even cost 59 bps per unit of turnover (7.8x). Not an alert: the margin covers a doubling of costs (docs/ALERT_POLICY.md).
+
+Procedure: Break-even cost = (gross total return - hurdle) / turnover, turnover = traded notional / initial cash (linear approximation; hurdle = zero). Scenarios: full reconstructions from the initial cash with k x the declared commission and slippage imputed on every trade (k = 1, 2, 3; commissions of trades.csv replaced). Novy-Marx and Velikov (2016) for why anomalies are judged net of costs.
+
+Evidence:
+
+| gross_total_return | hurdle | hurdle_source | turnover | break_even_cost_per_unit_turnover | break_even_bps | declared_cost_per_unit | declared_source | total_return_1x_costs | total_return_2x_costs | total_return_3x_costs |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 0.046093 | 0 | zero | 7.8484 | 0.005873 | 58.7 | 0.0025 | rules.yaml | 0.026472 | 0.006851 | -0.01277 |
 
 ## Passed within scope
 
@@ -195,13 +256,16 @@ Suggested action (priority medium): Provide llm_checklist to enable this check.
 - `signal_data_after_decision`: Signals use data not later than the decision. data_date <= decision_time for every signal. Procedure: data_date > decision_time per row.
 - `stale_prices`: No frozen prices. No run of 10 or more identical consecutive closes. Procedure: Scan of consecutive closes per ticker.
 - `price_jumps`: No one-period price move larger than 40%.  Procedure: close_t / close_(t-1) - 1 per ticker on consecutive dates of the series; split-like if the ratio is within 3% of 1/2, 1/3, 1/4, 1/5, 1/10, 2, 3, 4, 5, 10...; spike if the next day reverts by more than 25%. Threshold 40% (conventions.jump_threshold).
+- `coverage_drift`: No coverage drift against the strategy's own history. 1 input fields measured; lowest coverage 100%. Scope: members the universe source can see. Procedure: Per input field and per period (calendar quarter of period_end for fundamentals, calendar month of decision_time for signals): coverage = members with a finite value in the period / members of the universe at the period end (universe: rules.yaml universe list). A period is flagged when its coverage is at least 10% (conventions.coverage_drop) below the median coverage of all previous periods (at least 4).
 - `reconstruction`: Reconstruction complete with the available inputs. 28 trades applied over 125 dates; initial NAV 100,000.00 and final 104,609.34; costs 0.00. Procedure: Loop per date with the declared conventions (see metrics.reconstruction).
 - `positions_reconciliation`: Declared positions reconciled. 18 declared positions match the reconstruction (tolerance 1e-06). Procedure: Comparison per (date, ticker).
 - `results_reconciliation`: Declared results reconciled. Every declared metric present is within tolerance. Procedure: Daily NAV reconstructed from trades -> metrics with the declared convention (periods_per_year=252, sharpe=arithmetic, std_ddof=1, risk_free_annual=0, annual_return=geometric, returns=simple) -> comparison with declared_results.json using explicit tolerances.
 - `lookahead`: No early use of data according to the declared dates (data_date and availability). 48 signals evaluated: according to data_date and the availability timestamps, all use data available before the decision. Scope: the data_date declared by the strategy owner is trusted; the hint test (correlation with the subsequent return) gives -0.37, no hint. Procedure: For each signal: (ticker, data_date) -> availability in prices.csv (available_from) or fundamentals.csv (max of filing_date and available_from); error if availability > decision_time.
 - `metrics`: Declared metrics reproduced. They match the declared convention: sharpe, annual_return, max_drawdown. Procedure: Recomputed on the reconstructed NAV with the declared convention (periods_per_year=252, sharpe=arithmetic, std_ddof=1, risk_free_annual=0, annual_return=geometric, returns=simple) and with common alternatives: 252/260/365/360 periods, arithmetic vs geometric mean, std ddof 1 vs 0, with and without a risk-free rate (0/2/4/5%), simple vs log returns; max drawdown on the NAV, as a positive number, worst single period and sum of returns without compounding.
 - `rules_vs_implementation`: The trades implement the declared rule. 6 rebalance dates with holdings equal to the top 3; weights within 10% of 1/N; no trades off schedule. Scope: the signal column delivered is re-ranked; the signal computation itself is not verified. Procedure: From rules.yaml: ranking on `signal` (desc), top 3, monthly rebalance (first_day), equal_weight. On each rebalance date the top N of signals.csv is compared with the reconstructed holdings at the close of that day, and the weights with 1/N (tolerance 10%).
-- `sharpe_autocorrelation`: No material Sharpe inflation from autocorrelation. Naive annualised Sharpe 0.90, Lo-adjusted 1.48 (ratio 0.61); Ljung-Box p = 0.767. Conditional result: earlier blocks have confirmed errors (omitted_costs); these statistics describe the series as delivered, not a corrected one. Procedure: Sample autocorrelations rho_1..rho_10 of the period returns (rho_k = 0 beyond lag 10); Lo (2002) factor eta(q) = q / sqrt(q + 2 sum (q - k) rho_k) with q = 252, compared with the naive sqrt(q); Ljung-Box test on the same lags. Review if the naive annualised Sharpe exceeds the adjusted one by more than 10% and the autocorrelation is statistically significant.
+- `liquidity_participation`: Every trade below 10% of ADV. 28 trades measured, maximum participation 0.76%. Square-root impact estimate (context, not a measurement): 507 in total, 0.51% of the initial capital. Procedure: ADV = mean volume of the 20 previous sessions of the ticker (at least 5; conventions.adv_window); participation = |quantity| / ADV, review above 10% (conventions.max_participation). An order is impossible as filled when the strategy's quantity of the day exceeds the day's volume. Context: square-root impact Y sigma sqrt(Q / ADV), Y = 1, sigma = std of the previous 60 daily returns (Almgren et al. 2005; Toth et al. 2011): an order of magnitude only.
+- `sharpe_autocorrelation`: No material Sharpe inflation from autocorrelation. Naive annualised Sharpe 0.90, Lo-adjusted 1.48 (ratio 0.61); Ljung-Box p = 0.767. Conditional result: earlier blocks have confirmed errors (omitted_costs); these statistics describe the series as delivered, not a corrected one. Procedure: Sample autocorrelations rho_1..rho_10 of the period returns (rho_k = 0 beyond lag 10); Lo (2002) factor eta(q) = q / sqrt(q + 2 sum (q - k) rho_k) with q = 252, compared with the naive sqrt(q); Ljung-Box test on the same lags; single-lag band |rho_1| > 2.576 / sqrt(T). Review if the naive annualised Sharpe exceeds the adjusted one by more than 10% and the autocorrelation is statistically significant.
+- `stability_and_concentration`: No single subperiod, name or handful of days carries the result. 2 halves; Sharpe by subperiod: first half 1.597, second half 0.234 (dispersion 0.96). Largest name contribution: BBB 72% of the P&L. Procedure: Subperiods: halves of the return series (NAV reconstructed from trades); per subperiod P&L in currency (NAV change), compounded return and annualised Sharpe; dispersion = std of the subperiod Sharpe ratios. Days: P&L without the best 1% of periods (tested from 250 periods). Names (with trades): cash flows of each ticker's trades including commissions plus its final holding at the last close.
 
 ## Reconstructed metrics
 
@@ -250,10 +314,15 @@ Originals were not modified. These are the derivations made on working copies (a
 - pit_fundamentals: not executable (missing required inputs: fundamentals).
 - survivorship: not executable (missing required inputs: universe).
 - ticker_identity: not executable (missing security_master.csv (ticker -> entity_id); the price heuristic found no gap with a level shift, which does not prove identity).
+- input_sufficiency: not executable (missing required inputs: rules(required_inputs)).
+- dividend_corporate_actions: not executable (missing required inputs: unadjusted_prices or dividends).
+- benchmark_fit: not executable (missing required inputs: benchmark_returns).
+- protocol_integrity: not executable (missing required inputs: run_log, protocol).
 - trials_declared: not executable (neither declared_results.n_trials nor trials.csv: the number of configurations tried is unknown, so the Sharpe cannot be deflated for selection).
 - deflated_sharpe: not executable (number of trials unknown (declared_results.n_trials or trials.csv); with N = 1 the DSR equals the PSR (0.736), the most optimistic possible case).
 - multiple_testing: not executable (number of trials unknown (declared_results.n_trials or trials.csv)).
 - pbo: not executable (missing required inputs: trials (at least 2 configurations)).
+- conditional_rule_activation: not executable (missing required inputs: regimes, protocol(test) or rules(conventions.oos_start)).
 - llm_lookahead_risk: not executable (missing required inputs: llm_checklist).
 
 Review items a person must close: sharpe_significance.
@@ -269,9 +338,14 @@ Review items a person must close: sharpe_significance.
 | medium | pit_fundamentals | Not executable | Provide fundamentals to enable this check. |
 | medium | survivorship | Not executable | Provide universe to enable this check. |
 | medium | ticker_identity | Not executable | Provide security_master.csv. |
+| medium | input_sufficiency | Not executable | Provide rules(required_inputs) to enable this check. |
+| medium | dividend_corporate_actions | Not executable | Provide unadjusted_prices or dividends to enable this check. |
+| medium | benchmark_fit | Not executable | Provide benchmark_returns to enable this check. |
+| medium | protocol_integrity | Not executable | Provide run_log, protocol to enable this check. |
 | medium | trials_declared | Not executable | Declare n_trials (every configuration tried, including discarded ones) and deliver trials.csv. |
 | medium | deflated_sharpe | Not executable | Declare n_trials and deliver trials.csv. |
 | medium | pbo | Not executable | Provide trials (at least 2 configurations) to enable this check. |
+| medium | conditional_rule_activation | Not executable | Provide regimes, protocol(test) or rules(conventions.oos_start) to enable this check. |
 | medium | llm_lookahead_risk | Not executable | Provide llm_checklist to enable this check. |
 
 ---
