@@ -93,7 +93,16 @@ conventions:
   oos_start: '2022-01-01'          # out-of-sample start when protocol.yaml has no test window
   regime_rare_in_sample: 0.10
   regime_dominant_out_of_sample: 0.50
+  # 0.2.1
+  max_input_age_days: 400          # as-of fundamentals older than this (from period_end) count as missing
+  min_volume_coverage: 0.90        # share of traded notional with volume needed for a liquidity PASS
+  benchmark_universe_tracking_error: 0.01  # declared equal-weighted benchmark vs computed equal-weight universe
 ```
+
+`volume` (prices.csv) must be the consolidated daily volume in shares. `required_inputs` are matched
+case-insensitively (headers are lower-cased on reading). `run_log.csv` purposes accept synonyms (holdout, oos,
+out_of_sample, final_test -> test; repro, rerun -> reproduction; val, cv -> validation; training, fit -> train; diag,
+analysis -> diagnostic); any other purpose is reported as unrecognised.
 
 `declared_results.json` may also carry `return_basis: total | price` (0.2.0), contrasted with the dividends held
 over ex-dates by dividend_corporate_actions.

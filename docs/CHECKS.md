@@ -407,7 +407,7 @@ being correct ("data first, reconstruction second, statistics third").
 
 **Coverage drift of inputs** (block: data)
 
-- What it checks: Per input field (numeric columns of fundamentals.csv and signals.csv) and per period (quarter of period_end, month of decision_time), the share of universe members (universe.csv, the rules.yaml universe, or the tickers of the table) with a valid value; periods at least conventions.coverage_drop (10 pp) below the median of the previous periods are flagged.
+- What it checks: Per input field (numeric columns of fundamentals.csv and signals.csv) and per period (quarter of period_end, month of decision_time), the share of universe members (universe.csv, the rules.yaml universe, or the tickers of the table) with a valid value; periods at least conventions.coverage_drop (10 pp) below the median of the previous periods (at least 4, of at least 5 periods) are flagged. Periods run to the last one the strategy uses (rules.yaml period, signals, trades; minus 120 days of publication lag for fundamentals) and a period with no rows counts as 0%. With required_inputs declared, drops of other fields are INFO.
 - Why it matters: A database that silently loses part of the universe changes what the model ranks; row-level checks all pass.
 - How to fix: Find why the inputs disappeared (vendor, mapping, membership) before using or spending those periods.
 - Allows concluding: Periods whose input coverage is unlike the strategy's own history.
@@ -421,7 +421,7 @@ being correct ("data first, reconstruction second, statistics third").
 
 **Names scored with too few inputs** (block: data)
 
-- What it checks: For every scored row of signals.csv, how many of rules.yaml required_inputs have a value (in signals.csv, or as of the decision in fundamentals.csv); rows below min_input_share. With a declared minimum the violation is a CONFIRMED_ERROR; with the default (0.5) a review item.
+- What it checks: For every scored row of signals.csv, how many of rules.yaml required_inputs have a value (in signals.csv, or as of the decision in fundamentals.csv, at most conventions.max_input_age_days = 400 days after its period_end); names matched case-insensitively; rows below min_input_share. CONFIRMED_ERROR only with a declared minimum broken even if inputs missing from every table were present; otherwise a review item.
 - Why it matters: A model that scores names with half of its inputs is a different model from the one validated.
 - How to fix: Restore the inputs, or declare and evaluate the reduced model as a separate configuration.
 - Allows concluding: Periods where the delivered scores break the declared input requirement.
@@ -435,7 +435,7 @@ being correct ("data first, reconstruction second, statistics third").
 
 **Dividends and corporate actions: adjusted vs as-traded prices** (block: data)
 
-- What it checks: Step of the adjusted / as-traded ratio on each declared ex-date (1 / (1 - D / C) for a dividend, the ratio for a split); events not applied while others are, steps of the wrong size, ratio breaks without a declared event, adjusted prices frozen from an ex-date, declared total return that equals the price return.
+- What it checks: Step of the adjusted / as-traded ratio on each declared ex-date (1 / (1 - D / C) for a dividend, the ratio for a split); events not applied while others are, steps of the wrong size, ratio breaks without a declared event, adjusted prices frozen from an ex-date or the session after, declared total return that equals the price return. Without unadjusted_prices.csv application is NOT_EXECUTABLE, except an ex-date drop test on the adjusted series (>= 3 dividends of >= 0.5%) that can raise a review item.
 - Why it matters: A dividend applied late or not at all shows a loss or a flat price that never existed and corrupts valuation and total returns.
 - How to fix: Reload the affected rows after the vendor applies the event; re-adjust the history.
 - Allows concluding: Events inconsistently reflected in the adjusted series; stale valuations after an event.
@@ -449,7 +449,7 @@ being correct ("data first, reconstruction second, statistics third").
 
 **Research protocol integrity** (block: statistics)
 
-- What it checks: run_log.csv against protocol.yaml: train, validation, diagnostic or unknown-purpose runs touching a reserved (test or `reserved`) window; more than one configuration evaluated on it; 'reproductions' of configurations never tested on it; development after the first test look; validation looks vs declared trials (fed to the deflated Sharpe when n_trials is not declared).
+- What it checks: run_log.csv against protocol.yaml: train, validation, diagnostic or unknown-purpose runs touching a reserved (test or `reserved`) window; more than one configuration evaluated on it; 'reproductions' of configurations never tested on it; development after the first test look; validation looks vs declared trials (fed to the deflated Sharpe when n_trials is not declared). Purpose synonyms (holdout, oos, repro, ...) are mapped; an unrecognised purpose is a review item, never an error.
 - Why it matters: A holdout reused to choose among configurations is in-sample; its result says nothing about new data.
 - How to fix: Log every run with its purpose; declare a fresh untouched window for the final test.
 - Allows concluding: Logged runs that break the single-use protocol.
@@ -463,7 +463,7 @@ being correct ("data first, reconstruction second, statistics third").
 
 **Benchmark fit** (block: strategy)
 
-- What it checks: Beta, correlation, tracking error and information ratio vs the declared benchmark and vs the equal-weight universe; gap split into benchmark-choice effect (equal-weight universe minus benchmark) and selection effect (strategy minus equal-weight universe); review when the benchmark construction differs from the strategy's weighting or is not declared, or when R2 < 25%.
+- What it checks: Beta, correlation, tracking error and information ratio vs the declared benchmark and vs the equal-weight universe; gap split into benchmark-choice effect (equal-weight universe minus benchmark) and selection effect (strategy minus equal-weight universe); review when the benchmark construction differs from the strategy's weighting or is not declared, when a benchmark declared equal-weighted differs from the equal-weight universe computed from prices (tracking error > 1% or |choice effect| > 0.5 pp; conventions.benchmark_universe_tracking_error), or when R2 < 25% (at least 20 common dates).
 - Why it matters: An equal-weight book against a cap-weighted index measures the size tilt as much as the selection.
 - How to fix: Compare with a benchmark built like the strategy and report the benchmark-choice effect separately.
 - Allows concluding: How much of the gap comes from the yardstick.
@@ -477,7 +477,7 @@ being correct ("data first, reconstruction second, statistics third").
 
 **Participation in traded volume** (block: strategy)
 
-- What it checks: Per trade |quantity| / ADV (previous 20 sessions); review above conventions.max_participation (10%); an order larger than the whole day's volume is a confirmed error; square-root impact estimate Y sigma sqrt(Q / ADV) reported as context.
+- What it checks: Per ticker-day, the strategy's total |quantity| / ADV (previous 20 sessions, at least 5 with volume), so sliced orders are judged together; review above conventions.max_participation (10%); a ticker-day larger than the whole day's volume is a confirmed error (volume must be consolidated, in shares); trades without volume are disclosed, and below 90% of notional measured (conventions.min_volume_coverage) there is no PASS; square-root impact estimate reported as context.
 - Why it matters: Orders that are a large part of the volume do not fill at the close the backtest assumes.
 - How to fix: Cap orders at a fraction of ADV, spread them, or model impact explicitly.
 - Allows concluding: Trades that are implausible or expensive at their size.
@@ -505,7 +505,7 @@ being correct ("data first, reconstruction second, statistics third").
 
 **Stability across subperiods and concentration of the P&L** (block: statistics)
 
-- What it checks: Subperiod metrics (years or halves) with dispersion; share of the P&L from the top names and days. Review when one subperiod (of >= 3) or one name (of >= 3) carries the whole result, or when the result disappears without its best 1% of periods (>= 250 periods).
+- What it checks: Subperiod metrics (years or halves) with dispersion; share of the P&L from the top names and days. Review when one subperiod (of >= 3) or one name (of >= 3) carries the whole result, or when the result disappears without its best 1% of periods (>= 250 periods). Years are used from 3 calendar years, halves otherwise. The PASS title names only the tests that ran; with none applicable the result is INFO.
 - Why it matters: A result carried by one name, year or a few days is a bet on that exposure, not a repeatable rule.
 - How to fix: Report the result without that name, subperiod or days.
 - Allows concluding: Where the result comes from.
@@ -519,7 +519,7 @@ being correct ("data first, reconstruction second, statistics third").
 
 **Activation of conditional rules in and out of sample** (block: statistics)
 
-- What it checks: Share of periods in which each conditional rule (regimes.csv column, rules.yaml conditional_rules) is active before and after the out-of-sample start (protocol.yaml test, or conventions.oos_start); review when below 10% in sample and above 50% out of sample.
+- What it checks: Share of periods in which each conditional rule (regimes.csv column, rules.yaml conditional_rules) is active before and after the out-of-sample start (protocol.yaml test, or conventions.oos_start); review when below 10% in sample and above 50% out of sample, or when a declared rule has no in-sample value; every declared rule is reported.
 - Why it matters: A rule calibrated on a handful of in-sample periods and dominant in the test makes the test measure an almost untested rule.
 - How to fix: Report results with and without the rule; do not count the window as a test of the in-sample model.
 - Allows concluding: Rules whose exposure changed between the windows.

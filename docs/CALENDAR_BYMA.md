@@ -28,7 +28,7 @@ Columns: `date, name, type, market_closed, source_url, verified, notes`.
 
 ## Coverage and counts (built 2026-10-28)
 
-Years 2015 to 2026. Packaged file: 206 closed days (160 `yes`, 34 `partial`, 12 `no`). Research table: 222 rows
+Years 2015 to 2026. Packaged file: 206 closed days (159 `yes`, 35 `partial`, 12 `no`; 2026-11-09 relabelled `partial` in 0.2.1 after the independent review, as was the 2026-07-10 session row of the research table, because the BYMA calendar they rest on could not be retrieved to confirm). Research table: 222 rows
 (16 rows are days on which BYMA traded and are therefore not in the calendar).
 
 ## Sources (accessed 2026-10-28)

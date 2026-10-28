@@ -114,3 +114,13 @@ docs/ALERT_POLICY.md.
 `cases/lessons/` (16 cases, `cases/_generators/lessons_cases.py`) was added for the six new check families. Their
 expected.json files were committed before the checks were implemented (commit "Pre-register lesson benchmark cases
 for six new check families"); any later change to them is listed here.
+
+## 0.2.1: after the independent review
+
+- Every expectation added in 0.2.0 now carries `"post_hoc": true` (written by `expectation_changes.apply`), so the
+  battery reports it apart from the pre-registered detections and excludes it from detection rates (review D1).
+- Withdrawn (review D2, rule 1 of docs/ALERT_POLICY.md): core/05_impossible_dates `coverage NEEDS_REVIEW`;
+  data/D03_recycled_ticker `coverage NEEDS_REVIEW` and `price_jumps NEEDS_REVIEW`. The tool still raises them; they are
+  reported as unexpected review. 20 post-hoc expectations remain.
+- No pre-registered expectation and no lesson case changed. The reviewer's cases (`cases_review_v020/`) were not
+  edited.

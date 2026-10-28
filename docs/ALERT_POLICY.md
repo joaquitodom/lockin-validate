@@ -1,4 +1,8 @@
-# Alert policy (0.2.0)
+# Alert policy (0.2.0, revised in 0.2.1)
+
+0.2.1 revisions after the independent review (docs/REVIEW_V020.md, docs/REVIEW_V020_RESPONSE.md): post-hoc
+expectations are reported apart from pre-registered detections (D1); the P7 footprints of core 05 and D03 are
+withdrawn (D2); the P1 threshold is shown with its sensitivity (D3); the P5 size is measured (D4).
 
 A review report is only useful if every `NEEDS_REVIEW` is something a person must actually look at. Release 0.1.0
 raised 40 `NEEDS_REVIEW` items in the benchmark battery on checks that the cases did not mention ("unexpected
@@ -35,10 +39,11 @@ Decisions: **(a)** informative, downgraded to INFO; **(b)** genuine signal, the 
 | P4 | trials_declared ("cannot be contrasted") | S07 | 1 | (b) |
 | P5 | sharpe_autocorrelation | S06 | 1 | (c) |
 | P6 | omitted_costs ("zero cost with non-zero turnover") | R04, R05, R06, R07, R10, R11, R13 | 7 | (b) |
-| P7 | coverage (session gaps) | 05, D03 | 2 | (b) |
-| P7 | price_jumps | R10, D03 | 2 | (b) |
+| P7 | coverage (session gaps) | 05, D03 | 2 | (b) in 0.2.0; **withdrawn in 0.2.1** (rule 1), unexpected again |
+| P7 | price_jumps | R10 | 1 | (b) |
+| P7 | price_jumps | D03 | 1 | (b) in 0.2.0; **withdrawn in 0.2.1** (rule 1), unexpected again |
 | P7 | dates ("calendar not declared") | R11 | 1 | (b) |
-| | | | **40** | 16 (a), 23 (b), 1 (c) |
+| | | | **40** | 0.2.1: 16 (a), 20 (b), 1 (c), 3 withdrawn |
 
 ### P1. sharpe_significance: review only when the history is clearly too short
 
@@ -56,6 +61,43 @@ almost always. The new rule (convention `significance_review_ratio`, default 2):
 
 The threshold 2 is a documented judgement, not a statistical constant; rules.yaml can change it. The PSR, the MinTRL
 and the interval are in the evidence of the INFO note exactly as before.
+
+**Sensitivity (0.2.1).** The value 2 was chosen with the battery in view and falls in the gap between the cases it
+separates (reviewer finding D3), so the battery is not evidence for it. Every battery case below PSR 0.95 and its
+status at other ratios (R = review, i = INFO; `uv run python docs/simulations/alert_policy_checks.py`):
+
+```
+case                                              MinTRL/T     1   1.5     2     3     5
+adversarial/R11_byma_calendar_undeclared              1.14     R     i     i     i     i
+core/06_lookahead                                     1.19     R     i     i     i     i
+core/06b_lookahead_without_availability               1.19     R     i     i     i     i
+core/05_impossible_dates                              1.41     R     i     i     i     i
+statistical/S06_llm_before_cutoff                     1.54     R     R     i     i     i
+adversarial/R07_undeclared_leverage                   1.55     R     R     i     i     i
+statistical/S03_autocorrelated_returns                1.58     R     R     i     i     i
+adversarial/R01_zero_costs_declared                   1.59     R     R     i     i     i
+adversarial/R02_small_costs_omitted                   1.59     R     R     i     i     i
+adversarial/R04_lookahead_fundamentals                1.59     R     R     i     i     i
+adversarial/R08_declared_slippage_omitted             1.59     R     R     i     i     i
+adversarial/R13_unrecognised_results                  1.59     R     R     i     i     i
+adversarial/R00_clean                                 1.70     R     R     i     i     i
+lessons/L14_one_name_carries                          1.87     R     R     i     i     i
+core/08_rules_vs_implementation                       2.24     R     R     R     i     i
+lessons/L12_illiquid_and_cost_fragile                 2.31     R     R     R     i     i
+adversarial/R06_undeclared_short                      2.45     R     R     R     i     i
+adversarial/R03_first_day_commission                  3.22     R     R     R     R     i
+core/10_independent                                   4.19     R     R     R     R     i
+core/04_omitted_costs                                 6.74     R     R     R     R     R
+statistical/S07_short_track_record                    8.98     R     R     R     R     R
+lessons/L08_equal_weight_vs_cap_weighted             15.60     R     R     R     R     R
+lessons/L09_equal_weight_vs_equal_weight             15.60     R     R     R     R     R
+adversarial/R10_unadjusted_split                       inf     i     i     i     i     i
+review items                                                  23    19     9     6     4
+```
+
+At ratio 1 every positive Sharpe below PSR 0.95 is a review item (the 0.1.0 behaviour less the negative-Sharpe
+case); at 5 only the four longest shortfalls remain. Users who want the stricter reading set
+`significance_review_ratio: 1`.
 
 ### P2. omitted_costs that cannot discriminate stays a review item
 
@@ -79,12 +121,25 @@ of exactly the 0.25 threshold are genuine consequences of that search. S05 (best
 multiple-testing adjustment is the textbook outcome. S07 declares one trial without a trials log; by
 docs/CONVENTIONS.md section 5 an uncontrastable declaration is NEEDS_REVIEW. All five are now expected.
 
-### P5. Autocorrelation: the single-lag band was a second 5% test (c)
+### P5. Autocorrelation: the single-lag band was a second 5% test (c, re-graded in 0.2.1)
 
-The review fired when the Ljung-Box test was significant **or** |rho_1| > 1.96 / sqrt(T). Two tests at 5% joined by
-OR have a size above 5%: on S06 (i.i.d. noise, 1,250 observations) rho_1 = 0.067 crossed the 1.96 band (0.055) while
-Ljung-Box gave p = 0.17. The single-lag band now uses 2.576 / sqrt(T) (99%), so the combined test stays close to 5%.
-The planted AR(1) case S03 (phi = 0.6) is still detected; S06 now passes.
+The review fires when the autocorrelation is significant (Ljung-Box p < 0.05 **or** |rho_1| above a band) **and** the
+naive annualised Sharpe exceeds the Lo-adjusted one by more than 10%. 0.2.0 moved the band from 1.96 / sqrt(T) to
+2.576 / sqrt(T) on the argument that two 5% tests joined by OR are oversized. The 0.2.1 measurement (seeded Monte
+Carlo, i.i.d. normal returns with a positive mean, 2,000 draws per T):
+
+```
+     T  LB only  LB or z1.96  LB or z2.576  review 1.96  review 2.576
+   250    0.054        0.103         0.064        0.024         0.015
+  1250    0.050        0.087         0.056        0.017         0.010
+'review' = the full review condition (significance AND naive Sharpe more than 10% above the Lo-adjusted).
+```
+
+The significance component was indeed oversized with 1.96 (8.7-10.3%) and is close to 5% with 2.576 (5.6-6.4%). But
+the full review condition, which also requires the inflation, had a size of only 1.7-2.4% even with 1.96, now
+1.0-1.5%. So 0.1.0's rule was not producing false reviews at an excess rate: S06 (rho_1 = 0.067 against a band of
+0.055) was an event of about 2%. The change is kept as a refinement of the significance component and re-graded from
+"bug" to "refinement"; the planted AR(1) case S03 (phi = 0.6) is still detected.
 
 ### P6. Zero cost with turnover is a genuine review item (b)
 
@@ -92,7 +147,12 @@ Seven adversarial cases trade without declaring or charging any cost. No market 
 whether the result is gross. The cases were written to test other problems, so they did not mention it; they now
 expect it. R01, whose subject is exactly this, already did.
 
-### P7. Footprints of the planted data problem (b)
+### P7. Footprints of the planted data problem (b; partly withdrawn in 0.2.1)
+
+0.2.1: the core 05 `coverage` and D03 `coverage` / `price_jumps` expectations were withdrawn. They are consequences
+already judged by `dates` and `ticker_identity`; counting them as detections contradicted rule 1, which this policy
+uses to downgrade other items (reviewer finding D2). The tool still raises them, so they reappear as unexpected
+review. The 0.2.0 text follows.
 
 - core 05 plants a price row dated 2027: the series of DDD then has 629 missing sessions to that row (coverage).
 - D03 joins two companies under one ticker with a five-month gap and a level shift: coverage reports the gap and
@@ -102,7 +162,12 @@ expect it. R01, whose subject is exactly this, already did.
 - R11 is "BYMA data without a declared calendar"; its own description says the right answer is a review item for
   the undeclared calendar, which `dates` raises.
 
-## INFO in the 0.2.0 checks
+## INFO in the 0.2.0 and 0.2.1 checks
+
+0.2.1 additions: coverage_drift drops of fields outside a declared required_inputs (rule 3); duplicates of trades
+with distinct trade ids (likely partial fills); liquidity_participation trades without volume when at least 90% of
+the notional is measured; stability_and_concentration when no concentration test is applicable (descriptive only,
+neither alert nor PASS).
 
 The new checks use INFO under the same three rules:
 
@@ -118,16 +183,20 @@ The new checks use INFO under the same three rules:
 
 ## Result
 
-| Battery | Version | NEEDS_REVIEW findings | Unexpected NEEDS_REVIEW | INFO notes | Expected detections met |
-|---|---|---|---|---|---|
-| 36 cases of 0.1.0 | 0.1.0 | 57 | **40** | - | 40 / 40 |
-| same 36 cases | 0.2.0 | 40 | **0** | 25 | 63 / 63 |
-| all 52 cases | 0.2.0 | 53 | **3** | 33 | 75 / 75 |
+Pre-registered detections (expected outcomes written before the tool ran on the case) and post-hoc expectations
+(written after seeing the output, flagged `"post_hoc": true`) are reported separately and never added together.
 
-Every detection expected in 0.1.0 is still met; 23 genuine review items became expected detections. The 3
-unexpected items left are `sharpe_significance` on lesson cases L08, L09 and L12, genuine under P1 (MinTRL far above
-the history); the lesson cases were pre-registered for other checks and are not edited after the run, so they stay
-visible as unexpected. Commands and full output: [VALIDATION_EVIDENCE.md](VALIDATION_EVIDENCE.md).
+| Battery | Version | NEEDS_REVIEW findings | Unexpected NEEDS_REVIEW | INFO notes | Pre-registered detections met | Post-hoc expectations met |
+|---|---|---|---|---|---|---|
+| 36 cases of 0.1.0 | 0.1.0 | 57 | **40** | - | 40 / 40 | - |
+| same 36 cases | 0.2.1 | 40 | **3** | 26 | 40 / 40 | 20 / 20 |
+| all 52 cases | 0.2.1 | 53 | **6** | 36 | 52 / 52 | 20 / 20 |
+
+The reduction from 40 to 3 unexpected items is mostly relabelling, not a change of the tool: 20 items are now
+expected (post hoc) and 16 are INFO. The 3 left on the old cases are the withdrawn P7 footprints; the other 3 on the
+full battery are `sharpe_significance` on lesson cases L08, L09 and L12 (genuine under P1; the lesson cases were
+pre-registered for other checks and are not edited after the run). Commands and full output:
+[VALIDATION_EVIDENCE.md](VALIDATION_EVIDENCE.md).
 
 ## Rules for future changes
 

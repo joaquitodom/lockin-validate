@@ -3,6 +3,37 @@
 All notable changes to this project are documented here. The format follows Keep a Changelog and the project uses
 semantic versioning.
 
+## [0.2.1] - 2026-10-28
+
+Fixes from the independent review of 0.2.0 (docs/REVIEW_V020.md; response in docs/REVIEW_V020_RESPONSE.md). Score
+on the reviewer's 28 pre-registered cases: 18 -> 27 (the remaining one is a defect of the reviewer's generator).
+
+### Fixed
+- coverage_drift: periods without any row count as 0% coverage up to the last period the strategy uses (it returned
+  PASS when the vendor stopped delivering entirely).
+- dividend_corporate_actions: no PASS when no adjusted / as-traded comparison was possible (NOT_EXECUTABLE); new
+  ex-date drop test on the adjusted series; frozen prices are also searched from the session after the ex-date.
+- input_sufficiency: required_inputs matched case-insensitively; CONFIRMED_ERROR only when the declared minimum is
+  broken even counting inputs absent from every table as present; as-of fundamentals older than
+  conventions.max_input_age_days (400) count as missing.
+- protocol_integrity: purpose synonyms (holdout, oos, repro, ...) mapped and logged; an unrecognised purpose is a
+  review item, never a confirmed error; corrected title.
+- liquidity_participation: participation per ticker-day (sliced orders judged together); trades without volume are
+  disclosed and below 90% of notional measured there is no PASS.
+- benchmark_fit: a benchmark declared equal-weighted is contrasted with the equal-weight universe computed from
+  prices.
+- conditional_rule_activation: every declared rule is reported; a rule never computed in sample is a review item.
+- stability_and_concentration: the PASS title names only the tests that ran; INFO when none applies.
+- duplicates: repeated trades with distinct trade ids are INFO (partial fills), not a review item.
+
+### Changed
+- Battery reporting: pre-registered detections and post-hoc expectations (`"post_hoc": true`) are reported separately;
+  three post-hoc P7 expectations withdrawn (docs/CASE_CHANGES.md).
+- docs/ALERT_POLICY.md: sensitivity of the P1 threshold shown; P5 size measured by simulation
+  (docs/simulations/alert_policy_checks.py) and re-graded from bug to refinement.
+- BYMA: 2026-11-09 and 2026-07-10 relabelled `verified = partial`.
+- New conventions: max_input_age_days, min_volume_coverage, benchmark_universe_tracking_error.
+
 ## [0.2.0] - 2026-10-28
 
 ### Added

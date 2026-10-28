@@ -92,9 +92,13 @@ written by an independent reviewer role, 7 statistical cases (best-of-200 noise 
 genuine signal must pass it, autocorrelated returns inflate the naive Sharpe, under-declared trials, short track record,
 LLM before its cutoff...), 6 data cases (fundamentals before filing, survivorship, recycled ticker, split not
 applied, reference mismatch, clean extended inputs) and 16 lesson cases for the 0.2.0 checks (a planted positive and
-a clean negative per family, expectations committed before the checks existed). Current result: 52 of 52 cases with
-all expected outcomes, no false positive, and 3 unexpected review items (40 in 0.1.0; see
-[docs/ALERT_POLICY.md](docs/ALERT_POLICY.md) and [docs/VALIDATION_EVIDENCE.md](docs/VALIDATION_EVIDENCE.md)). The cases are regenerated deterministically by
+a clean negative per family, expectations committed before the checks existed). Current result (0.2.1): 52 of 52
+cases with all expected outcomes, no false positive; **pre-registered detections 52 of 52**, reported apart from the
+**20 expectations added after seeing the output** (post hoc, all met, not counted as detections); 6 unexpected review
+items (40 in 0.1.0, mostly reduced by relabelling: see [docs/ALERT_POLICY.md](docs/ALERT_POLICY.md)). An independent
+reviewer's 28 pre-registered cases (`cases_review_v020/`, run with `lockin-validate cases --dir cases_review_v020`):
+27 of 28 (18 on 0.2.0; [docs/REVIEW_V020_RESPONSE.md](docs/REVIEW_V020_RESPONSE.md)). Details in
+[docs/VALIDATION_EVIDENCE.md](docs/VALIDATION_EVIDENCE.md). The cases are regenerated deterministically by
 `cases/_generators/*.py`, which never import the package.
 
 ## Independence of the verification
