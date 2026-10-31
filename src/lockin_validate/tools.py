@@ -42,5 +42,13 @@ def list_checks_tool() -> dict[str, Any]:
     return {k: {"block": v["block"], "title": v["title"]} for k, v in CHECKS.items()}
 
 
+def list_use_cases_tool() -> list[dict[str, Any]]:
+    """The use-case modules (what each validates, who it is for, inputs and checks)."""
+    from . import usecases
+
+    usecases.load_all()
+    return usecases.describe()
+
+
 def _exists(p: str) -> bool:
     return Path(p).exists()

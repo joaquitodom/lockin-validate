@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from .inputs import REQUIREMENTS
+from .inputs import DATE_COLUMNS, FILES, NUMERIC_COLUMNS, REQUIREMENTS, SCHEMA
 
 CSV_TEMPLATES: dict[str, str] = {
     "prices.csv": "date,ticker,open,high,low,close,volume,adjusted,available_from\n"
@@ -98,13 +98,46 @@ LLM_CHECKLIST = {
 }
 
 
+def _example_value(table: str, col: str) -> str:
+    if col in DATE_COLUMNS.get(table, []) or col.endswith(("_date", "_time", "timestamp")) or col in ("date", "timestamp"):
+        return "2024-01-02"
+    if col in NUMERIC_COLUMNS.get(table, []) or col in ("weight", "value", "prediction", "actual", "forecast", "pnl",
+                                                         "return", "signal", "quantity", "price", "probability"):
+        return "0.0"
+    if col == "split":
+        return "train"
+    if col == "side":
+        return "buy"
+    return "EXAMPLE"
+
+
+def usecase_templates() -> dict[str, str]:
+    """One header + one example row for every table declared by a registered use-case module."""
+    from . import usecases
+
+    usecases.load_all()
+    out: dict[str, str] = {}
+    for uc in usecases.REGISTRY.values():
+        for table, fname in uc.files.items():
+            if fname in CSV_TEMPLATES or not fname.endswith(".csv"):
+                continue
+            sch = SCHEMA.get(table, {})
+            cols = list(sch.get("required", [])) + list(sch.get("optional", []))
+            if not cols:
+                continue
+            out[fname] = ",".join(cols) + "\n" + ",".join(_example_value(table, c) for c in cols) + "\n"
+    return out
+
+
 def scaffold(target: str | Path, force: bool = False) -> list[Path]:
     d = Path(target)
     if d.exists() and any(d.iterdir()) and not force:
         raise FileExistsError(f"{d} is not empty (use --force to write anyway)")
     d.mkdir(parents=True, exist_ok=True)
     written = []
-    for name, content in CSV_TEMPLATES.items():
+    templates = dict(CSV_TEMPLATES)
+    templates.update(usecase_templates())
+    for name, content in templates.items():
         p = d / name
         p.write_text(content, encoding="utf-8")
         written.append(p)
@@ -116,7 +149,8 @@ def scaffold(target: str | Path, force: bool = False) -> list[Path]:
     lines = ["# Input package template", "",
              "Every file here contains ONE example row: replace it with your data or delete the file. No file is "
              "mandatory; checks that lack inputs are reported as NOT_EXECUTABLE with the missing input.", "",
-             "Full specification: docs/INPUT_SPEC.md in the lockin-validate repository.", "",
+             "Full specification: docs/INPUT_SPEC.md in the lockin-validate repository; the tables of the use-case "
+             "modules (signals, ml, risk, forecast, portfolio, live) are described in docs/usecases/.", "",
              "| Check | Required inputs | Optional inputs |", "|---|---|---|"]
     for k, v in REQUIREMENTS.items():
         lines.append(f"| {k} | {', '.join(v['required']) or '-'} | {', '.join(v['optional']) or '-'} |")

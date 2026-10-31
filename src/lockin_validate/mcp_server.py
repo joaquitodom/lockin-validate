@@ -1,6 +1,6 @@
 """Minimal MCP server (stdio) exposing the review to Claude and other agents.
 
-Tools: ``run_validation`` (review a local input folder), ``explain_check`` and ``list_checks``.
+Tools: ``run_validation`` (review a local input folder), ``explain_check``, ``list_checks`` and ``list_use_cases``.
 Requires the optional extra: ``pip install "lockin-validate[mcp]"``. Start with ``lockin-validate-mcp``.
 The tools read local files only and send nothing anywhere.
 """
@@ -43,6 +43,13 @@ def build_server():
     def list_checks() -> dict:
         """List every check id with its block and title."""
         return tools.list_checks_tool()
+
+    @server.tool()
+    def list_use_cases() -> list:
+        """List the use-case modules (alpha signals, ML models, VaR / ES risk models, point forecasts, portfolio
+        allocations, live track record vs backtest): what each validates, who it is for, its input files and
+        checks."""
+        return tools.list_use_cases_tool()
 
     return server
 
