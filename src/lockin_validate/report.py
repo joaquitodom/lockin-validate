@@ -118,6 +118,12 @@ def render_markdown(res: AuditResult) -> str:
         L += ["Conventions used: " + "; ".join(f"{k}={fmt(v['value'])} ({v['source']})" for k, v in cu.items()) + ".", ""]
     if s.get("reconstruction_conventions"):
         L += ["Reconstruction conventions: " + fmt(s["reconstruction_conventions"]) + ".", ""]
+    uc = s.get("use_cases") or {}
+    if uc:
+        off = uc.get("not_run_activated_by") or {}
+        L += ["Use-case modules run: " + (", ".join(uc.get("ran") or []) or "none (core only)")
+              + (". Not run: " + "; ".join(f"{k} (add {' or '.join(v)})" for k, v in off.items()) + "." if off else "."),
+              ""]
     L += ["## Inputs and versions (manifest)", "", "| Input | File | Present | Rows | sha256 |", "|---|---|---|---|---|"]
     for k, v in res.manifest.get("files", {}).items():
         L.append(f"| {k} | {v.get('file')} | {'yes' if v.get('present') else 'no'} | {v.get('rows', '-')} | "
