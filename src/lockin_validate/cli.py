@@ -18,7 +18,7 @@ import logging
 import sys
 from pathlib import Path
 
-from . import __version__
+from . import __version__, usecases
 from .auditor import DISCLAIMER, run
 from .cases import default_cases_root, per_check_table, render_battery, run_battery
 from .catalog import CHECKS, render_explain
@@ -38,6 +38,7 @@ def _utf8() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     _utf8()
+    usecases.load_all()
     p = argparse.ArgumentParser(prog="lockin-validate",
                                 description="Offline validation of quantitative strategies and their backtests.")
     p.add_argument("--version", action="version", version=f"lockin-validate {__version__}")
@@ -47,6 +48,8 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("--out", required=True, help="output folder (must not be inside the input folder)")
     r.add_argument("--profile", default=None, choices=sorted(PROFILES))
     r.add_argument("--previous-manifest", default=None, help="report.json of a previous run, to detect silent changes")
+    r.add_argument("--use-case", action="append", default=None, dest="use_cases",
+                   help="run only this use-case module (repeatable; default: all; see `usecases`)")
     r.add_argument("-v", "--verbose", action="store_true")
     i = sub.add_parser("init", help="scaffold an input package template")
     i.add_argument("dir")
@@ -58,12 +61,15 @@ def main(argv: list[str] | None = None) -> int:
     e = sub.add_parser("explain", help="explain a check")
     e.add_argument("check_id")
     sub.add_parser("checks", help="list the checks")
+    sub.add_parser("usecases", help="list the use-case modules (what each validates, inputs, checks)")
     a = p.parse_args(argv)
+    usecases.load_all()
     logging.basicConfig(level=logging.INFO if getattr(a, "verbose", False) else logging.WARNING,
                         format="%(levelname)s %(name)s: %(message)s")
     if a.cmd == "run":
         try:
-            res, paths = run(a.input_dir, a.out, profile=a.profile, previous_manifest=a.previous_manifest)
+            res, paths = run(a.input_dir, a.out, profile=a.profile, previous_manifest=a.previous_manifest,
+                             use_cases=a.use_cases)
         except (InputError, ValueError, FileNotFoundError) as ex:
             print(f"error: {ex}", file=sys.stderr)
             return 2
@@ -92,7 +98,16 @@ def main(argv: list[str] | None = None) -> int:
         return 0 if a.check_id in CHECKS else 2
     if a.cmd == "checks":
         for k, v in CHECKS.items():
-            print(f"{k:28} {v['block']:15} {v['title']}")
+            print(f"{k:32} {v['block']:12} {v['title']}")
+        return 0
+    if a.cmd == "usecases":
+        print("Core (always on): backtest of a systematic trading strategy; blocks input, data, reconstruction, "
+              "strategy, statistics.")
+        for u in usecases.describe():
+            print(f"\n{u['name']}: {u['title']}  [{u['audience']}]")
+            print(f"  {u['description']}")
+            print(f"  inputs: {', '.join(u['inputs']) or '-'}")
+            print(f"  checks: {', '.join(u['checks'])}")
         return 0
     root = Path(a.dir) if a.dir else default_cases_root()
     if not root.is_dir():

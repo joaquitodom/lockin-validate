@@ -11,7 +11,7 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
-from . import __version__
+from . import __version__, usecases
 from .checks.benchmark import check_benchmark_fit
 from .checks.coverage_inputs import check_coverage_drift, check_input_sufficiency
 from .checks.data_integrity import run_data_checks
@@ -75,8 +75,13 @@ def _diff_manifest(old: dict, new: dict) -> list[dict[str, Any]]:
 
 
 def audit(input_dir: str | Path, profile: str | None = None, today: date | None = None,
-          previous_manifest: str | Path | dict | None = None) -> AuditResult:
-    """Run the full review of one input folder and return the result (no files written)."""
+          previous_manifest: str | Path | dict | None = None, use_cases: list[str] | None = None) -> AuditResult:
+    """Run the full review of one input folder and return the result (no files written).
+
+    ``use_cases`` restricts the use-case modules that run (default: all registered; each reports NOT_EXECUTABLE
+    when its inputs are absent).
+    """
+    usecases.load_all()
     pkg = read_package(input_dir, profile)
     res = AuditResult()
     res.meta = {"tool": "lockin-validate", "tool_version": __version__,
@@ -109,6 +114,8 @@ def audit(input_dir: str | Path, profile: str | None = None, today: date | None 
     check_conditional_rules(pkg, res)
     series = strategy_returns(pkg, rec)
     check_llm_lookahead(pkg, res, series.returns if series else None, series.dates if series else None)
+    ran = usecases.run_usecases(pkg, res, use_cases)
+    res.metrics["use_cases"] = {"ran": ran, "active": [u.name for u in usecases.active_usecases(pkg)]}
 
     if previous_manifest is not None:
         old = previous_manifest if isinstance(previous_manifest, dict) else json.loads(
@@ -142,6 +149,7 @@ def audit(input_dir: str | Path, profile: str | None = None, today: date | None 
         "requirements_per_check": REQUIREMENTS,
         "reconstruction_conventions": (res.metrics.get("reconstruction") or {}).get("conventions"),
         "review_date": str(pkg.conv("review_date") or (today or date.today())),
+        "use_cases": res.metrics.get("use_cases"),
     }
     res.limitations = list(FIXED_LIMITATIONS)
     for f in res.by_status(NOT_EXECUTABLE):
@@ -151,13 +159,14 @@ def audit(input_dir: str | Path, profile: str | None = None, today: date | None 
 
 
 def run(input_dir: str | Path, out_dir: str | Path, profile: str | None = None, today: date | None = None,
-        previous_manifest: str | Path | dict | None = None) -> tuple[AuditResult, dict[str, Path]]:
+        previous_manifest: str | Path | dict | None = None,
+        use_cases: list[str] | None = None) -> tuple[AuditResult, dict[str, Path]]:
     """Audit and write the reports (REPORT.md, report.json, report.html) to ``out_dir``."""
     input_dir = Path(input_dir).resolve()
     out_dir = Path(out_dir).resolve()
     if out_dir == input_dir or input_dir in out_dir.parents:
         raise ValueError("the output folder cannot be inside the input folder (originals are opened read-only and are "
                          "never mixed with reports)")
-    res = audit(input_dir, profile, today, previous_manifest)
+    res = audit(input_dir, profile, today, previous_manifest, use_cases)
     paths = write_reports(res, out_dir)
     return res, paths

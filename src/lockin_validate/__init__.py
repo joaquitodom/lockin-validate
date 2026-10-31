@@ -13,7 +13,10 @@ from __future__ import annotations
 
 __version__ = "0.2.1"
 
+from . import usecases as _usecases  # noqa: E402
 from .auditor import DISCLAIMER, audit, run  # noqa: E402
+
+_usecases.load_all()
 from .findings import (  # noqa: E402
     CONFIRMED_ERROR,
     INFO,

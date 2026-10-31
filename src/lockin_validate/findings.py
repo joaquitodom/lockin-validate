@@ -41,7 +41,9 @@ STATUS_TEXT = {
 PRIORITIES = ["high", "medium", "low"]
 MAX_EVIDENCE = 20  # evidence rows kept per finding in the JSON report
 
-BLOCKS = ["input", "data", "reconstruction", "strategy", "statistics"]
+BLOCKS = ["input", "data", "reconstruction", "strategy", "statistics",
+          # use-case modules (src/lockin_validate/usecases/)
+          "signals", "ml", "risk", "forecast", "portfolio", "live"]
 
 
 @dataclass
