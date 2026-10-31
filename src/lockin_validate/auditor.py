@@ -78,8 +78,8 @@ def audit(input_dir: str | Path, profile: str | None = None, today: date | None 
           previous_manifest: str | Path | dict | None = None, use_cases: list[str] | None = None) -> AuditResult:
     """Run the full review of one input folder and return the result (no files written).
 
-    ``use_cases`` restricts the use-case modules that run (default: all registered; each reports NOT_EXECUTABLE
-    when its inputs are absent).
+    ``use_cases`` selects the use-case modules that run (default: those whose input tables are present;
+    ``["all"]`` forces every module, each reporting NOT_EXECUTABLE when its inputs are absent).
     """
     usecases.load_all()
     pkg = read_package(input_dir, profile)
@@ -114,8 +114,7 @@ def audit(input_dir: str | Path, profile: str | None = None, today: date | None 
     check_conditional_rules(pkg, res)
     series = strategy_returns(pkg, rec)
     check_llm_lookahead(pkg, res, series.returns if series else None, series.dates if series else None)
-    ran = usecases.run_usecases(pkg, res, use_cases)
-    res.metrics["use_cases"] = {"ran": ran, "active": [u.name for u in usecases.active_usecases(pkg)]}
+    res.metrics["use_cases"] = usecases.run_usecases(pkg, res, use_cases)
 
     if previous_manifest is not None:
         old = previous_manifest if isinstance(previous_manifest, dict) else json.loads(
@@ -154,6 +153,10 @@ def audit(input_dir: str | Path, profile: str | None = None, today: date | None 
     res.limitations = list(FIXED_LIMITATIONS)
     for f in res.by_status(NOT_EXECUTABLE):
         res.limitations.append(f"{f.check}: not executable ({f.reason}).")
+    uc = res.metrics.get("use_cases") or {}
+    for name, files in (uc.get("not_run_activated_by") or {}).items():
+        res.limitations.append(f"use case {name} did not run: add {' or '.join(files)} to activate it "
+                               f"(or force it with --use-case {name}).")
     log.info("audit finished: %s", res.counts())
     return res
 

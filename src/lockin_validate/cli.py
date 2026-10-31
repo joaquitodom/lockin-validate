@@ -49,7 +49,7 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("--profile", default=None, choices=sorted(PROFILES))
     r.add_argument("--previous-manifest", default=None, help="report.json of a previous run, to detect silent changes")
     r.add_argument("--use-case", action="append", default=None, dest="use_cases",
-                   help="run only this use-case module (repeatable; default: all; see `usecases`)")
+                   help="force this use-case module (repeatable; 'all' forces every one; default: the modules whose input files are present; see `usecases`)")
     r.add_argument("-v", "--verbose", action="store_true")
     i = sub.add_parser("init", help="scaffold an input package template")
     i.add_argument("dir")

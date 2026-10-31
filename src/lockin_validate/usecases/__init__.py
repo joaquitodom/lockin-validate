@@ -96,21 +96,32 @@ def active_usecases(pkg: Any) -> list[UseCase]:
     return [uc for uc in REGISTRY.values() if any(pkg.has(t) for t in uc.detect_files)]
 
 
-def run_usecases(pkg: Any, res: AuditResult, only: list[str] | None = None) -> list[str]:
-    """Run every registered use case (``only`` restricts by name). Returns the names that ran.
+def run_usecases(pkg: Any, res: AuditResult, only: list[str] | None = None) -> dict[str, Any]:
+    """Run the use-case modules and return a scope summary.
 
-    A use case whose inputs are absent still runs: its checks report NOT_EXECUTABLE with the missing input,
-    exactly like the core checks, so the report lists what could have been verified with more data.
+    Default: only the modules whose detection tables are present run (a core-only package gets no use-case
+    noise). ``only`` forces a list of modules by name (``["all"]`` runs every registered one); a forced module
+    whose inputs are absent reports every check as NOT_EXECUTABLE with the missing input, like the core.
     """
+    if only and "all" in only:
+        selected = list(REGISTRY.values())
+    elif only:
+        unknown = sorted(set(only) - set(REGISTRY))
+        if unknown:
+            raise ValueError(f"unknown use case(s) {', '.join(unknown)}; available: {', '.join(REGISTRY)}")
+        selected = [REGISTRY[n] for n in only]
+    else:
+        selected = active_usecases(pkg)
     ran = []
-    for name, uc in REGISTRY.items():
-        if only and name not in only:
-            continue
+    for uc in selected:
         if uc.run is None:
             continue
         uc.run(pkg, res)
-        ran.append(name)
-    return ran
+        ran.append(uc.name)
+    inactive = {uc.name: [inputs.FILES.get(t, t) for t in uc.detect_files] for uc in REGISTRY.values()
+                if uc.name not in ran}
+    return {"ran": ran, "active": [u.name for u in active_usecases(pkg)],
+            "not_run_activated_by": inactive}
 
 
 def load_all() -> None:
