@@ -1,0 +1,27 @@
+{
+  "description": "Only the bottom quintile earns a (negative) return: the top-minus-bottom spread is large and significant but comes entirely from the short leg, which a long-only book cannot hold.",
+  "origin": "usecase",
+  "use_case": "signals",
+  "must_include": [
+    {
+      "check": "signal_quantile_spread",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "signal_quantile_spread",
+      "status": "INFO"
+    }
+  ],
+  "text_must_contain": [
+    {
+      "check": "signal_quantile_spread",
+      "text": "long leg"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "Spread t-stat 6.6 but the long leg contributes 5% of it; rules.yaml declares short_selling: false."
+}

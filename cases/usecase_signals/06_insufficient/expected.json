@@ -1,0 +1,61 @@
+{
+  "description": "Three decision dates with a full cross-section: the rows align, but no statistic can be concluded (signal_min_periods = 24).",
+  "origin": "usecase",
+  "use_case": "signals",
+  "must_include": [
+    {
+      "check": "signal_forward_alignment",
+      "status": [
+        "PASS",
+        "INFO"
+      ]
+    },
+    {
+      "check": "signal_predictive_power",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "signal_quantile_spread",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "signal_turnover",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "signal_lookahead_hint",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "signal_predictive_power",
+      "status": "PASS"
+    },
+    {
+      "check": "signal_predictive_power",
+      "status": "INFO"
+    },
+    {
+      "check": "signal_predictive_power",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "signal_quantile_spread",
+      "status": "INFO"
+    },
+    {
+      "check": "signal_turnover",
+      "status": "INFO"
+    }
+  ],
+  "errors_only_from": []
+}

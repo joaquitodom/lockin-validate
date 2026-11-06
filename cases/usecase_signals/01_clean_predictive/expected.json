@@ -1,0 +1,82 @@
+{
+  "description": "Persistent AR(1) signal that drives the return two sessions after the decision: a genuine, modest, decaying alpha. Nothing should be flagged.",
+  "origin": "usecase",
+  "use_case": "signals",
+  "profile": "signal_research",
+  "must_include": [
+    {
+      "check": "signal_forward_alignment",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "signal_predictive_power",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "signal_quantile_spread",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "signal_turnover",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "signal_lookahead_hint",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "signal_forward_alignment",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "signal_forward_alignment",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "signal_predictive_power",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "signal_predictive_power",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "signal_quantile_spread",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "signal_quantile_spread",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "signal_turnover",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "signal_turnover",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "signal_lookahead_hint",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "signal_lookahead_hint",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "Planted IC at h=1 about 0.076 (t 8.3); persistent signal (rank autocorrelation about 0.9), so turnover is low and no horizon flips sign."
+}

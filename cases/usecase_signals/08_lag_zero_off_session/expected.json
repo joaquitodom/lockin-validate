@@ -1,0 +1,16 @@
+{
+  "description": "rules.yaml declares signal_lag_sessions: 0 (entry at the decision session's close) but one decision in five is dated on a Saturday: its entry would be Monday's close, a price that was not known at the decision.",
+  "origin": "usecase",
+  "use_case": "signals",
+  "must_include": [
+    {
+      "check": "signal_forward_alignment",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "errors_only_from": [
+    "signal_forward_alignment"
+  ]
+}

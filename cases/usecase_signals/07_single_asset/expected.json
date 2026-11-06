@@ -1,0 +1,45 @@
+{
+  "description": "A single asset: there is no cross-section, so the predictive power must be computed as a time-series correlation (and said so), the quantile and turnover checks cannot run, and nothing may raise.",
+  "origin": "usecase",
+  "use_case": "signals",
+  "must_include": [
+    {
+      "check": "signal_predictive_power",
+      "status": [
+        "NEEDS_REVIEW",
+        "INFO"
+      ]
+    },
+    {
+      "check": "signal_quantile_spread",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "signal_turnover",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "signal_lookahead_hint",
+      "status": [
+        "NEEDS_REVIEW",
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "signal_predictive_power",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "signal_predictive_power",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "Time-series Spearman between the signal and the return two sessions later: 0.14."
+}

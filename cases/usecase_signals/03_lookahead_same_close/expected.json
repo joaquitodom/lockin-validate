@@ -1,0 +1,25 @@
+{
+  "description": "Adversarial: the alignment is formally correct (lag 1), but the score is the return of the decision session itself, i.e. it was computed with that session's close. The IC at h=0 dwarfs the IC at h=1.",
+  "origin": "usecase",
+  "use_case": "signals",
+  "must_include": [
+    {
+      "check": "signal_lookahead_hint",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "signal_lookahead_hint",
+      "status": "INFO"
+    },
+    {
+      "check": "signal_predictive_power",
+      "status": "INFO"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "IC with the same-session return 1.00 vs -0.011 at h=1."
+}

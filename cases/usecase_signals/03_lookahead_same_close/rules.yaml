@@ -1,0 +1,9 @@
+strategy: alpha signal under research (no trades yet)
+signal:
+  column: signal
+  order: desc
+  description: score known at the decision date
+conventions:
+  periods_per_year: 252
+  review_date: '2026-10-20'
+  short_selling: false

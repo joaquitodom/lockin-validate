@@ -1,0 +1,21 @@
+{
+  "description": "Signal re-drawn independently every session while the declared horizons are 21 and 42 sessions and the rebalance is monthly: the signal cannot be held for its horizon.",
+  "origin": "usecase",
+  "use_case": "signals",
+  "must_include": [
+    {
+      "check": "signal_turnover",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "signal_turnover",
+      "status": "INFO"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "Lag-1 rank autocorrelation +0.02 with a 21-session primary horizon and a monthly rebalance declared."
+}
