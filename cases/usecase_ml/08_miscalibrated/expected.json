@@ -1,0 +1,28 @@
+{
+  "description": "Probabilities squeezed to 0.45-0.55 (ranking intact, AUC unchanged) so the reliability curve is flat: ECE far above 0.05.",
+  "origin": "usecase",
+  "use_case": "ml",
+  "profile": "ml_classification",
+  "must_include": [
+    {
+      "check": "ml_calibration",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "ml_split_leakage",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "ml_calibration",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "ECE computed by the generator: 0.228"
+}

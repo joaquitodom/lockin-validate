@@ -1,0 +1,29 @@
+{
+  "description": "Training samples end on 2021-01-29 and the test starts on 2021-02-01, but the 20-day label window of the last 12 training samples reaches into the test period (no purging): looks clean by timestamp, leaks by label.",
+  "origin": "usecase",
+  "use_case": "ml",
+  "profile": "ml_classification",
+  "must_include": [
+    {
+      "check": "ml_split_leakage",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "ml_split_leakage",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "ml_split_leakage"
+  ],
+  "text_must_contain": [
+    {
+      "check": "ml_split_leakage",
+      "text": "purging"
+    }
+  ]
+}

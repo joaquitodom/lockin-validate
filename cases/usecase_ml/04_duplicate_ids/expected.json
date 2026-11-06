@@ -1,0 +1,29 @@
+{
+  "description": "30 sample ids appear both in the training and in the test split.",
+  "origin": "usecase",
+  "use_case": "ml",
+  "profile": "ml_classification",
+  "must_include": [
+    {
+      "check": "ml_split_leakage",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "ml_split_leakage",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "ml_split_leakage"
+  ],
+  "text_must_contain": [
+    {
+      "check": "ml_split_leakage",
+      "text": "more than one split"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "description": "Adversarial: purged 5-fold cross-validation with a 10-day embargo. Every test block sits inside the overall training range, so a naive window check would scream; compared per fold it is legitimate and must PASS.",
+  "origin": "usecase",
+  "use_case": "ml",
+  "profile": "ml_classification",
+  "must_include": [
+    {
+      "check": "ml_split_leakage",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "ml_split_leakage",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "ml_split_leakage",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "ml_target_leakage",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "ml_target_leakage",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "ml_evaluation_protocol",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "ml_evaluation_protocol",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "ml_split_leakage",
+      "text": "K-fold"
+    }
+  ]
+}

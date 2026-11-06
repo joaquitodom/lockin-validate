@@ -1,0 +1,32 @@
+{
+  "description": "Clean temporal split; the model memorised the training labels (AUC ~0.95) and is random on the test split (AUC ~0.52).",
+  "origin": "usecase",
+  "use_case": "ml",
+  "profile": "ml_classification",
+  "must_include": [
+    {
+      "check": "ml_overfit_gap",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "ml_split_leakage",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "ml_overfit_gap",
+      "status": "INFO"
+    },
+    {
+      "check": "ml_overfit_gap",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "train AUC 1.000, test AUC 0.553"
+}

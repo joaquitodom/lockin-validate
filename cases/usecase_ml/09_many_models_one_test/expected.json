@@ -1,0 +1,33 @@
+{
+  "description": "Six model versions scored on the same single test split (the holdout was reused for selection).",
+  "origin": "usecase",
+  "use_case": "ml",
+  "profile": "ml_classification",
+  "must_include": [
+    {
+      "check": "ml_evaluation_protocol",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "ml_split_leakage",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "ml_evaluation_protocol",
+      "status": "INFO"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "ml_evaluation_protocol",
+      "text": "6 models"
+    }
+  ]
+}

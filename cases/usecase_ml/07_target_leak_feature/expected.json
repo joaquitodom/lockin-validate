@@ -1,0 +1,37 @@
+{
+  "description": "Feature x3 equals the label plus N(0, 0.05) noise: it separates the classes perfectly on the training split. The name gives nothing away. Must be NEEDS_REVIEW (high), not CONFIRMED_ERROR.",
+  "origin": "usecase",
+  "use_case": "ml",
+  "profile": "ml_classification",
+  "must_include": [
+    {
+      "check": "ml_target_leakage",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "ml_split_leakage",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "ml_target_leakage",
+      "status": "PASS"
+    },
+    {
+      "check": "ml_target_leakage",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "ml_target_leakage",
+      "text": "x3"
+    }
+  ]
+}

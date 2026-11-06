@@ -1,0 +1,28 @@
+{
+  "description": "Covariate shift: the main feature moves by 1.2 standard deviations in the test split, so the score distribution and the base rate shift (PSI > 0.25). Not an error of the model, but a review item.",
+  "origin": "usecase",
+  "use_case": "ml",
+  "profile": "ml_classification",
+  "must_include": [
+    {
+      "check": "ml_population_stability",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "ml_split_leakage",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "ml_population_stability",
+      "status": "INFO"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "PSI of the score computed by the generator: 1.169 (> 0.25, high priority)"
+}

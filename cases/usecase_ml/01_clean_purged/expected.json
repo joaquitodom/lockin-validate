@@ -1,0 +1,96 @@
+{
+  "description": "Temporal split with label_end and a 10-day embargo respected; calibrated honest classifier; features with zero availability lag. Nothing may alert.",
+  "origin": "usecase",
+  "use_case": "ml",
+  "profile": "ml_classification",
+  "must_include": [
+    {
+      "check": "ml_split_leakage",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "ml_overfit_gap",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "ml_calibration",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "ml_population_stability",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "ml_target_leakage",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "ml_evaluation_protocol",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "ml_split_leakage",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "ml_split_leakage",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "ml_overfit_gap",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "ml_overfit_gap",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "ml_calibration",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "ml_calibration",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "ml_population_stability",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "ml_population_stability",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "ml_target_leakage",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "ml_target_leakage",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "ml_evaluation_protocol",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "ml_evaluation_protocol",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "honest calibrated model, train AUC 0.818, test AUC 0.804"
+}

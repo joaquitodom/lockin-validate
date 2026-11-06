@@ -1,0 +1,3 @@
+feature,available_from_lag_days,source
+x1,0,prices
+x2,0,fundamentals

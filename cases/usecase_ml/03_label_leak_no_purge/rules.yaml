@@ -1,0 +1,3 @@
+model: synthetic model for the ml use-case battery
+conventions:
+  ml_embargo_days: 10

@@ -1,0 +1,90 @@
+{
+  "description": "Honest return-forecast regression (prediction = true conditional mean) on a clean temporal split; the overfit gap is an INFO table and calibration is not applicable.",
+  "origin": "usecase",
+  "use_case": "ml",
+  "profile": "ml_regression",
+  "must_include": [
+    {
+      "check": "ml_overfit_gap",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "ml_calibration",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "ml_split_leakage",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "ml_target_leakage",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "ml_split_leakage",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "ml_split_leakage",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "ml_overfit_gap",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "ml_overfit_gap",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "ml_calibration",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "ml_calibration",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "ml_population_stability",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "ml_population_stability",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "ml_target_leakage",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "ml_target_leakage",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "ml_evaluation_protocol",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "ml_evaluation_protocol",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "ml_calibration",
+      "text": "calibration applies to probabilistic classifiers"
+    }
+  ],
+  "comment": "R2 train 0.499, test 0.548"
+}

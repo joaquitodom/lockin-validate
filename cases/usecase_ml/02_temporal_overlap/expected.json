@@ -1,0 +1,29 @@
+{
+  "description": "500 test samples dated inside the 2018-2020 training window (random split of a time series).",
+  "origin": "usecase",
+  "use_case": "ml",
+  "profile": "ml_classification",
+  "must_include": [
+    {
+      "check": "ml_split_leakage",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "ml_split_leakage",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "ml_split_leakage"
+  ],
+  "text_must_contain": [
+    {
+      "check": "ml_split_leakage",
+      "text": "inside the training window"
+    }
+  ]
+}
