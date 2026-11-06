@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from .inputs import DATE_COLUMNS, FILES, NUMERIC_COLUMNS, REQUIREMENTS, SCHEMA
+from .inputs import DATE_COLUMNS, NUMERIC_COLUMNS, REQUIREMENTS, SCHEMA
 
 CSV_TEMPLATES: dict[str, str] = {
     "prices.csv": "date,ticker,open,high,low,close,volume,adjusted,available_from\n"
