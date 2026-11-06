@@ -1,0 +1,54 @@
+{
+  "description": "Insufficient data: only 30 live days; nothing can be concluded (no PASS anywhere on the statistical checks).",
+  "origin": "usecase",
+  "use_case": "live",
+  "must_include": [
+    {
+      "check": "live_period_integrity",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "live_performance_decay",
+      "status": [
+        "INFO",
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "live_structural_break",
+      "status": [
+        "INFO",
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": [
+        "INFO",
+        "NOT_EXECUTABLE"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "live_performance_decay",
+      "status": "PASS"
+    },
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": "PASS"
+    },
+    {
+      "check": "live_period_integrity",
+      "status": "PASS"
+    },
+    {
+      "check": "live_period_integrity",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "30 live days: overlap below live_min_periods = 60 (integrity NEEDS_REVIEW); the decay and tracking checks may describe but must not PASS."
+}

@@ -1,0 +1,10 @@
+strategy: synthetic live record against its backtest
+conventions:
+  periods_per_year: 252
+  review_date: '2026-10-20'
+live:
+  start: 2024-10-31
+  backtest_end: 2024-10-30
+  declared_sharpe: 1.2
+  declared_annual_return: 0.11599
+  declared_max_drawdown: -0.116264

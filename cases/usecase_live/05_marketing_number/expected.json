@@ -1,0 +1,23 @@
+{
+  "description": "The marketing Sharpe (1.8) is not the one of the series delivered (1.1); the live record itself tracks the shadow backtest.",
+  "origin": "usecase",
+  "use_case": "live",
+  "must_include": [
+    {
+      "check": "live_declared_vs_realised",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "errors_only_from": [
+    "live_declared_vs_realised"
+  ],
+  "text_must_contain": [
+    {
+      "check": "live_declared_vs_realised",
+      "text": "1.8"
+    }
+  ],
+  "comment": "rules.yaml live.declared_sharpe = 1.8 while returns.csv over the backtest period gives exactly 1.1 (arithmetic, 252, ddof 1); annual return and max drawdown are declared correctly."
+}

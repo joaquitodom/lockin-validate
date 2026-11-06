@@ -1,0 +1,72 @@
+{
+  "description": "Adversarial-legitimate: two live accounts with AUM, two rows per date; must aggregate, not alert on duplicates.",
+  "origin": "usecase",
+  "use_case": "live",
+  "must_include": [
+    {
+      "check": "live_period_integrity",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": [
+        "PASS",
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "live_period_integrity",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_period_integrity",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "live_performance_decay",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_performance_decay",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "live_structural_break",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_structural_break",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "live_execution_quality",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_execution_quality",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "live_declared_vs_realised",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_declared_vs_realised",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "Two rows per date (one per account) look like duplicates but are not: the (date, account) key is unique and the module aggregates by AUM."
+}

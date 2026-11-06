@@ -1,0 +1,31 @@
+{
+  "description": "The edge decayed: five years of backtest at Sharpe 2.0 and 1.5 years live at Sharpe 0.0 (the shadow backtest tracks live, so the model itself stopped working).",
+  "origin": "usecase",
+  "use_case": "live",
+  "must_include": [
+    {
+      "check": "live_performance_decay",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "live_structural_break",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "live_performance_decay",
+      "status": "PASS"
+    },
+    {
+      "check": "live_structural_break",
+      "status": "INFO"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "Backtest Sharpe exactly 2.0 on 1260 days, live exactly 0.0 on 378 days: PSR of the live Sharpe against 2.0 is about 0.007; two-sample t of the mean shift about -2.15. The CUSUM at h = 5 does not cross for a shift of 0.126 sd per day; the mean-shift test carries the structural-break alert."
+}

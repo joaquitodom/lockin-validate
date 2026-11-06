@@ -1,0 +1,45 @@
+{
+  "description": "The backtest worst case was not the worst case: live max drawdown about -18% against a declared (and correct) backtest max drawdown of about -10%, everything else consistent.",
+  "origin": "usecase",
+  "use_case": "live",
+  "must_include": [
+    {
+      "check": "live_declared_vs_realised",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "live_period_integrity",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "live_declared_vs_realised",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "live_performance_decay",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "live_structural_break",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "live_declared_vs_realised",
+      "text": "drawdown"
+    }
+  ],
+  "comment": "Declared metrics equal the backtest series (max drawdown -11.6%); the live record already fell -21.9% while tracking the shadow backtest."
+}

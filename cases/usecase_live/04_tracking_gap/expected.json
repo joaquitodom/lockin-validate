@@ -1,0 +1,21 @@
+{
+  "description": "Live tracks the shadow backtest perfectly for nine months, then diverges from 2025-07-23 on with an annualised tracking error of about 6%.",
+  "origin": "usecase",
+  "use_case": "live",
+  "must_include": [
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "Live equals the shadow for the first half, then diverges with noise; overall tracking error 5.7% a year, above the 3% review threshold. The divergence date is 2025-07-23."
+}

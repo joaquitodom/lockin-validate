@@ -1,0 +1,31 @@
+{
+  "description": "Execution problems: 25 bps of signed slippage, fill ratio 85% and 15% discretionary overrides; the return series themselves are clean.",
+  "origin": "usecase",
+  "use_case": "live",
+  "must_include": [
+    {
+      "check": "live_execution_quality",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "live_execution_quality",
+      "status": "INFO"
+    },
+    {
+      "check": "live_execution_quality",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "live_execution_quality",
+      "text": "slippage"
+    }
+  ],
+  "comment": "Every fill is 25 bps worse than the model price (threshold 10), 15 of 100 model trades never executed (fill ratio 0.85 < 0.9) and 15 live trades have no model order (15% overrides > 5%)."
+}

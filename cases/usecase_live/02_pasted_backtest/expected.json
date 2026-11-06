@@ -1,0 +1,29 @@
+{
+  "description": "The 'live' track record is the backtest pasted over the live dates (correlation 1, max difference 0 on 378 periods).",
+  "origin": "usecase",
+  "use_case": "live",
+  "must_include": [
+    {
+      "check": "live_period_integrity",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "live_period_integrity",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "live_period_integrity"
+  ],
+  "text_must_contain": [
+    {
+      "check": "live_period_integrity",
+      "text": "IDENTICAL"
+    }
+  ],
+  "comment": "live_returns.csv is returns.csv over the live dates, to the last digit."
+}

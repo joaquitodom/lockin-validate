@@ -1,0 +1,39 @@
+{
+  "description": "No shadow backtest: the backtest series stops the day live starts.",
+  "origin": "usecase",
+  "use_case": "live",
+  "must_include": [
+    {
+      "check": "live_period_integrity",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "live_performance_decay",
+      "status": [
+        "INFO",
+        "NEEDS_REVIEW",
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "live_period_integrity",
+      "status": "PASS"
+    },
+    {
+      "check": "live_period_integrity",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "returns.csv ends the period before the first live date: no common dates, so the comparison is period vs period and the shadow checks cannot run."
+}

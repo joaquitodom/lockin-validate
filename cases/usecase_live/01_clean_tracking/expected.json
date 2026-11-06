@@ -1,0 +1,91 @@
+{
+  "description": "Clean live record: a shadow backtest covers the 1.5 live years and live differs only by execution noise and 0.5 bps a day of costs.",
+  "origin": "usecase",
+  "use_case": "live",
+  "must_include": [
+    {
+      "check": "live_period_integrity",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": [
+        "PASS",
+        "INFO"
+      ]
+    },
+    {
+      "check": "live_performance_decay",
+      "status": [
+        "INFO",
+        "PASS"
+      ]
+    },
+    {
+      "check": "live_structural_break",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "live_declared_vs_realised",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "live_period_integrity",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_period_integrity",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "live_performance_decay",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_performance_decay",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "live_structural_break",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_structural_break",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "live_execution_quality",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_execution_quality",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "live_declared_vs_realised",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_declared_vs_realised",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "Live = shadow backtest + N(0, 10 bps) noise - 0.5 bps/day; tracking error about 1.6% a year, mean difference not significant, same drift before and after going live, live drawdown inside the backtest's worst case."
+}
