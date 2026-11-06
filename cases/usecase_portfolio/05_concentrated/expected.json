@@ -1,0 +1,37 @@
+{
+  "description": "Three names hold 90% (30% each); nothing declared.",
+  "origin": "usecase",
+  "use_case": "portfolio",
+  "must_include": [
+    {
+      "check": "portfolio_concentration",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "portfolio_constraints",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "portfolio_constraints",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_concentration",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "portfolio_concentration",
+      "text": "UCITS"
+    }
+  ],
+  "comment": "HHI 0.271 (effective N 3.7); three names above 25% with no declared max_weight; also breaches UCITS 5/10/40 (INFO)."
+}

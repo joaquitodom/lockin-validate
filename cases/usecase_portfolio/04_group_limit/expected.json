@@ -1,0 +1,28 @@
+{
+  "description": "The TECH sector holds 38% on every date while rules.yaml declares a 30% sector limit.",
+  "origin": "usecase",
+  "use_case": "portfolio",
+  "must_include": [
+    {
+      "check": "portfolio_constraints",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "portfolio_constraints",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "portfolio_constraints"
+  ],
+  "text_must_contain": [
+    {
+      "check": "portfolio_constraints",
+      "text": "sector"
+    }
+  ]
+}

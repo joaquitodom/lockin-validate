@@ -1,0 +1,30 @@
+{
+  "description": "Strategy text says active alpha; the weights are the benchmark weights plus a 0.8-point tilt: active share 0.08 on every date.",
+  "origin": "usecase",
+  "use_case": "portfolio",
+  "must_include": [
+    {
+      "check": "portfolio_active_share",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "portfolio_active_share",
+      "status": "INFO"
+    },
+    {
+      "check": "portfolio_active_share",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "portfolio_active_share",
+      "text": "Closet"
+    }
+  ]
+}

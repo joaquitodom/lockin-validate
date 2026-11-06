@@ -1,0 +1,28 @@
+{
+  "description": "T01 holds 14% on every date while rules.yaml declares max_weight 0.10.",
+  "origin": "usecase",
+  "use_case": "portfolio",
+  "must_include": [
+    {
+      "check": "portfolio_constraints",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "portfolio_constraints",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "portfolio_constraints"
+  ],
+  "text_must_contain": [
+    {
+      "check": "portfolio_constraints",
+      "text": "max_weight"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+strategy: Long-only model portfolio with a 10% single-name cap
+constraints:
+  portfolio:
+    long_only: true
+    max_weight: 0.1
+conventions:
+  periods_per_year: 252
+  review_date: '2026-10-20'

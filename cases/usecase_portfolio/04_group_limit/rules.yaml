@@ -1,0 +1,9 @@
+strategy: Long-only sector-constrained model portfolio
+constraints:
+  portfolio:
+    long_only: true
+    group_limits:
+      sector: 0.3
+conventions:
+  periods_per_year: 252
+  review_date: '2026-10-20'

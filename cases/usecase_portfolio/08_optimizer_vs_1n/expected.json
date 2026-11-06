@@ -1,0 +1,31 @@
+{
+  "description": "Long-only mean-variance weights from 60-day sample means and covariances, 20 names with identical true drift: out of sample the optimiser does not beat 1/N.",
+  "origin": "usecase",
+  "use_case": "portfolio",
+  "must_include": [
+    {
+      "check": "portfolio_vs_naive",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "portfolio_vs_naive",
+      "status": "INFO"
+    },
+    {
+      "check": "portfolio_vs_naive",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "portfolio_vs_naive",
+      "text": "1/N"
+    }
+  ],
+  "comment": "Jobson-Korkie-Memmel z = 1.22, one-sided p = 0.111 by the generator. The names share the same true drift and vol, so the optimiser only fits noise; concentration and turnover may also be review items (not planted, not forbidden)."
+}

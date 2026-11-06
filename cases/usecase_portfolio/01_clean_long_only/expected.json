@@ -1,0 +1,95 @@
+{
+  "description": "24 monthly dates, 20 names, declared long_only / max_weight 0.10 / sector 0.30 / monthly all satisfied; weights tilted to the names with higher drift, so the path beats 1/N.",
+  "origin": "usecase",
+  "use_case": "portfolio",
+  "must_include": [
+    {
+      "check": "portfolio_constraints",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "portfolio_concentration",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "portfolio_turnover",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "portfolio_vs_naive",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "portfolio_weights_vs_positions",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "portfolio_active_share",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "portfolio_constraints",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_constraints",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "portfolio_concentration",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_concentration",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "portfolio_turnover",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_turnover",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "portfolio_weights_vs_positions",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_weights_vs_positions",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "portfolio_vs_naive",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_vs_naive",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "portfolio_active_share",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_active_share",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "Jobson-Korkie-Memmel z = 4.74, one-sided p = 0.0000 computed by the generator."
+}

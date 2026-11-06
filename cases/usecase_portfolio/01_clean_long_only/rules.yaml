@@ -1,0 +1,11 @@
+strategy: Long-only quality-tilt model portfolio of 20 names, rebalanced monthly
+constraints:
+  portfolio:
+    long_only: true
+    max_weight: 0.1
+    group_limits:
+      sector: 0.3
+    rebalance_frequency: monthly
+conventions:
+  periods_per_year: 252
+  review_date: '2026-10-20'

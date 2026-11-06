@@ -1,0 +1,27 @@
+{
+  "description": "Weights re-randomised every week (104 dates) under a declared monthly rebalance; prices present.",
+  "origin": "usecase",
+  "use_case": "portfolio",
+  "must_include": [
+    {
+      "check": "portfolio_turnover",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "portfolio_turnover",
+      "status": "INFO"
+    },
+    {
+      "check": "portfolio_turnover",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "portfolio_turnover"
+  ],
+  "comment": "Prices are present, so drift is removed and the weekly changes that remain on non-rebalance dates are trades outside the declared monthly schedule: CONFIRMED_ERROR (without prices the same case would be NEEDS_REVIEW)."
+}

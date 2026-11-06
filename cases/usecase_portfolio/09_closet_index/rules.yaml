@@ -1,0 +1,4 @@
+strategy: Active alpha-seeking equity portfolio with conviction stock picking
+conventions:
+  periods_per_year: 252
+  review_date: '2026-10-20'

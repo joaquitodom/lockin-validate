@@ -1,0 +1,46 @@
+{
+  "description": "Only 4 weight dates (below portfolio_min_dates 12): the comparison with 1/N must not run.",
+  "origin": "usecase",
+  "use_case": "portfolio",
+  "must_include": [
+    {
+      "check": "portfolio_vs_naive",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "portfolio_turnover",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "portfolio_weights_vs_positions",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "portfolio_active_share",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "portfolio_vs_naive",
+      "status": "PASS"
+    },
+    {
+      "check": "portfolio_vs_naive",
+      "status": "INFO"
+    },
+    {
+      "check": "portfolio_vs_naive",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": []
+}

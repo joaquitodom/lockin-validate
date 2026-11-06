@@ -1,0 +1,4 @@
+strategy: Mean-variance optimised portfolio re-estimated monthly on a 60-day window
+conventions:
+  periods_per_year: 252
+  review_date: '2026-10-20'

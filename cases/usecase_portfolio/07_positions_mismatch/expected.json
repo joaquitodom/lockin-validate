@@ -1,0 +1,28 @@
+{
+  "description": "positions.csv holds, for every name, the weight declared for another name (8% vs 2%): the implied weights differ from the declared ones by 6 points on every ticker-date.",
+  "origin": "usecase",
+  "use_case": "portfolio",
+  "must_include": [
+    {
+      "check": "portfolio_weights_vs_positions",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    },
+    {
+      "check": "portfolio_constraints",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "portfolio_weights_vs_positions",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "portfolio_weights_vs_positions"
+  ]
+}

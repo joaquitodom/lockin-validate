@@ -1,0 +1,28 @@
+{
+  "description": "On 3 of 24 dates the weights sum to 0.92 with no cash row under a declared long_only mandate.",
+  "origin": "usecase",
+  "use_case": "portfolio",
+  "must_include": [
+    {
+      "check": "portfolio_constraints",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "portfolio_constraints",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "portfolio_constraints"
+  ],
+  "text_must_contain": [
+    {
+      "check": "portfolio_constraints",
+      "text": "sum of weights"
+    }
+  ]
+}

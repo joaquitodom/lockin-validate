@@ -1,0 +1,7 @@
+strategy: Long-only model portfolio
+constraints:
+  portfolio:
+    long_only: true
+conventions:
+  periods_per_year: 252
+  review_date: '2026-10-20'

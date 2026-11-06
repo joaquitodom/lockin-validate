@@ -1,0 +1,37 @@
+{
+  "description": "Buy-and-hold book whose weights are reported every month at market value (they drift with prices); declared annual rebalance. Adversarial: looks like monthly trading, is none.",
+  "origin": "usecase",
+  "use_case": "portfolio",
+  "must_include": [
+    {
+      "check": "portfolio_turnover",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "portfolio_constraints",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "portfolio_turnover",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "portfolio_turnover",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "portfolio_turnover",
+      "text": "net of drift"
+    }
+  ],
+  "comment": "Raw monthly turnover up to 0.031 without the drift correction; with prices it is ~0 on every date."
+}
