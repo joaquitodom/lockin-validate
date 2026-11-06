@@ -1,0 +1,33 @@
+{
+  "description": "Biased: the true forecast plus a constant 0.5 sigma (systematic over-forecasting).",
+  "origin": "usecase",
+  "use_case": "forecast",
+  "must_include": [
+    {
+      "check": "forecast_bias",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "forecast_origin_integrity",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "forecast_bias",
+      "status": "INFO"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "forecast_bias",
+      "text": "over-forecasts"
+    }
+  ],
+  "comment": "Mean error -0.5 with t about -9; the Mincer-Zarnowitz intercept rejects a = 0."
+}

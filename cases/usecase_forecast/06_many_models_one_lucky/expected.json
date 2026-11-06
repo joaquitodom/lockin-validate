@@ -1,0 +1,31 @@
+{
+  "description": "Many models: 12 noise forecasts of i.i.d. returns, one marginally better by chance.",
+  "origin": "usecase",
+  "use_case": "forecast",
+  "must_include": [
+    {
+      "check": "forecast_multiple_models",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "forecast_vs_naive",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "forecast_multiple_models",
+      "status": "INFO"
+    },
+    {
+      "check": "forecast_multiple_models",
+      "status": "NOT_EXECUTABLE"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "12 models of i.i.d. returns; the best t against the zero naive is below the expected maximum of 12 skill-less t-statistics (about 1.63)."
+}

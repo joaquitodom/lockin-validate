@@ -1,0 +1,29 @@
+{
+  "description": "Revised-data cheat: the supplied naive uses the last actual by target date although it was not yet published at the origin (actual_available_from).",
+  "origin": "usecase",
+  "use_case": "forecast",
+  "must_include": [
+    {
+      "check": "forecast_origin_integrity",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "forecast_origin_integrity",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "forecast_origin_integrity"
+  ],
+  "text_must_contain": [
+    {
+      "check": "forecast_origin_integrity",
+      "text": "not yet published"
+    }
+  ],
+  "comment": "Every supplied naive equals the previous month's value, published 45 days after the origin; the publication-aware random walk is the value of two months earlier."
+}

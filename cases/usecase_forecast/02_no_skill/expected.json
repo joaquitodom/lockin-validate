@@ -1,0 +1,35 @@
+{
+  "description": "No skill: random forecasts of i.i.d. returns against the zero naive.",
+  "origin": "usecase",
+  "use_case": "forecast",
+  "must_include": [
+    {
+      "check": "forecast_vs_naive",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "forecast_directional",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "forecast_vs_naive",
+      "status": "PASS"
+    },
+    {
+      "check": "forecast_vs_naive",
+      "status": "INFO"
+    },
+    {
+      "check": "forecast_directional",
+      "status": "INFO"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "Random forecasts of i.i.d. returns: Theil's U > 1 against zero and a hit ratio near 50%."
+}

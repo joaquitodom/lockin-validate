@@ -1,0 +1,93 @@
+{
+  "description": "Clean: AR(1) series forecast one step ahead by the true model (300 daily observations).",
+  "origin": "usecase",
+  "use_case": "forecast",
+  "must_include": [
+    {
+      "check": "forecast_vs_naive",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "forecast_bias",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "forecast_origin_integrity",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "forecast_directional",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "forecast_error_dynamics",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "forecast_origin_integrity",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "forecast_origin_integrity",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "forecast_vs_naive",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "forecast_vs_naive",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "forecast_bias",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "forecast_bias",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "forecast_directional",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "forecast_directional",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "forecast_error_dynamics",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "forecast_error_dynamics",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "forecast_multiple_models",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "forecast_multiple_models",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "forecast_vs_naive",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "AR(1) phi = 0.5 forecast by its true conditional mean: beats the random walk, unbiased, directional skill, white errors."
+}

@@ -1,0 +1,57 @@
+{
+  "description": "Insufficient data: 15 forecasts; the statistical checks must be NOT_EXECUTABLE, never PASS.",
+  "origin": "usecase",
+  "use_case": "forecast",
+  "must_include": [
+    {
+      "check": "forecast_vs_naive",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "forecast_bias",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "forecast_directional",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "forecast_error_dynamics",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "forecast_multiple_models",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "forecast_vs_naive",
+      "status": "PASS"
+    },
+    {
+      "check": "forecast_vs_naive",
+      "status": "INFO"
+    },
+    {
+      "check": "forecast_bias",
+      "status": "PASS"
+    },
+    {
+      "check": "forecast_directional",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "15 forecasts, below forecast_min_observations = 30."
+}
