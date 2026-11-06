@@ -3,6 +3,51 @@
 All notable changes to this project are documented here. The format follows Keep a Changelog and the project uses
 semantic versioning.
 
+## [0.3.0] - 2026-11-06
+
+Use-case modules: validation of other kinds of financial models beyond the backtest of a trading strategy. The core
+checks are unchanged. The modules are review aids, not a certification or a statement of regulatory compliance.
+
+### Added
+- Use-case registry (`lockin_validate.usecases`: `UseCase`, `register`, `run_usecases`, `describe`). A module declares
+  its input tables, schema, aliases, requirements, catalogue entries, references, conventions and profiles in one file
+  and `register` merges them into the package-wide tables. It runs automatically when one of its detect files is in
+  the input folder; `--use-case NAME` (repeatable, or `all`) forces it and reports NOT_EXECUTABLE with the missing
+  input when its tables are absent. Contract: docs/dev/USECASE_MODULE_GUIDE.md.
+- `signals` (alpha signal research, 5 checks): per-date Spearman rank IC with Newey-West t-statistics under
+  overlapping horizons and the Harvey-Liu-Zhu hurdle as context, quantile spread and monotonicity, rank
+  autocorrelation, top-bucket turnover and half-life, forward-return alignment and a look-ahead hint from the IC with
+  the contemporaneous return.
+- `ml` (supervised model validation, 6 checks): temporal overlap, purging and embargo, train / validation / test
+  metric gap, calibration (ECE, Brier with Murphy decomposition, Hosmer-Lemeshow), PSI and label-shift test, target
+  leakage in features, and models scored on the test split against the declared trials.
+- `risk` (VaR / ES backtesting, 6 checks): Kupiec proportion-of-failures, Christoffersen independence and
+  conditional coverage, Basel traffic-light zones, Acerbi-Szekely ES tests, chi-square homogeneity of exception
+  rates, input coherence (sign convention, monotone quantiles, ES >= VaR).
+- `forecast` (point forecasts, 6 checks): forecast origin integrity (including revised data), Diebold-Mariano with
+  the Harvey-Leybourne-Newbold correction against a naive benchmark, Mincer-Zarnowitz bias Wald test,
+  Pesaran-Timmermann directional test, error dynamics (Ljung-Box and its multi-step variant), expected-maximum
+  selection check across several models.
+- `portfolio` (target weights, 6 checks): declared constraints on every date, HHI / effective N / top-5 and group
+  concentration, turnover net of drift, weights against positions x prices, Sharpe difference against 1/N
+  (Jobson-Korkie with the Memmel correction), active share against a benchmark (closet indexing).
+- `live` (live track record, 6 checks): period integrity against the declared start, live against the shadow
+  backtest (tracking error, Sharpe difference, PSR), performance decay with the expected out-of-sample haircut,
+  structural break (CUSUM and a mean-shift test), execution quality (slippage, fill ratio, overrides), declared
+  against realised metrics.
+- 35 new catalogue entries (72 checks in total, regenerated docs/CHECKS.md), 11 new input tables
+  (docs/INPUT_SPEC.md, "Use-case module tables") and 11 new review profiles.
+- CLI: `lockin-validate usecases` lists the modules; `run --use-case NAME` (repeatable, or `all`). MCP: new tool
+  `list_use_cases`. `lockin-validate init` scaffolds the module tables.
+- Documentation: docs/usecases/ (one document per module), docs/dev/USECASE_MODULE_GUIDE.md, a "Use cases" section in
+  README.md and README.es.md and section 7 of docs/CONVENTIONS.md (module conventions and the `rules.yaml` keys they
+  read).
+- Benchmark battery: 57 new cases in cases/usecase_*/ (signals 8, ml 12, risk 8, forecast 8, portfolio 11, live 10),
+  generators in cases/_generators/. The battery now has 109 cases (52 before).
+
+### Changed
+- Version 0.3.0 (pyproject.toml, `__version__`, CITATION.cff).
+
 ## [0.2.1] - 2026-10-28
 
 Fixes from the independent review of 0.2.0 (docs/REVIEW_V020.md; response in docs/REVIEW_V020_RESPONSE.md). Score

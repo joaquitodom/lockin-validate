@@ -112,7 +112,38 @@ over ex-dates by dividend_corporate_actions.
 `lockin-validate run --profile NAME` fills conventions that rules.yaml does not declare (rules.yaml always wins; the
 report says where each value came from): `equities_daily` (default; no calendar presumed), `nyse_equities_daily`,
 `byma_equities_daily`, `equities_monthly` (12 periods, frozen run 3, jump 60%), `crypto_daily` (365 periods, calendar
-none).
+none). The use-case modules add their own profiles (0.3.0): `signal_research`, `ml_classification`, `ml_regression`,
+`risk_var_daily`, `risk_var_fund`, `forecast_returns`, `forecast_macro`, `portfolio_long_only_monthly`,
+`portfolio_risk_parity`, `live_daily`, `live_monthly`.
+
+## Use-case module tables
+
+Version 0.3.0 adds six optional use-case modules (docs/usecases/). Each module is activated when one of its detect
+tables is present in the folder (or forced with `--use-case NAME`); a core-only folder is not affected. The tables
+below are declared by the modules themselves (`lockin_validate.usecases`), so `lockin-validate init` scaffolds them
+and `lockin-validate usecases` lists them. Column aliases, date formats and extra columns are described in each
+module document.
+
+| Module | Table | File | Required columns | Optional columns |
+|---|---|---|---|---|
+| [signals](usecases/signals.md) | signals (detect) | `signals.csv` | decision_time, ticker, signal | data_date, data_source |
+| | prices (shared with the core) | `prices.csv` | date, ticker, close | |
+| [ml](usecases/ml.md) | ml_samples (detect) | `ml_samples.csv` | sample_id, timestamp, split | label_end, ticker, fold |
+| | ml_predictions (detect) | `ml_predictions.csv` | sample_id, prediction, actual | probability, model, fold |
+| | ml_features | `ml_features.csv` | feature | available_from_lag_days, source, importance |
+| | ml_feature_values | `ml_feature_values.csv` | sample_id, feature, value | |
+| [risk](usecases/risk.md) | var_forecasts (detect) | `var_forecasts.csv` | date, pnl | model, portfolio (plus at least one `var_<level>` column such as `var_99`, and optionally `es_<level>`) |
+| [forecast](usecases/forecast.md) | forecasts (detect) | `forecasts.csv` | origin_date, target_date, forecast, actual | model, series, horizon, actual_available_from, naive |
+| [portfolio](usecases/portfolio.md) | weights (detect) | `weights.csv` | date, ticker, weight | portfolio, asset_class, sector, group, industry, country |
+| | benchmark_weights | `benchmark_weights.csv` | date, ticker, weight | portfolio |
+| | positions, prices (shared with the core) | `positions.csv`, `prices.csv` | date, ticker, quantity; date, ticker, close | |
+| [live](usecases/live.md) | live_returns (detect) | `live_returns.csv` | date | return, nav, account, aum (one of return or nav is needed) |
+| | live_trades | `live_trades.csv` | timestamp, ticker, side, quantity, price | commission, model_price, model_timestamp, trade_id |
+| | model_trades | `model_trades.csv` | timestamp, ticker, side, quantity, price | commission, model_price, model_timestamp, trade_id |
+| | returns (shared with the core; the shadow backtest) | `returns.csv` | date, return (or nav) | |
+
+The `rules.yaml` blocks the modules read (`constraints.portfolio`, `live`, `risk`, `forecast`) are listed in
+docs/CONVENTIONS.md, section 7. The required and optional inputs of each new check are in docs/CHECKS.md.
 
 ## Required and optional inputs per check
 

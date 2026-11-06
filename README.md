@@ -25,6 +25,37 @@ Every result has exactly one status (alerts are the first two):
 | `INFO` | a note worth reading that is not an alert ([docs/ALERT_POLICY.md](docs/ALERT_POLICY.md) says when) |
 | `PASS` | the check ran and found no problem *within its scope* |
 
+## Use cases (0.3.0)
+
+The core validates the backtest of a systematic trading strategy. Version 0.3.0 adds six optional **use-case
+modules** for other kinds of financial models. Every module follows the same contract as the core (one status per
+result, evidence for every finding, no PASS about something it could not verify) and reads its own input tables
+(docs/INPUT_SPEC.md, "Use-case module tables"). The checks are review aids for a person who reviews the work: they are
+not a certification, not an approval and not a statement of regulatory compliance, and nothing here says whether a
+model will make money.
+
+| Module | What it validates | Who it is for | Files that activate it | Main checks |
+|---|---|---|---|---|
+| [signals](docs/usecases/signals.md) | an alpha signal or factor before it becomes a strategy | quant researchers, factor teams | `signals.csv` (+ `prices.csv`) | forward-return alignment, rank IC with Newey-West t, quantile spread, turnover and half-life, look-ahead hint |
+| [ml](docs/usecases/ml.md) | a supervised model used in finance, from its sampling protocol and delivered predictions (never refitted) | data scientists, model-risk teams | `ml_samples.csv` or `ml_predictions.csv` | split leakage (overlap, purge, embargo), train / test gap, calibration (ECE, Hosmer-Lemeshow), PSI, target leakage, models scored on test |
+| [risk](docs/usecases/risk.md) | VaR and Expected Shortfall forecasts against realised P&L | risk managers, model validation units | `var_forecasts.csv` | input coherence, Kupiec, Christoffersen, Basel traffic light, Acerbi-Szekely ES test, stability |
+| [forecast](docs/usecases/forecast.md) | point forecasts of a financial or economic series | economists, strategists, treasury and FP&A teams | `forecasts.csv` | origin integrity, Diebold-Mariano vs naive, Mincer-Zarnowitz bias, Pesaran-Timmermann direction, error dynamics, many models |
+| [portfolio](docs/usecases/portfolio.md) | target weights of an allocation model | portfolio managers, allocators, investment committees, compliance | `weights.csv` | declared constraints, concentration, turnover net of drift, weights vs positions, vs 1/N, active share |
+| [live](docs/usecases/live.md) | a live or paper track record against its shadow backtest | managers who went live, allocators doing due diligence, risk committees | `live_returns.csv` | period integrity, live vs shadow, performance decay, structural break (CUSUM), execution quality, declared vs realised |
+
+**How activation works.** A module runs automatically when one of its detect files is in the input folder; a
+core-only folder gets no use-case output. `--use-case NAME` (repeatable, or `all`) forces a module: if its tables are
+missing, each of its checks reports NOT_EXECUTABLE with the missing input. `lockin-validate usecases` lists the modules
+with their audience, input tables and checks; the same list is available to MCP clients as `list_use_cases`, and
+`lockin-validate init` writes a template of every module table. One document per module is in docs/usecases/, and the
+contract for writing a new module is docs/dev/USECASE_MODULE_GUIDE.md.
+
+```bash
+uv run lockin-validate usecases                                  # list the modules
+uv run lockin-validate run my_risk_inputs/ --out review/         # var_forecasts.csv present: risk runs by itself
+uv run lockin-validate run my_inputs/ --use-case portfolio --out review/   # force a module
+```
+
 ## What it checks
 
 | Block | Checks |
@@ -111,7 +142,7 @@ reviewer's 28 pre-registered cases (`cases_review_v020/`, run with `lockin-valid
 
 ## MCP server (optional)
 
-`pip install ".[mcp]"`, then `lockin-validate-mcp` (stdio). Tools: `run_validation`, `explain_check`, `list_checks`.
+`pip install ".[mcp]"`, then `lockin-validate-mcp` (stdio). Tools: `run_validation`, `explain_check`, `list_checks`, `list_use_cases`.
 For Claude Code: `claude mcp add lockin-validate -- lockin-validate-mcp`. The tools read local files only.
 
 ## What it does NOT do

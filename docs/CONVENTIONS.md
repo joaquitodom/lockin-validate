@@ -118,3 +118,38 @@ returns PASS; a declared number of trials without a trials log is NEEDS_REVIEW; 
 | NOT_EXECUTABLE | the check could not run; the reason says what is missing |
 | INFO | the check ran; a note worth reading that is not an alert (not counted as a review item) |
 | PASS | the check ran and found no problem within its scope |
+
+## 7. Use-case module conventions (0.3.0)
+
+Each use-case module (docs/usecases/) declares its defaults in `UseCase.conventions` (module guide:
+docs/dev/USECASE_MODULE_GUIDE.md). `register` merges them into the package defaults without overwriting a core key;
+`rules.yaml` `conventions:` overrides them (and a review profile fills what rules.yaml does not declare). The report
+says where each value came from. The thresholds are review aids chosen by the authors, not regulatory limits unless
+a module document says that the number comes from a published rule. Defaults (the module document explains each use):
+
+| Module | Convention (default) |
+|---|---|
+| signals | `signal_horizons` [1, 5, 21], `signal_quantiles` 5, `signal_min_cross_section` 10, `signal_min_periods` 24, `signal_ic_t_review` 2.0, `signal_turnover_review` 0.5, `signal_lag_sessions` 1 (reads also the core `short_selling` and `rebalance.frequency`) |
+| ml | `ml_task` auto, `ml_embargo_days` 0, `ml_psi_review` 0.1, `ml_psi_error` 0.25, `ml_overfit_gap_review` 0.1, `ml_min_test_samples` 200, `ml_calibration_bins` 10, `ml_leak_correlation` 0.95, `ml_calibration_ece_review` 0.05, `ml_calibration_hl_p` 0.01, `ml_label_shift_p` 0.01 |
+| risk | `risk_kupiec_alpha` 0.05, `risk_christoffersen_alpha` 0.05, `risk_min_observations` 250, `risk_traffic_light_window` 250, `risk_es_alpha` 0.05, `risk_var_sign` positive_loss (or negative_quantile) |
+| forecast | `forecast_alpha` 0.05, `forecast_min_observations` 30, `forecast_naive` random_walk, `forecast_loss` squared, `forecast_bias_alpha` 0.05, `forecast_directional_alpha` 0.05, `forecast_revised_data` false |
+| portfolio | `portfolio_weight_sum_tolerance` 0.01, `portfolio_hhi_review` 0.2, `portfolio_turnover_review_annual` 3.0, `portfolio_min_dates` 12, `portfolio_naive_alpha` 0.05, `portfolio_drift_tolerance` 0.02 |
+| live | `live_min_periods` 60, `live_tracking_error_review` 0.03, `live_alpha` 0.05, `live_haircut_expected` 0.5, `live_cusum_h` 5.0, `live_slippage_review_bps` 10, `live_rolling_window` 60 |
+
+`rules.yaml` keys read by the modules (all optional; only what is declared is verified):
+
+- `constraints.portfolio` (portfolio): `long_only`, `max_weight`, `min_weight`, `gross_leverage_max`,
+  `net_exposure` ([low, high]), `group_limits` ({column: limit} or {column: {GROUP: limit, default: limit}}),
+  `cash_ticker`, `rebalance_frequency`, `turnover_max_annual`, `benchmark_weights_file`. A `constraints` block that
+  holds these keys directly is also accepted; failing both, the profile's `portfolio_constraints` apply. The `strategy`
+  text is read by `portfolio_active_share`.
+- `live` (live): `start`, `backtest_end`, `gap_reason`, `declared_sharpe`, `declared_annual_return`,
+  `declared_max_drawdown` (the `declared_*` values may also come from `declared_results.json`).
+- `risk` (risk): `horizon_days`, `confidence` (context only) and `window` (traffic-light window when
+  `risk_traffic_light_window` is not set).
+- `forecast` (forecast): `revised_data` (actuals subject to revision).
+- `research.n_trials` and `declared_results.json` `n_trials` (ml, `ml_evaluation_protocol`): trials declared for the
+  models scored on the test split.
+
+Conclusion rule (section 5) applies unchanged: a module check says PASS only for a property it verified, and a module
+forced with `--use-case` on a folder without its tables reports NOT_EXECUTABLE with the missing input.
