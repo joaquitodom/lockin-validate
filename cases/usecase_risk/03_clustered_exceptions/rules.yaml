@@ -1,0 +1,8 @@
+strategy: synthetic VaR backtest for the risk use case
+risk:
+  horizon_days: 1
+  confidence: 0.99
+  window: 250
+conventions:
+  review_date: '2026-10-30'
+  risk_var_sign: positive_loss

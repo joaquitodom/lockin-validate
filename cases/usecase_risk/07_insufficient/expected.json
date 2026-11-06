@@ -1,0 +1,90 @@
+{
+  "description": "120 days only: below the minimum of 250 observations, the tests are not executable.",
+  "origin": "usecase",
+  "use_case": "risk",
+  "must_include": [
+    {
+      "check": "var_coverage",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "var_independence",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "basel_traffic_light",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "es_backtest",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "var_model_stability",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "var_coverage",
+      "status": "PASS"
+    },
+    {
+      "check": "var_independence",
+      "status": "PASS"
+    },
+    {
+      "check": "basel_traffic_light",
+      "status": "PASS"
+    },
+    {
+      "check": "es_backtest",
+      "status": "PASS"
+    },
+    {
+      "check": "var_model_stability",
+      "status": "PASS"
+    },
+    {
+      "check": "var_input_coherence",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "var_coverage",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "var_independence",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "basel_traffic_light",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "es_backtest",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "var_model_stability",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "var_coverage",
+      "text": "120"
+    }
+  ]
+}

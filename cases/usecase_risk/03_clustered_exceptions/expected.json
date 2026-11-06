@@ -1,0 +1,41 @@
+{
+  "description": "Two high-volatility episodes with a constant VaR: exceptions cluster and the VaR ignores volatility.",
+  "origin": "usecase",
+  "use_case": "risk",
+  "must_include": [
+    {
+      "check": "var_independence",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "var_model_stability",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "var_independence",
+      "status": "PASS"
+    },
+    {
+      "check": "var_model_stability",
+      "status": "INFO"
+    },
+    {
+      "check": "var_input_coherence",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "var_model_stability",
+      "text": "does not respond to volatility"
+    }
+  ],
+  "comment": "47 exceptions, all inside the two high-volatility episodes; LR_ind = 17.6."
+}

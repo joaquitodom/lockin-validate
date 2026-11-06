@@ -1,0 +1,96 @@
+{
+  "description": "Correct 95% and 99% VaR and ES for a normal P&L with slowly varying volatility, 1000 days.",
+  "origin": "usecase",
+  "use_case": "risk",
+  "must_include": [
+    {
+      "check": "var_input_coherence",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "var_coverage",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "var_independence",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "basel_traffic_light",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "es_backtest",
+      "status": [
+        "INFO",
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "var_model_stability",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "var_input_coherence",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_input_coherence",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "var_coverage",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_coverage",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "var_independence",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_independence",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "basel_traffic_light",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "basel_traffic_light",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "es_backtest",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "es_backtest",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "var_model_stability",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_model_stability",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "9 exceptions at 99% and 46 at 95% in 1000 days; 2 in the last 250 (green)."
+}

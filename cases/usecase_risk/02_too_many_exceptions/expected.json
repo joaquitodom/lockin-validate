@@ -1,0 +1,41 @@
+{
+  "description": "VaR and ES scaled by 0.7: about 5% of days breach the 99% VaR; the traffic light is yellow or red.",
+  "origin": "usecase",
+  "use_case": "risk",
+  "must_include": [
+    {
+      "check": "var_coverage",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "basel_traffic_light",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "var_coverage",
+      "status": "PASS"
+    },
+    {
+      "check": "basel_traffic_light",
+      "status": "INFO"
+    },
+    {
+      "check": "var_input_coherence",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "var_coverage",
+      "text": "too many"
+    }
+  ],
+  "comment": "48 exceptions at 99% in 1000 days; 12 in the last 250."
+}

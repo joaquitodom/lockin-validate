@@ -1,0 +1,31 @@
+{
+  "description": "VaR scaled by 2: the model is never breached; Kupiec rejects on the conservative side.",
+  "origin": "usecase",
+  "use_case": "risk",
+  "must_include": [
+    {
+      "check": "var_coverage",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "var_coverage",
+      "status": "PASS"
+    },
+    {
+      "check": "var_input_coherence",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "var_coverage",
+      "text": "too few"
+    }
+  ],
+  "comment": "0 exceptions at 99% in 1000 days (expected 10)."
+}

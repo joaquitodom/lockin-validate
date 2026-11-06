@@ -1,0 +1,29 @@
+{
+  "description": "Student-t(3) P&L with the correct 99% VaR but an ES fixed at 1.05 x VaR: the tail beyond the VaR is under-estimated.",
+  "origin": "usecase",
+  "use_case": "risk",
+  "must_include": [
+    {
+      "check": "es_backtest",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "es_backtest",
+      "status": "INFO"
+    },
+    {
+      "check": "es_backtest",
+      "status": "NOT_EXECUTABLE"
+    },
+    {
+      "check": "var_input_coherence",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "comment": "22 exceptions; mean loss on exception days / ES = 1.47 (the true t(3) ES / VaR ratio is about 1.54)."
+}

@@ -1,0 +1,29 @@
+{
+  "description": "Clean model with var_95 > var_99 on 12 days: quantile monotonicity violated.",
+  "origin": "usecase",
+  "use_case": "risk",
+  "must_include": [
+    {
+      "check": "var_input_coherence",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "var_input_coherence",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "var_input_coherence"
+  ],
+  "text_must_contain": [
+    {
+      "check": "var_input_coherence",
+      "text": "monotonicity"
+    }
+  ],
+  "comment": "var_95 > var_99 on 12 days."
+}

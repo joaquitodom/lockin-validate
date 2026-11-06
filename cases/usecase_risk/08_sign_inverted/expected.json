@@ -1,0 +1,47 @@
+{
+  "description": "A correct model delivered as negative P&L quantiles while rules.yaml declares positive_loss: the sign must be auto-detected (INFO) and the coverage test must still pass.",
+  "origin": "usecase",
+  "use_case": "risk",
+  "must_include": [
+    {
+      "check": "var_input_coherence",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "var_coverage",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "var_independence",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "var_input_coherence",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_coverage",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "var_coverage",
+      "status": "NOT_EXECUTABLE"
+    }
+  ],
+  "errors_only_from": [],
+  "text_must_contain": [
+    {
+      "check": "var_input_coherence",
+      "text": "negative_quantile"
+    }
+  ],
+  "comment": "9 exceptions at 99% and 45 at 95% once the sign is read correctly."
+}
