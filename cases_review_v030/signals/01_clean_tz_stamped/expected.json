@@ -1,0 +1,47 @@
+{
+  "description": "Genuine iid signal predicting the session t+2 return (IC ~0.25), decisions stamped with a -05:00 timezone after the close.",
+  "profile": "signal_research",
+  "must_include": [
+    {
+      "check": "signal_forward_alignment",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "signal_predictive_power",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "signal_lookahead_hint",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "signal_quantile_spread",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "signal_predictive_power",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "signal_forward_alignment",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "signal_lookahead_hint",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "origin": "review_v030",
+  "use_case": "signals"
+}

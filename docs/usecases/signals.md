@@ -72,7 +72,11 @@ decision session's own close) is only legitimate when the decision is taken at o
 ### `signal_quantile_spread`
 
 - **What.** On each date with at least max(`signal_min_cross_section`, `signal_quantiles`) names, the signal is sorted
-  into `signal_quantiles` (5) equal-sized buckets by rank (bucket q = highest signal; ties broken by file order).
+  into `signal_quantiles` (5) buckets by average rank (bucket q = highest signal). Tied values always share a bucket,
+  so a graded score with fewer distinct values than `signal_quantiles` (for example ratings 1-5 or a 3-level score)
+  fills only some buckets and the finding says how many dates collapsed; tie-breaking by file order is not used because
+  it manufactures a spread from the order of the tickers. A signal that is constant on almost every date is
+  NOT_EXECUTABLE (the same for `signal_turnover`, whose rank autocorrelation is undefined).
   Mean forward return per bucket at the primary horizon, averaged over dates; top-minus-bottom spread per date with
   its Newey-West t-stat; monotonicity = Spearman between bucket rank and mean return; long-leg share =
   (top - mean of the middle buckets) / spread.
@@ -152,6 +156,9 @@ The generator asserts each planted property with its own numpy computation befor
 
 ## Limitations
 
+- Blank signal cells trigger the core `essential_fields` check (CONFIRMED_ERROR: "empty values in `signal`, those rows
+  cannot be used"). This is the core data check, not this module: the rows are dropped and the module still runs. If
+  a name legitimately has no score on a date, leave the row out of `signals.csv` instead of exporting an empty cell.
 - Returns are close-to-close on the price file; no dividends, no costs, no borrow. The spread is before costs.
 - The module has no notion of neutralisation: a signal correlated with the market or a sector will show an IC that
   is partly beta; neutralise before submitting if that is the claim.

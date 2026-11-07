@@ -49,6 +49,11 @@ LEAK_NAME_PATTERNS = ("target", "label", "future", "fwd", "next")
 def rankdata(a) -> np.ndarray:
     """Average ranks (1-based), ties share the mean rank."""
     a = np.asarray(a, dtype=float)
+    fin = np.isfinite(a)
+    if not fin.all():  # NaN would sort last and be ranked as the best score: rank the finite values, NaN stays NaN
+        out = np.full(a.size, np.nan)
+        out[fin] = rankdata(a[fin])
+        return out
     n = a.size
     order = np.argsort(a, kind="mergesort")
     s = a[order]
@@ -67,6 +72,8 @@ def auc(score, y) -> float:
     """Rank AUC = Mann-Whitney U / (n1 n0), ties counted one half."""
     score = np.asarray(score, dtype=float)
     y = np.asarray(y, dtype=int)
+    keep = np.isfinite(score)  # a blank score is never ranked (NaN would sort above every real score)
+    score, y = score[keep], y[keep]
     n1 = int((y == 1).sum())
     n0 = int((y == 0).sum())
     if n1 == 0 or n0 == 0:
@@ -88,6 +95,8 @@ def auc_se(a: float, n1: int, n0: int) -> float:
 def ks_statistic(score, y) -> float:
     score = np.asarray(score, dtype=float)
     y = np.asarray(y, dtype=int)
+    keep = np.isfinite(score)
+    score, y = score[keep], y[keep]
     n1 = int((y == 1).sum())
     n0 = int((y == 0).sum())
     if n1 == 0 or n0 == 0:
@@ -301,7 +310,23 @@ def joined(pkg: Any) -> pd.DataFrame | None:
     cols = [c for c in ("sample_id", "fold", "split", "timestamp", "row") if c in s.columns]
     s2 = s[cols].rename(columns={"row": "sample_row"}).drop_duplicates(keys)
     j = p.merge(s2, on=keys, how="inner")
+    # rows with a blank probability are dropped where the model delivers probabilities, so that AUC, calibration and
+    # PSI all use the same cleaned n; the count is kept in j.attrs and disclosed in the findings
+    dropped = 0
+    if "probability" in j.columns and len(j):
+        prob = pd.to_numeric(j["probability"], errors="coerce")
+        j["probability"] = prob
+        has = prob.groupby(j["model"]).transform(lambda x: x.notna().any())
+        bad = prob.isna() & has
+        dropped = int(bad.sum())
+        j = j[~bad].copy()
+    j.attrs["dropped_blank_probability"] = dropped
     return j
+
+
+def _dropped_note(j: pd.DataFrame) -> str:
+    n = int(j.attrs.get("dropped_blank_probability", 0) or 0)
+    return (f" {n} rows with a blank probability were excluded from every metric of this module." if n else "")
 
 
 def task_of(pkg: Any, actual: pd.Series) -> str:
@@ -529,7 +554,9 @@ def check_overfit_gap(pkg: Any, res: AuditResult) -> None:
     if j is None or j.empty:
         _ne(res, cid, title, "no prediction could be joined to a sample (sample_id mismatch)")
         return
+    attrs = dict(j.attrs)
     j = j.dropna(subset=["prediction", "actual"])
+    j.attrs.update(attrs)
     min_test = int(pkg.conv("ml_min_test_samples", 200))
     gap_max = float(pkg.conv("ml_overfit_gap_review", 0.10))
     task = task_of(pkg, j["actual"])
@@ -547,6 +574,7 @@ def check_overfit_gap(pkg: Any, res: AuditResult) -> None:
     ev: list[dict[str, Any]] = []
     problems: list[str] = []
     summary: dict[str, Any] = {}
+    undefined: list[str] = []
     for model, jm in j.groupby("model"):
         m, src = _split_metrics(jm, task)
         if "test" not in m or "train" not in m or m["test"]["n"] < min_test:
@@ -554,6 +582,11 @@ def check_overfit_gap(pkg: Any, res: AuditResult) -> None:
         for sp, d in m.items():
             ev.append({"model": model, "split": sp, **_fmt(d)})
         tr, te = m["train"], m["test"]
+        if task == "classification" and not (math.isfinite(tr["auc"]) and math.isfinite(te["auc"])):
+            undefined.append(f"{model}: AUC is undefined on the "
+                             f"{'test' if not math.isfinite(te['auc']) else 'train'} split (only one class present: "
+                             f"{te['n_positive']} positives of {te['n']} in test, {tr['n_positive']} of {tr['n']} in train)")
+            continue
         if task == "classification":
             ex_tr, ex_te = tr["auc"] - 0.5, te["auc"] - 0.5
             rel = (ex_tr - ex_te) / ex_tr if ex_tr > 0 else float("nan")
@@ -577,7 +610,13 @@ def check_overfit_gap(pkg: Any, res: AuditResult) -> None:
                 problems.append(f"{model}: test R2 {r_te:.3f} is at or below the mean baseline (R2 <= 0)")
             summary[model] = {"metric": "r2", "train": r_tr, "test": r_te, "relative_drop": rel,
                               "test_spearman_ic": te["spearman_ic"]}
-    res.metrics[cid] = {"task": task, "models": summary}
+    res.metrics[cid] = {"task": task, "models": summary, "undefined": undefined,
+                        "dropped_blank_probability": int(j.attrs.get("dropped_blank_probability", 0))}
+    if not summary and undefined:
+        _ne(res, cid, title, "the gap cannot be measured: " + "; ".join(undefined),
+            "Deliver a test split that contains both classes (a metric on one class is undefined).")
+        return
+    problems.extend(u + ": the train/test gap cannot be measured" for u in undefined)
     if not summary:
         _ne(res, cid, title, "no model has both a training split and a test split with at least "
                        f"{min_test} scored samples")
@@ -593,7 +632,7 @@ def check_overfit_gap(pkg: Any, res: AuditResult) -> None:
         res.add(cid, NAME, NEEDS_REVIEW, "Test performance far below training: " + problems[0],
                 _cap("; ".join(problems)) + ". A large in-sample / out-of-sample gap is the signature of "
                 "overfitting or of a leak that only exists in training (Arnott, Harvey and Markowitz 2019); a test "
-                "metric at the naive baseline means the model has no demonstrated skill.", ev, proc,
+                "metric at the naive baseline means the model has no demonstrated skill." + _dropped_note(j), ev, proc,
                 action="Regularise or simplify the model, repeat the evaluation with purged cross-validation, and "
                        "report the test metric with its standard error.", priority="high",
                 inputs=["ml_samples", "ml_predictions"])
@@ -602,7 +641,8 @@ def check_overfit_gap(pkg: Any, res: AuditResult) -> None:
                 "; ".join(f"{m}: {d['metric']} train {d['train']:.3f}, test {d['test']:.3f}"
                           + (f" (relative drop {d['relative_drop']:.0%})" if math.isfinite(d["relative_drop"]) else "")
                           for m, d in summary.items())
-                + ". The gap is within the review threshold; this is a description, not a proof of generalisation.",
+                + ". The gap is within the review threshold; this is a description, not a proof of generalisation."
+                + _dropped_note(j),
                 ev, proc, inputs=["ml_samples", "ml_predictions"])
 
 
@@ -618,7 +658,9 @@ def check_calibration(pkg: Any, res: AuditResult) -> None:
     if j is None or j.empty:
         _ne(res, cid, title, "no prediction could be joined to a sample (sample_id mismatch)")
         return
+    attrs = dict(j.attrs)
     j = j.dropna(subset=["actual"])
+    j.attrs.update(attrs)
     task = task_of(pkg, j["actual"])
     if task == "regression":
         _ne(res, cid, title, "calibration applies to probabilistic classifiers; for a regression it "
@@ -650,7 +692,14 @@ def check_calibration(pkg: Any, res: AuditResult) -> None:
         r = reliability(p, y, bins)
         base = float(y.mean())
         mean_p = float(p.mean())
-        se = math.sqrt(base * (1 - base) / len(y)) if 0 < base < 1 else float("nan")
+        if 0 < base < 1:
+            se = math.sqrt(base * (1 - base) / len(y))
+        else:
+            # observed rate is exactly 0 or 1: the binomial SE of the observed rate is 0, so use the SE of the mean
+            # under the model itself, sqrt(sum p (1 - p)) / n
+            se = math.sqrt(float((p * (1 - p)).sum())) / len(y)
+            notes.append(f"{model}: the test base rate is {base:.0f}, so the SE of the mean probability is taken from the "
+                         "predicted probabilities")
         g_tr = tr[tr["model"] == model]
         base_tr = float(binarise(g_tr["actual"]).mean()) if len(g_tr) else float("nan")
         for row in r["table"]:
@@ -669,9 +718,12 @@ def check_calibration(pkg: Any, res: AuditResult) -> None:
         elif r["ece"] > ece_max:
             notes.append(f"{model}: ECE {r['ece']:.3f} is above {ece_max:.2f} but the Hosmer-Lemeshow test does not "
                          f"reject calibration (p = {r['hl_p_value']:.3f}): with {len(y)} rows the ECE is biased upward")
-        if math.isfinite(se) and abs(mean_p - base) > 2 * se:
+        if not (math.isfinite(se) and math.isfinite(r["ece"])):
+            problems.append(f"{model}: calibration statistics are not finite (SE {se}, ECE {r['ece']}), so calibration "
+                            "cannot be confirmed")
+        elif abs(mean_p - base) > 2 * se + 1e-12:
             problems.append(f"{model}: mean predicted probability {mean_p:.3f} differs from the test base rate "
-                            f"{base:.3f} by more than 2 binomial SE ({se:.4f})")
+                            f"{base:.3f} by more than 2 SE ({se:.4f})")
     res.metrics[cid] = summary
     if not summary:
         _ne(res, cid, title, f"no model has {min_test} test samples with a probability")
@@ -679,7 +731,7 @@ def check_calibration(pkg: Any, res: AuditResult) -> None:
     proc = (f"Test split, {bins} quantile bins of the predicted probability; ECE = sum n_b / N |mean p_b - observed "
             "rate_b| (Guo et al. 2017); Brier score (Brier 1950) decomposed into reliability, resolution and "
             "uncertainty (Murphy 1973; exact only when p is constant inside each bin); base rate in train and test; mean "
-            "probability against the base rate with the binomial SE sqrt(p (1 - p) / N). The ECE alert requires the "
+            "probability against the base rate with the binomial SE sqrt(p (1 - p) / N) (sqrt(sum p (1 - p)) / N when the base rate is 0 or 1). The ECE alert requires the "
             f"Hosmer-Lemeshow chi-square ({bins} - 2 df) to reject calibration at p < {hl_p:g}, because the ECE of a "
             "perfectly calibrated model is biased upward on a few hundred rows.")
     if problems:
@@ -694,7 +746,7 @@ def check_calibration(pkg: Any, res: AuditResult) -> None:
                 "; ".join(f"{m}: ECE {d['ece']:.3f}, Brier {d['brier']:.3f}, mean probability {d['mean_probability']:.3f} "
                           f"vs base rate {d['base_rate_test']:.3f} (n = {d['n']})" for m, d in summary.items())
                 + f". ECE below {ece_max:.2f} (or not rejected by Hosmer-Lemeshow) and mean probability within 2 SE of "
-                "the base rate on the test split." + (" " + "; ".join(notes) + "." if notes else ""),
+                "the base rate on the test split." + (" " + "; ".join(notes) + "." if notes else "") + _dropped_note(j),
                 ev, proc, inputs=["ml_samples", "ml_predictions"])
 
 

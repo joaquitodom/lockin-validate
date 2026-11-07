@@ -1,0 +1,20 @@
+{
+  "description": "Only 20 distinct forecasts, each exported twice (40 rows >= the 30 minimum) plus 4 blank rows. Duplicates are not observations: statistics must be NOT_EXECUTABLE.",
+  "must_include": [
+    {
+      "check": "forecast_vs_naive",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "forecast_vs_naive",
+      "status": "INFO"
+    }
+  ],
+  "errors_only_from": [],
+  "origin": "review_v030",
+  "use_case": "forecast"
+}

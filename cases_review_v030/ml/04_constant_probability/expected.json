@@ -1,0 +1,27 @@
+{
+  "description": "Model outputs the base rate 0.10 for every row (AUC exactly 0.5, train excess 0); base rate 10% in every split. Must flag no skill, not crash, calibration fine, PSI zero.",
+  "must_include": [
+    {
+      "check": "ml_overfit_gap",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "ml_calibration",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "ml_population_stability",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [],
+  "errors_only_from": [],
+  "origin": "review_v030",
+  "use_case": "ml"
+}

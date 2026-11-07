@@ -1,0 +1,32 @@
+{
+  "description": "True one-step AR(1) forecasts, aliases origin/date/yhat/y and +00:00 timestamps. Must behave like the clean base case.",
+  "must_include": [
+    {
+      "check": "forecast_origin_integrity",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "forecast_vs_naive",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "forecast_bias",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "forecast_error_dynamics",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "origin": "review_v030",
+  "use_case": "forecast"
+}

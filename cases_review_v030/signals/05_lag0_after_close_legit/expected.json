@@ -1,0 +1,34 @@
+{
+  "description": "signal_lag_sessions: 0 declared, decisions on session days stamped 16:30 (after close): legitimate, signal predicts next session.",
+  "profile": "signal_research",
+  "must_include": [
+    {
+      "check": "signal_forward_alignment",
+      "status": [
+        "INFO",
+        "PASS"
+      ]
+    },
+    {
+      "check": "signal_predictive_power",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "signal_lookahead_hint",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "signal_lookahead_hint",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "origin": "review_v030",
+  "use_case": "signals"
+}

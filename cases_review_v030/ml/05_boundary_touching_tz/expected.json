@@ -1,0 +1,15 @@
+{
+  "description": "Timestamps with +00:00; the last training label_end coincides exactly with the first test timestamp, embargo 0. No sample overlaps: legitimate.",
+  "must_include": [
+    {
+      "check": "ml_split_leakage",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [],
+  "errors_only_from": [],
+  "origin": "review_v030",
+  "use_case": "ml"
+}

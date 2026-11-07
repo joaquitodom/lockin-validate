@@ -1,0 +1,31 @@
+{
+  "description": "Policy rate that never moves for 80 months, forecast equal to it: zero variance everywhere. Must not crash, must not claim the model beats the naive.",
+  "must_include": [
+    {
+      "check": "forecast_vs_naive",
+      "status": [
+        "NEEDS_REVIEW",
+        "NOT_EXECUTABLE"
+      ]
+    },
+    {
+      "check": "forecast_directional",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "forecast_vs_naive",
+      "status": "INFO"
+    },
+    {
+      "check": "forecast_error_dynamics",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "origin": "review_v030",
+  "use_case": "forecast"
+}

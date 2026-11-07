@@ -1,0 +1,27 @@
+{
+  "description": "20% of the rows have probability exactly 1.0 or 0.0 and are always right; the rest is calibrated. No inf/NaN, no alert.",
+  "must_include": [
+    {
+      "check": "ml_split_leakage",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "ml_calibration",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "ml_overfit_gap",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [],
+  "errors_only_from": [],
+  "origin": "review_v030",
+  "use_case": "ml"
+}

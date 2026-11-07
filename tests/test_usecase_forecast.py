@@ -255,3 +255,32 @@ def test_clean_case_no_alerts_from_module():
     out = run_case(CASES[0])
     assert out["false_positives"] == []
     assert not [c for c in out["unexpected_review"] if c.startswith("forecast_")]
+
+
+# ---------------------------------------------------------------------------- review v0.3.0 A regressions
+
+def _review_audit(prefix: str):
+    folder = next((ROOT / "cases_review_v030" / "forecast").glob(prefix + "*"))
+    return audit(folder)
+
+
+def test_h5_business_day_weekend_gaps_are_one_step():
+    res = _review_audit("02_")
+    assert any(x.check == "forecast_origin_integrity" and x.status == PASS for x in res.findings)
+    vs = [x for x in res.findings if x.check == "forecast_vs_naive"]
+    assert vs and all(x.evidence[0]["horizon"] == 1 for x in vs)
+    assert len(vs) == 1  # a single h = 1 group, no spurious h = 3 group
+
+
+def test_h6_exact_duplicates_dropped_and_counted():
+    res = _review_audit("06_")
+    assert res.status_of("forecast_vs_naive") == NOT_EXECUTABLE
+    f = next(x for x in res.findings if x.check == "forecast_origin_integrity" and x.status == "NEEDS_REVIEW")
+    assert "20 exact duplicate row" in f.title
+
+
+def test_l2_zero_naive_error_has_no_inf_in_text():
+    res = _review_audit("03_")
+    for x in res.findings:
+        if x.check == "forecast_vs_naive":
+            assert "inf" not in (x.title + " " + x.detail).lower().replace("information", "")

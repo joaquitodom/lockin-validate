@@ -1,0 +1,31 @@
+{
+  "description": "Signal is a random 3-level score (massive ties, 5% blank) with NO skill; returns carry a ticker fixed effect increasing with file order. Tie-breaking by file order must not manufacture a significant spread.",
+  "profile": "signal_research",
+  "must_include": [
+    {
+      "check": "signal_predictive_power",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "signal_quantile_spread",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "signal_predictive_power",
+      "status": "INFO"
+    },
+    {
+      "check": "signal_quantile_spread",
+      "status": "INFO"
+    }
+  ],
+  "errors_only_from": [],
+  "origin": "review_v030",
+  "use_case": "signals"
+}

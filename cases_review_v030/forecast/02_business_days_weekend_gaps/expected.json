@@ -1,0 +1,26 @@
+{
+  "description": "Daily business-day series, one-step forecasts (origin = previous business day), no horizon column. Weekend gaps (3 calendar days) are NOT a mixed horizon.",
+  "must_include": [
+    {
+      "check": "forecast_origin_integrity",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "forecast_vs_naive",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "forecast_error_dynamics",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "origin": "review_v030",
+  "use_case": "forecast"
+}

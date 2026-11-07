@@ -1,0 +1,28 @@
+{
+  "description": "Same genuine signal; T07 has no prices for 31 sessions (halt) and T12 only lists after session 150, signals exist throughout (<3% of rows affected).",
+  "profile": "signal_research",
+  "must_include": [
+    {
+      "check": "signal_forward_alignment",
+      "status": [
+        "PASS",
+        "INFO"
+      ]
+    },
+    {
+      "check": "signal_predictive_power",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "signal_forward_alignment",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "origin": "review_v030",
+  "use_case": "signals"
+}

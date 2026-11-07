@@ -1,0 +1,27 @@
+{
+  "description": "Decisions dated on Saturdays with default lag 1 (entry Tuesday close): legitimate. Plus 3 decision dates after the last price date (~5% of rows) that must be excluded, not crash or alert.",
+  "profile": "signal_research",
+  "must_include": [
+    {
+      "check": "signal_forward_alignment",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "signal_predictive_power",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "signal_forward_alignment",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "origin": "review_v030",
+  "use_case": "signals"
+}

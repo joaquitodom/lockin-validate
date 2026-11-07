@@ -61,9 +61,9 @@ def test_quantile_assignment():
     b = assign_quantiles(v, 5)
     assert list(b) == [3, 1, 5, 2, 4, 1, 4, 2, 3, 5]
     assert sorted(np.bincount(b)[1:]) == [2, 2, 2, 2, 2]
-    # ties are split by position; NaN gets bucket 0
+    # tied values share one bucket (average rank); NaN gets bucket 0
     b2 = assign_quantiles([1, 1, 1, 1, np.nan], 2)
-    assert list(b2) == [1, 1, 2, 2, 0]
+    assert list(b2) == [2, 2, 2, 2, 0]
 
 
 def test_half_life_from_profile():
@@ -138,3 +138,40 @@ def test_single_asset_uses_time_series_mode():
     res = audit(ROOT / "cases" / "usecase_signals" / "07_single_asset", use_cases=["signals"])
     f = [x for x in res.findings if x.check == "signal_predictive_power"][0]
     assert f.status != NOT_EXECUTABLE and "TIME-SERIES" in f.procedure
+
+
+# ---------------------------------------------------------------------------- review v0.3.0 A regressions
+
+REVIEW = ROOT / "cases_review_v030"
+
+
+def _review_audit(group: str, prefix: str):
+    import json
+
+    folder = next((REVIEW / group).glob(prefix + "*"))
+    exp = json.loads((folder / "expected.json").read_text(encoding="utf-8"))
+    return audit(folder, profile=exp.get("profile"))
+
+
+def test_h1_tied_values_share_a_bucket():
+    from lockin_validate.usecases.signals import assign_quantiles
+
+    vals = np.array([1, 2, 3] * 20, dtype=float)
+    b = assign_quantiles(vals, 5)
+    for v in (1.0, 2.0, 3.0):
+        assert len(set(b[vals == v])) == 1  # one bucket per value, whatever the file order
+    assert (assign_quantiles(vals[::-1], 5)[::-1] == b).all()
+    assert b[vals == 1].max() < b[vals == 2].max() < b[vals == 3].max()
+    assert (assign_quantiles(np.arange(10.0), 5) == np.repeat([1, 2, 3, 4, 5], 2)).all()  # no ties: unchanged
+
+
+def test_h1_skill_less_three_level_signal_has_no_significant_spread():
+    res = _review_audit("signals", "04_")
+    f = [x for x in res.findings if x.check == "signal_quantile_spread"]
+    assert f and all(x.status != "INFO" for x in f)
+
+
+def test_m1_constant_signal_turnover_and_spread_not_executable():
+    res = _review_audit("signals", "03_")
+    assert res.status_of("signal_turnover") == NOT_EXECUTABLE
+    assert res.status_of("signal_quantile_spread") == NOT_EXECUTABLE

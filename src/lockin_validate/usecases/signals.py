@@ -17,7 +17,7 @@ Statistics (numpy + pandas only):
 - mean IC, its standard deviation, hit rate and a t-statistic whose variance uses Newey-West (Bartlett) weights
   with L = ceil(h / spacing) - 1 lags when forward windows overlap (spacing = median sessions between decision
   dates);
-- quantile portfolios (equal-sized buckets by rank; bucket q = highest signal), top-minus-bottom spread, its
+- quantile portfolios (buckets by average rank, tied values share a bucket; bucket q = highest signal), top-minus-bottom spread, its
   Newey-West t-stat and the monotonicity (Spearman between bucket rank and mean return);
 - rank autocorrelation of the signal between decision dates, one-way turnover of the top bucket and the signal
   half-life fitted on the lag profile;
@@ -94,7 +94,8 @@ def nw_tstat(x, lags: int) -> dict[str, float]:
 
 
 def assign_quantiles(values, q: int) -> np.ndarray:
-    """Bucket 1..q by ascending rank (ties broken by position, equal-sized buckets); q = highest signal.
+    """Bucket 1..q by ascending average rank, so tied values always share a bucket (buckets are then not
+    equal-sized and some can be empty when the signal has fewer distinct values than q); q = highest signal.
     NaN values get 0."""
     s = pd.Series(np.asarray(values, dtype=float))
     out = np.zeros(len(s), dtype=int)
@@ -102,8 +103,8 @@ def assign_quantiles(values, q: int) -> np.ndarray:
     n = int(ok.sum())
     if n == 0:
         return out
-    r = s[ok].rank(method="first").to_numpy()
-    out[ok.to_numpy()] = np.minimum(q, np.ceil(r * q / n)).astype(int)
+    r = s[ok].rank(method="average").to_numpy()
+    out[ok.to_numpy()] = np.clip(np.ceil(r * q / n), 1, q).astype(int)
     return out
 
 
@@ -424,36 +425,50 @@ def check_quantile_spread(pkg: Any, res: AuditResult) -> None:
                        f"(need signal_min_periods = {cv['min_periods']}); quantile portfolios need a cross-section")
         return
     d = d[d["decision_date"].isin(good)].copy()
+    nuniq = d.groupby("decision_date")["signal"].nunique()
+    if int((nuniq >= 2).sum()) < cv["min_periods"]:
+        not_executable(res, cid, NAME, title,
+                       "the signal is constant (fewer than 2 distinct values) on almost every decision date, so it cannot "
+                       "be sorted into quantiles")
+        return
+    d = d[d["decision_date"].isin(nuniq[nuniq >= 2].index)].copy()
+    collapsed = int((nuniq[nuniq >= 2] < q).sum())
     d["bucket"] = 0
     for _, g in d.groupby("decision_date"):
         d.loc[g.index, "bucket"] = assign_quantiles(g["signal"].to_numpy(), q)
     per_date = d.groupby(["decision_date", "bucket"])[ycol].mean().unstack("bucket").sort_index()
+    per_date = per_date.reindex(columns=range(1, q + 1))
     means = per_date.mean()
     spread = (per_date[q] - per_date[1]).dropna()
     st = nw_tstat(spread.to_numpy(), P.nw_lags(h))
-    mono = spearman(list(range(1, q + 1)), [means.get(b, np.nan) for b in range(1, q + 1)])
-    middle = float(means.drop([1, q]).mean()) if q > 2 else float(means.mean())
+    bs = [b for b in range(1, q + 1) if b in means.index and math.isfinite(float(means[b]))]
+    mono = spearman(bs, [float(means[b]) for b in bs]) if len(bs) >= 3 else float("nan")
+    middle = float(np.nanmean(means.drop([1, q]).to_numpy(dtype=float))) if q > 2 and len(bs) > 2 else float(means.mean())
     long_leg = float(means[q] - middle)
     short_leg = float(middle - means[1])
     long_share = long_leg / st["mean"] if st["mean"] and st["mean"] > 0 else float("nan")
     short_selling = _bool(pkg.conv("short_selling"), False)
-    ev = [{"bucket": int(b), "mean_forward_return": round(float(means[b]), 6), "n_dates": int(per_date[b].notna().sum()),
+    ev = [{"bucket": int(b), "mean_forward_return": round(float(means[b]), 6) if math.isfinite(float(means[b])) else None,
+           "n_dates": int(per_date[b].notna().sum()),
            "label": "top (highest signal)" if b == q else ("bottom" if b == 1 else "")} for b in range(1, q + 1)]
     ev.append({"bucket": "top - bottom", "mean_forward_return": round(st["mean"], 6), "t_stat": round(st["t"], 2),
                "nw_lags": st["lags"], "n_dates": st["n"], "monotonicity": round(mono, 3) if math.isfinite(mono) else None,
                "long_leg_share": round(long_share, 3) if math.isfinite(long_share) else None})
-    res.metrics[cid] = {"means": {int(b): float(means[b]) for b in means.index}, "spread": st, "monotonicity": mono,
+    res.metrics[cid] = {"means": {int(b): float(means[b]) for b in means.index}, "collapsed_dates": collapsed, "spread": st, "monotonicity": mono,
                         "long_leg": long_leg, "short_leg": short_leg, "long_leg_share": long_share, "horizon": h}
-    proc = (f"On each of {len(good)} decision dates with at least {need} names, the signal is sorted into {q} equal-sized "
-            f"buckets (bucket {q} = highest); the mean forward return at h = {h} per bucket is averaged over dates; "
+    proc = (f"On each of {len(good)} decision dates with at least {need} names, the signal is sorted into {q} "
+            f"buckets by average rank, tied values sharing a bucket (bucket {q} = highest); the mean forward return at h = {h} per bucket is averaged over dates; "
             f"spread = bucket {q} - bucket 1 per date, t-stat with Newey-West L = {st['lags']}; monotonicity = Spearman "
             "between bucket rank and mean return; long-leg share = (top - mean of middle buckets) / spread.")
     txt = (f"Spread {st['mean'] * 1e4:+.1f} bp per {h}-session horizon (t {st['t']:+.2f}, n {st['n']}), monotonicity "
            f"{mono:.2f}, long leg {long_leg * 1e4:+.1f} bp, short leg {short_leg * 1e4:+.1f} bp.")
+    if collapsed:
+        txt += (f" On {collapsed} of {len(nuniq)} decision dates the signal has fewer than {q} distinct values: tied values "
+                f"share a bucket, so only {len(bs)} of {q} buckets are populated and the buckets are not equal-sized.")
     problems = []
     if not math.isfinite(st["t"]) or st["t"] < SPREAD_T_REVIEW:
         problems.append(f"spread t-stat {st['t']:.2f} < {SPREAD_T_REVIEW}")
-    if not math.isfinite(mono) or mono < MONOTONICITY_REVIEW:
+    if len(bs) >= 3 and (not math.isfinite(mono) or mono < MONOTONICITY_REVIEW):
         problems.append(f"monotonicity {mono:.2f} < {MONOTONICITY_REVIEW}")
     if not short_selling and st["mean"] > 0 and math.isfinite(long_share) and long_share < LONG_LEG_MIN_SHARE:
         problems.append(f"only {max(long_share, 0):.0%} of the spread comes from the long leg (< {LONG_LEG_MIN_SHARE:.0%}) "
@@ -508,6 +523,11 @@ def check_turnover(pkg: Any, res: AuditResult) -> None:
         acs = [x for x in acs if math.isfinite(x)]
         profile.append(float(np.mean(acs)) if acs else float("nan"))
     rho1 = profile[0]
+    if not math.isfinite(rho1):
+        not_executable(res, cid, NAME, title,
+                       "the rank autocorrelation between decision dates is undefined (the signal is constant within "
+                       "decision dates or there are no common names), so persistence and turnover cannot be computed")
+        return
     hl_dates = half_life_from_profile(profile)
     hl_sessions = hl_dates * P.spacing if math.isfinite(hl_dates) else hl_dates
     turnover = float(np.mean(turn)) if turn else float("nan")
@@ -659,7 +679,7 @@ SPEC = UseCase(
         },
         "signal_quantile_spread": {
             "title": "Quantile portfolios and top-minus-bottom spread",
-            "what": "Each date the signal is sorted into signal_quantiles (5) equal-sized buckets; mean forward return per "
+            "what": "Each date the signal is sorted into signal_quantiles (5) buckets by average rank (tied values share a bucket); mean forward return per "
                     "bucket at the primary horizon, top-minus-bottom spread with Newey-West t-stat, monotonicity "
                     "(Spearman between bucket rank and mean return) and the share of the spread from the long leg. "
                     "NEEDS_REVIEW when the spread t-stat < 2, monotonicity < 0.6, or the long leg contributes less than "

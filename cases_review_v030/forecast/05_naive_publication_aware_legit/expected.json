@@ -1,0 +1,20 @@
+{
+  "description": "Revised-data series with publication dates; the supplied naive is exactly the last value published at each origin (t-2). Legitimate: must PASS, no CONFIRMED_ERROR.",
+  "must_include": [
+    {
+      "check": "forecast_origin_integrity",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "forecast_origin_integrity",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "origin": "review_v030",
+  "use_case": "forecast"
+}

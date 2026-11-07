@@ -1,0 +1,22 @@
+{
+  "description": "Monthly series published 15 days after month-end, except 3 rows whose publication date precedes the period they measure (entry error).",
+  "must_include": [
+    {
+      "check": "forecast_origin_integrity",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "forecast_origin_integrity",
+      "status": "PASS"
+    }
+  ],
+  "errors_only_from": [
+    "forecast_origin_integrity"
+  ],
+  "origin": "review_v030",
+  "use_case": "forecast"
+}

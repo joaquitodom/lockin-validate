@@ -1,0 +1,37 @@
+{
+  "description": "Signal column is constant (1.0): no information, IC undefined. Must never be reported as a significant IC.",
+  "profile": "signal_research",
+  "must_include": [
+    {
+      "check": "signal_predictive_power",
+      "status": [
+        "NOT_EXECUTABLE",
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "signal_quantile_spread",
+      "status": [
+        "NOT_EXECUTABLE",
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "signal_predictive_power",
+      "status": "INFO"
+    },
+    {
+      "check": "signal_predictive_power",
+      "status": "PASS"
+    },
+    {
+      "check": "signal_quantile_spread",
+      "status": "INFO"
+    }
+  ],
+  "errors_only_from": [],
+  "origin": "review_v030",
+  "use_case": "signals"
+}

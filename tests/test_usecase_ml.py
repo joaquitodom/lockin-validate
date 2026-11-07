@@ -204,3 +204,43 @@ def test_ml_case(expected):
     out = run_case(expected)
     assert out["ok"], "\n".join(out["problems"])
     assert out["false_positives"] == []
+
+
+# ---------------------------------------------------------------------------- review v0.3.0 A regressions
+
+def _review_audit(prefix: str):
+    import json
+
+    folder = next((ROOT / "cases_review_v030" / "ml").glob(prefix + "*"))
+    exp = json.loads((folder / "expected.json").read_text(encoding="utf-8"))
+    return audit(folder, profile=exp.get("profile"))
+
+
+def test_h2_single_class_in_test_overfit_gap_not_executable():
+    res = _review_audit("03_")
+    f = [x for x in res.findings if x.check == "ml_overfit_gap"]
+    assert f and all(x.status == NOT_EXECUTABLE for x in f)
+    assert "undefined" in (f[0].reason or f[0].detail)
+
+
+def test_h3_base_rate_zero_calibration_never_passes():
+    res = _review_audit("03_")
+    f = [x for x in res.findings if x.check == "ml_calibration"]
+    assert f and all(x.status == NEEDS_REVIEW for x in f)
+    assert "2 SE" in f[0].detail
+
+
+def test_h4_rankdata_and_auc_ignore_nan():
+    r = ml.rankdata([3.0, float("nan"), 1.0, 2.0])
+    assert r[0] == 3 and r[2] == 1 and r[3] == 2 and math.isnan(r[1])
+    clean = ml.auc([0.9, 0.8, 0.4, 0.7, 0.3], [1, 1, 1, 0, 0])
+    assert ml.auc([0.9, 0.8, float("nan"), 0.4, 0.7, 0.3], [1, 1, 1, 1, 0, 0]) == pytest.approx(clean)
+
+
+def test_h4_blank_probability_rows_dropped_and_disclosed():
+    res = _review_audit("01_")
+    f = next(x for x in res.findings if x.check == "ml_overfit_gap")
+    assert "3 rows with a blank probability" in f.detail
+    n_cal = next(x for x in res.findings if x.check == "ml_calibration")
+    assert "n = 997" in n_cal.detail
+    assert any(e.get("split") == "test" and e.get("n") == 997 for e in f.evidence)
