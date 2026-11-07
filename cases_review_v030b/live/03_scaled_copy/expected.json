@@ -1,0 +1,20 @@
+{
+  "description": "Live = 0.9 x backtest + 1e-5, an exact affine transform of the shadow backtest on 300 days: a doctored paste. Doc: NEEDS_REVIEW (affine, corr > 0.99999).",
+  "must_include": [
+    {
+      "check": "live_period_integrity",
+      "status": [
+        "NEEDS_REVIEW",
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "live_period_integrity",
+      "status": "PASS"
+    }
+  ],
+  "use_case": "live",
+  "origin": "review_v030"
+}

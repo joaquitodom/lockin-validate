@@ -1,0 +1,32 @@
+{
+  "description": "2000 days, correct 95% VaR and correct ES (sigma x 2.0627). ES backtest must not alert (INFO).",
+  "must_include": [
+    {
+      "check": "es_backtest",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "es_backtest",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "es_backtest",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "var_input_coherence",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_input_coherence",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "risk",
+  "origin": "review_v030"
+}

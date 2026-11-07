@@ -1,0 +1,61 @@
+{
+  "description": "Calibrated normal model, columns named var_0.99 and var_97.5 (both are common spellings). 1000 days.",
+  "must_include": [
+    {
+      "check": "var_coverage",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "basel_traffic_light",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "var_independence",
+      "status": [
+        "PASS",
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "var_input_coherence",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_input_coherence",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "var_coverage",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_coverage",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "var_independence",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_independence",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "basel_traffic_light",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "basel_traffic_light",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "risk",
+  "origin": "review_v030"
+}

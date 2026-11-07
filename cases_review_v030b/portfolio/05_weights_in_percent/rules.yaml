@@ -1,0 +1,5 @@
+strategy: Long-only
+constraints:
+  portfolio:
+    long_only: true
+    max_weight: 0.10

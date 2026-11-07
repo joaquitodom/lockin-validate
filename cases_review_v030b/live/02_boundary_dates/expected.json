@@ -1,0 +1,28 @@
+{
+  "description": "First live date equals live.start and last live date equals review_date exactly (neither is before start nor after review); shadow backtest present; no gap.",
+  "must_include": [
+    {
+      "check": "live_period_integrity",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "live_period_integrity",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_period_integrity",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "live",
+  "origin": "review_v030"
+}

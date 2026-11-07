@@ -1,0 +1,24 @@
+{
+  "description": "T01 delivered as two rows per date (0.06 + 0.04, two lots/sleeves); doc: duplicates are summed -> 0.10 = max_weight 0.10, sum 1.00. Must not alert.",
+  "must_include": [
+    {
+      "check": "portfolio_constraints",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "portfolio_constraints",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_constraints",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "portfolio",
+  "origin": "review_v030"
+}

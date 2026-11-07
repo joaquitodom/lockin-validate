@@ -217,12 +217,62 @@ def test_turnover_drift_not_trading_and_churn(tmp_path):
     _write(tmp_path / "drift_np", weights, rules)
     res = audit(tmp_path / "drift_np", use_cases=["portfolio"])
     assert _status(res, "portfolio_turnover") == NEEDS_REVIEW
-    # real trades every 10 sessions (back to 60/40) under a declared annual rebalance, with prices -> error
+    # the SAME target printed every 10 sessions is not a change of the delivered weights (review v0.3.0 B, H1)
     weights2 = [(days[i].date(), t, x) for i in (0, 10, 20, 30) for t, x in (("A", 0.6), ("B", 0.4))]
-    _write(tmp_path / "churn", weights2, rules, prices=prices)
+    _write(tmp_path / "const", weights2, rules, prices=prices)
+    res = audit(tmp_path / "const", use_cases=["portfolio"])
+    f = [x for x in res.findings if x.check == "portfolio_turnover"][0]
+    assert f.status == INFO and "delivered target weights changed" in f.detail
+    # real trades: the delivered target itself moves every 10 sessions under a declared annual rebalance -> error
+    tg = {0: (0.6, 0.4), 10: (0.5, 0.5), 20: (0.7, 0.3), 30: (0.4, 0.6)}
+    weights3 = [(days[i].date(), t, x) for i in (0, 10, 20, 30) for t, x in zip(("A", "B"), tg[i])]
+    _write(tmp_path / "churn", weights3, rules, prices=prices)
     res = audit(tmp_path / "churn", use_cases=["portfolio"])
     f = [x for x in res.findings if x.check == "portfolio_turnover"][0]
     assert f.status == CONFIRMED_ERROR and f.evidence[0]["rebalance_date"] is False
+
+
+def test_h1_constant_target_quarterly_schedule_no_error(tmp_path):
+    days = list(pd.date_range("2021-01-31", periods=36, freq="ME"))
+    rng = np.random.default_rng(3)
+    px = {t: 100 * np.cumprod(1 + rng.normal(0.01, 0.05, 36)) for t in "ABC"}
+    prices = [(d.date(), t, f"{px[t][i]:.4f}") for i, d in enumerate(days) for t in "ABC"]
+    weights = [(d.date(), t, 1 / 3) for d in days for t in "ABC"]
+    rules = "constraints:\n  portfolio:\n    rebalance_frequency: quarterly\n"
+    _write(tmp_path / "h1", weights, rules, prices=prices)
+    res = audit(tmp_path / "h1", use_cases=["portfolio"])
+    assert _status(res, "portfolio_turnover") != CONFIRMED_ERROR
+    m = res.metrics["portfolio_turnover"]["default"]
+    assert m["n_target_changes"] == 0 and m["annual_turnover"] > 0  # drift-adjusted turnover stays the cost measure
+
+
+def test_m3_short_only_and_market_neutral_have_no_naive_comparator(tmp_path):
+    days = list(pd.bdate_range("2024-01-01", periods=60))
+    rng = np.random.default_rng(5)
+    px = {t: 100 * np.cumprod(1 + rng.normal(0, 0.01, 60)) for t in "ABCD"}
+    prices = [(d.date(), t, f"{px[t][i]:.4f}") for i, d in enumerate(days) for t in "ABCD"]
+    dates = [days[i].date() for i in range(0, 60, 4)]
+    short = [(d, t, -0.25) for d in dates for t in "ABCD"]
+    _write(tmp_path / "short", short, "constraints:\n  portfolio:\n    long_only: false\n", prices=prices)
+    neutral = [(d, t, w) for d in dates for t, w in zip("ABCD", (0.5, 0.5, -0.5, -0.5))]
+    _write(tmp_path / "neutral", neutral, "constraints:\n  portfolio:\n    long_only: false\n", prices=prices)
+    for name in ("short", "neutral"):
+        res = audit(tmp_path / name, use_cases=["portfolio"])
+        assert _status(res, "portfolio_vs_naive") == NOT_EXECUTABLE, name
+        f = [x for x in res.findings if x.check == "portfolio_vs_naive"][0]
+        assert "net exposure" in f.reason
+
+
+def test_l2_model_identical_to_one_over_n_says_so(tmp_path):
+    days = list(pd.bdate_range("2024-01-01", periods=60))
+    rng = np.random.default_rng(7)
+    px = {t: 100 * np.cumprod(1 + rng.normal(0, 0.01, 60)) for t in "ABC"}
+    prices = [(d.date(), t, f"{px[t][i]:.4f}") for i, d in enumerate(days) for t in "ABC"]
+    weights = [(days[i].date(), t, 1 / 3) for i in range(0, 60, 4) for t in "ABC"]
+    _write(tmp_path / "eq", weights, prices=prices)
+    res = audit(tmp_path / "eq", use_cases=["portfolio"])
+    f = [x for x in res.findings if x.check == "portfolio_vs_naive"][0]
+    assert f.status == NEEDS_REVIEW and "identical to 1/N" in f.title and "nan" not in f.detail
 
 
 def test_weights_vs_positions(tmp_path):

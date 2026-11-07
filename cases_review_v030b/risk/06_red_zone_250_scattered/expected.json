@@ -1,0 +1,38 @@
+{
+  "description": "Exactly 250 days, 10 well-spread exceptions at 99%: Basel red, Kupiec rejects (too many), no clustering. Red is NEEDS_REVIEW, never CONFIRMED_ERROR.",
+  "must_include": [
+    {
+      "check": "basel_traffic_light",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "var_coverage",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "var_independence",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_independence",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "basel_traffic_light",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_coverage",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "risk",
+  "origin": "review_v030"
+}

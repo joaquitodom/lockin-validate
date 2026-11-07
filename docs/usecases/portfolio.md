@@ -87,9 +87,12 @@ rules.yaml declares nothing; `portfolio_risk_parity` presumes nothing (declare `
   buy-and-hold book reported at market value shows zero turnover; without prices the raw difference is used and the
   finding says that drift could not be removed. Annualised turnover = total / years of span; trade dates per year;
   share of intervals with no trade (turnover below 0.001). Under a declared `rebalance_frequency`, a change is a
-  rebalance when it is the first in its period (calendar month, ISO week, quarter...).
+  rebalance when it is the first in its period (calendar month, ISO week, quarter...). A "change outside the
+  schedule" needs the **delivered target weights** to differ from the previous row (raw difference above 0.001) and a
+  trade net of drift above 1%; the same target printed every month under a quarterly schedule is not a change (its
+  drift-adjusted turnover stays the cost measure and the finding says so).
 - **Statuses.** NEEDS_REVIEW when the annual turnover exceeds the declared `turnover_max_annual` or
-  `portfolio_turnover_review_annual` (3.0), when the trade count per year exceeds 1.5 x the declared frequency, or
+  `portfolio_turnover_review_annual` (3.0), when the number of dates with a changed target and a trade per year exceeds 1.5 x the declared frequency, or
   when (without prices) weights change on non-rebalance dates. CONFIRMED_ERROR only when prices are present, drift
   has been removed and weights still change by more than 1% on dates outside the declared schedule. INFO otherwise.
   NOT_EXECUTABLE with fewer than 2 weight dates.
@@ -122,7 +125,10 @@ rules.yaml declares nothing; `portfolio_risk_parity` presumes nothing (declare `
   benchmark_returns.csv exists, with the benchmark: annualised return, volatility, Sharpe, max drawdown, tracking
   error. The Sharpe difference is tested with the Jobson-Korkie (1981) statistic with the Memmel (2003) correction,
   `z = (SR1 - SR2) / sqrt((2 (1 - rho) + 0.5 (SR1^2 + SR2^2) - SR1 SR2 rho^2) / T)`, one-sided H1: model > 1/N.
-  Periods per year inferred from the spacing of the price dates.
+  Periods per year inferred from the spacing of the price dates. With prices at a coarser frequency than the model
+  (e.g. month-end prices) "the first session after d" is the next price date, i.e. a full period of delay: the first
+  model return is earned one period later. Books whose mean net exposure is at most 0.1 (short-only, market-neutral)
+  are not compared with the long-only 1/N (NOT_EXECUTABLE with the reason): use `benchmark_returns.csv`.
 - **Statuses.** NEEDS_REVIEW when the model does not beat 1/N at `portfolio_naive_alpha` (0.05): the finding says
   explicitly that this is common and not an error (DeMiguel, Garlappi and Uppal 2009), but that the construction
   added no measurable value on this sample. INFO when it does. NOT_EXECUTABLE without prices, with fewer than

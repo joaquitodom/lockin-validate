@@ -1,0 +1,8 @@
+strategy: Long-only fund with a 10% cash sleeve
+constraints:
+  portfolio:
+    long_only: true
+    max_weight: 0.12
+    gross_leverage_max: 1.0
+    cash_ticker: CASH
+    rebalance_frequency: monthly

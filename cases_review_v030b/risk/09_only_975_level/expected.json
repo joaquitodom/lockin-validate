@@ -1,0 +1,46 @@
+{
+  "description": "Only a 97.5% VaR column (var_975), 300 days, calibrated. Coverage passes; the Basel traffic light needs var_99 and must be NOT_EXECUTABLE (not PASS, not an alert).",
+  "must_include": [
+    {
+      "check": "var_coverage",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "basel_traffic_light",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "var_input_coherence",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_input_coherence",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "var_coverage",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_coverage",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "basel_traffic_light",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_independence",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "risk",
+  "origin": "review_v030"
+}

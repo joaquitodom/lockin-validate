@@ -295,3 +295,84 @@ def test_live_case(expected):
     out = run_case(expected)
     assert out["ok"], "\n".join(out["problems"])
     assert out["false_positives"] == []
+
+
+# ------------------------------------------------------------------ review v0.3.0 B (H2, M1, L3, L4)
+
+def test_t_cdf_matches_known_values():
+    assert live.t_cdf(0.0, 10) == pytest.approx(0.5)
+    assert live.t_cdf(2.228138852, 10) == pytest.approx(0.975, abs=1e-6)
+    assert live.t_cdf(-1.699127027, 29) == pytest.approx(0.05, abs=1e-6)
+    assert live.t_ppf(0.95, 29) == pytest.approx(1.699127027, abs=1e-6)
+
+
+def test_m1_hac_size_at_n30_is_not_inflated():
+    # Monte Carlo (seeded): one-sided 5% test under iid H0 at n = 30; the plain asymptotic HAC test is at 8-9%
+    rng = np.random.default_rng(11)
+    reps, n = 1500, 30
+    rej = sum(live.significantly_below_zero(live.hac_mean_test(rng.standard_normal(n)), 0.05) for _ in range(reps))
+    assert rej / reps < 0.07
+    # at large n a clearly negative mean is still detected
+    assert live.significantly_below_zero(live.hac_mean_test(rng.standard_normal(400) - 0.4), 0.05)
+
+
+def test_h2_nan_nav_is_not_merged_into_two_day_returns(tmp_path):
+    dates = _weekdays(date(2021, 1, 4), 120)
+    rng = np.random.default_rng(4)
+    r = rng.normal(0.0005, 0.01, 120)
+    nav = 100 * np.cumprod(1 + r)
+    live_nav = nav.copy()
+    live_nav[[40, 80]] = np.nan
+    _write(tmp_path, "returns.csv", ["date", "return"], [[d.isoformat(), f"{x:.10f}"] for d, x in zip(dates, r)])
+    _write(tmp_path, "live_returns.csv", ["date", "nav"],
+           [[d.isoformat(), "" if np.isnan(v) else f"{v:.8f}"] for d, v in zip(dates, live_nav)])
+    (tmp_path / "rules.yaml").write_text("conventions:\n  periods_per_year: 252\n  review_date: '2030-01-01'\n"
+                                         "live:\n  start: " + dates[0].isoformat() + "\n", encoding="utf-8")
+    res = _run(tmp_path)
+    m = res.metrics["live_vs_shadow_backtest"]
+    assert m["n"] == 115  # 120 dates - first date - 2 returns around each of the 2 missing NAVs
+    assert m["tracking_error"] < 1e-6  # live is exactly the shadow wherever both exist
+    pkg = read_package(tmp_path)
+    ctx = live.Ctx(pkg)
+    assert ctx.live_info["n_nav_missing"] == 2
+
+
+def test_m1_monthly_consecutive_periods_are_not_a_gap(tmp_path):
+    from pandas import date_range
+
+    me = [d.date() for d in date_range("2018-01-31", periods=66, freq="ME")]
+    rng = np.random.default_rng(8)
+    r = rng.normal(0.008, 0.03, 66)
+    _write(tmp_path, "returns.csv", ["date", "return"], [[d.isoformat(), f"{x:.8f}"] for d, x in zip(me, r)])
+    lv = r[36:] + rng.normal(0, 0.002, 30)
+    _write(tmp_path, "live_returns.csv", ["date", "return"], [[d.isoformat(), f"{x:.8f}"] for d, x in zip(me[36:], lv)])
+    (tmp_path / "rules.yaml").write_text(
+        f"conventions:\n  periods_per_year: 12\n  review_date: '2030-01-01'\nlive:\n  start: {me[36]}\n"
+        f"  backtest_end: {me[35]}\n", encoding="utf-8")
+    res = _run(tmp_path)
+    f = [x for x in res.findings if x.check == "live_period_integrity"]
+    assert all("without a reason" not in (x.detail + x.title) for x in f)
+    # a skipped quarter in monthly data is still a gap
+    (tmp_path / "rules.yaml").write_text(
+        f"conventions:\n  periods_per_year: 12\n  review_date: '2030-01-01'\nlive:\n  start: {me[36]}\n"
+        f"  backtest_end: {me[32]}\n", encoding="utf-8")
+    f = [x for x in _run(tmp_path).findings if x.check == "live_period_integrity"]
+    assert any("without a reason" in (x.detail + x.title) for x in f)
+
+
+def test_l3_identical_slippages_report_mean_only(tmp_path):
+    rows = [[f"2024-01-{2 + i:02d}T10:00:00", "AAA", "buy" if i % 2 == 0 else "sell", 100,
+             f"{100.15 if i % 2 == 0 else 99.85:.4f}", "100.0000" if i % 2 == 0 else "100.0000"] for i in range(20)]
+    _write(tmp_path, "live_trades.csv", ["timestamp", "ticker", "side", "quantity", "price", "model_price"], rows)
+    res = _run(tmp_path)
+    f = [x for x in res.findings if x.check == "live_execution_quality"][0]
+    assert "no dispersion" in f.detail and "e+" not in f.detail
+
+
+def test_l4_live_in_percent_units_is_flagged(tmp_path):
+    folder = _package(tmp_path, np.random.default_rng(6).normal(0.001, 0.01, 300),
+                      np.random.default_rng(6).normal(0.001, 0.01, 300) * 100, 100)
+    # live = 100 x the same series on its own dates: beta of live on backtest ~ 100
+    res = _run(folder)
+    f = [x for x in res.findings if x.check == "live_period_integrity"]
+    assert any("look like percent" in (x.detail + x.title) for x in f)

@@ -60,9 +60,11 @@ Profiles: `risk_var_daily` (daily 99% one-day VaR, 250-day window) and `risk_var
 
 - **What:** Kupiec (1995) proportion-of-failures test per level: exceptions x in N days, expected rate p = 1 - level,
   `LR_uc = -2 ln[(1-p)^(N-x) p^x] + 2 ln[(1-x/N)^(N-x) (x/N)^x]` against chi-square(1) (p-value `erfc(sqrt(LR/2))`),
-  plus the exact two-sided binomial acceptance region of x. NEEDS_REVIEW when p < `risk_kupiec_alpha`, saying whether
+  as context, and the exact two-sided binomial acceptance region of x, which **decides** (x outside the region rejects;
+  the asymptotic LR over-rejects with about 3 expected exceptions, e.g. 0 in 260 days at 99%: asymptotic p = 0.022 but
+  exact P(X = 0) = 0.073). NEEDS_REVIEW when x is outside the region at `risk_kupiec_alpha`, saying whether
   there are **too many** exceptions (risk under-estimated, high priority) or **too few** (model too conservative: it
-  costs capital and hides whether the model reacts to stress). PASS when p >= alpha and N >= `risk_min_observations`.
+  costs capital and hides whether the model reacts to stress). PASS when x is inside the region and N >= `risk_min_observations`.
   NOT_EXECUTABLE below that, saying how many observations there are.
 - **Why:** coverage is the first promise of a VaR.
 - **Fix:** re-estimate volatility and tails; check the horizon and the P&L definition (hypothetical vs actual).

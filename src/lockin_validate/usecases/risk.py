@@ -165,6 +165,13 @@ def binom_acceptance_region(n: int, p: float, alpha: float) -> tuple[int, int]:
     return lo, hi
 
 
+def binom_two_sided_p(x: int, n: int, p: float) -> float:
+    """Exact two-sided (doubled smaller tail) binomial p-value of x exceptions in n days at rate p."""
+    lower = binom_cdf(x, n, p)
+    upper = 1.0 - binom_cdf(x - 1, n, p) if x > 0 else 1.0
+    return min(1.0, 2.0 * min(lower, upper))
+
+
 def traffic_zone(k: int, window: int, p: float = 0.01) -> str:
     """Basel (1996) zone: for 250 days the published table (green 0-4, yellow 5-9, red 10+); for another window the
     cumulative binomial probability P(X <= k): green below 95%, yellow from 95% to 99.99%, red above."""
@@ -512,19 +519,23 @@ def check_coverage(pkg: Any, res: AuditResult) -> None:
         k = kupiec_lr(x, n, p)
         lo, hi = binom_acceptance_region(n, p, alpha)
         rate = x / n
+        p_exact = binom_two_sided_p(x, n, p)
+        reject = x < lo or x > hi  # the exact region decides; the asymptotic LR is context (it over-rejects at ~3 expected)
         ev = [{"level": lab, "n": n, "exceptions": x, "expected": round(n * p, 2), "observed_rate": round(rate, 5),
                "expected_rate": p, "lr_uc": round(k["lr"], 4), "p_value": round(k["p_value"], 5),
+               "p_value_exact": round(p_exact, 5),
                "acceptance_region": f"[{lo}, {hi}]", "alpha": alpha}]
         idx = np.flatnonzero(ok)[h == 1]
         ev += [{"row": int(d.rows[i]), "date": d.dates[i], "pnl": round(float(-d.loss[i]), 6),
                 d.var_name[lv]: round(float(d.var[lv][i]), 6)} for i in idx[:19]]
         proc = (f"Exceptions x = days with -pnl > {d.var_name[lv]} ({_sign_text(d)}); N = {n}; p = 1 - {lv:g}. "
                 "LR_uc = -2 ln[(1-p)^(N-x) p^x] + 2 ln[(1-x/N)^(N-x) (x/N)^x] ~ chi-square(1); "
-                "p-value = erfc(sqrt(LR/2)). Acceptance region: exact two-sided binomial region of x at alpha "
-                f"= {alpha} (Kupiec 1995).")
+                "asymptotic p-value = erfc(sqrt(LR/2)) is context only. The decision uses the exact two-sided binomial "
+                f"acceptance region of x at alpha = {alpha} (at most alpha/2 in each tail; Kupiec 1995): x outside "
+                "the region rejects.")
         metrics[lab] = {"n": n, "exceptions": x, "rate": rate, "lr_uc": k["lr"], "p_value": k["p_value"],
-                        "acceptance_region": [lo, hi]}
-        if k["p_value"] < alpha:
+                        "p_value_exact": p_exact, "acceptance_region": [lo, hi]}
+        if reject:
             direction = "too many" if rate > p else "too few"
             if direction == "too many":
                 why = (f"The model under-estimates risk: {x} exceptions against {n * p:.1f} expected "
@@ -537,13 +548,14 @@ def check_coverage(pkg: Any, res: AuditResult) -> None:
                        "(and hides whether the model would react to a real stress).")
                 act = "Check whether the VaR is inflated (double-counted buffers, stale high volatility); a " \
                       "conservative VaR is not free: it ties up capital and limits."
-            res.add(cid, NAME, NEEDS_REVIEW, f"{lab} VaR: {direction} exceptions (Kupiec p = {k['p_value']:.4f})",
-                    why + f" LR_uc = {k['lr']:.2f}, p = {k['p_value']:.4f} < {alpha}; acceptance region [{lo}, {hi}].",
+            res.add(cid, NAME, NEEDS_REVIEW, f"{lab} VaR: {direction} exceptions (exact binomial p = {p_exact:.4f})",
+                    why + f" {x} is outside the exact acceptance region [{lo}, {hi}] (exact two-sided p = "
+                    f"{p_exact:.4f}); asymptotic LR_uc = {k['lr']:.2f}, p = {k['p_value']:.4f}.",
                     ev, proc, action=act, priority="high" if direction == "too many" else "medium", inputs=inputs)
         else:
-            res.add(cid, NAME, PASS, f"{lab} VaR: exception rate consistent with {p:.2%} (Kupiec p = {k['p_value']:.3f})",
+            res.add(cid, NAME, PASS, f"{lab} VaR: exception rate consistent with {p:.2%} (exact binomial p = {p_exact:.3f})",
                     f"{x} exceptions in {n} days ({rate:.2%}); expected {n * p:.1f}; acceptance region [{lo}, {hi}]; "
-                    f"LR_uc = {k['lr']:.2f}. Scope: unconditional coverage only; independence and the regulatory "
+                    f"asymptotic LR_uc = {k['lr']:.2f} (p = {k['p_value']:.3f}, context only). Scope: unconditional coverage only; independence and the regulatory "
                     "zones are separate checks.", ev, proc, inputs=inputs)
     if metrics:
         res.metrics.setdefault("risk", {})["coverage"] = metrics
@@ -604,7 +616,17 @@ def check_independence(pkg: Any, res: AuditResult) -> None:
             problems.append(f"LR_cc = {lr_cc:.2f} (p = {p_cc:.4f}) rejects conditional coverage")
         if run >= 3 and abs(lv - 0.99) < 1e-9:
             problems.append(f"a run of {run} consecutive exceptions at 99%")
-        if problems:
+        only_cc = bool(problems) and ind["p_value"] >= alpha and run < 3 and p_cc < alpha
+        if only_cc:
+            res.add(cid, NAME, NEEDS_REVIEW,
+                    f"{lab} VaR: conditional coverage rejected (LR_cc = {lr_cc:.2f}), independence alone not rejected",
+                    _sentence("; ".join(problems)) + f". The independence part is not rejected (LR_ind = "
+                    f"{ind['lr']:.2f}, p = {ind['p_value']:.3f}); the rejection comes from the coverage component "
+                    f"(LR_uc = {uc['lr']:.2f}), which is also reported by var_coverage_kupiec. No clustering of "
+                    "exceptions is shown by this test.",
+                    [base] + ev_rows, proc, action="Fix the unconditional coverage first (see var_coverage_kupiec); "
+                    "then re-run the independence test.", priority="medium", inputs=inputs)
+        elif problems:
             res.add(cid, NAME, NEEDS_REVIEW, f"{lab} VaR: exceptions cluster ({problems[0].split(':')[0]})",
                     _sentence("; ".join(problems)) + f". {n_clusters} cluster(s) hold {in_clusters} of the {x} "
                     "exceptions. Clustered exceptions mean the model does not update fast enough when volatility "

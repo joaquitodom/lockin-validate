@@ -1,0 +1,20 @@
+{
+  "description": "Two portfolios in one file; PB holds T01 at 20% on one date with max_weight 0.15 declared (sum still 1). PA is clean.",
+  "must_include": [
+    {
+      "check": "portfolio_constraints",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [],
+  "text_must_contain": [
+    {
+      "check": "portfolio_constraints",
+      "text": "PB"
+    }
+  ],
+  "use_case": "portfolio",
+  "origin": "review_v030"
+}

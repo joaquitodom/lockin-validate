@@ -1,0 +1,30 @@
+{
+  "description": "The model is exactly 1/N rebalanced monthly; model minus 1/N is identically zero (zero variance of the difference). Must not crash and must say it does not beat 1/N.",
+  "must_include": [
+    {
+      "check": "portfolio_vs_naive",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "portfolio_constraints",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "portfolio_vs_naive",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_turnover",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "portfolio",
+  "origin": "review_v030"
+}

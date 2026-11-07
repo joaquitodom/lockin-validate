@@ -1,0 +1,64 @@
+{
+  "description": "Monthly record, 42 months backtest + 30 live months with shadow backtest over the live months; live = shadow + 20 bps noise; same drift. live_monthly profile (min 24 periods).",
+  "must_include": [
+    {
+      "check": "live_period_integrity",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": [
+        "PASS",
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "live_period_integrity",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_period_integrity",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "live_performance_decay",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_performance_decay",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "live_structural_break",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_structural_break",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "live_declared_vs_realised",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_declared_vs_realised",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "profile": "live_monthly",
+  "use_case": "live",
+  "origin": "review_v030"
+}

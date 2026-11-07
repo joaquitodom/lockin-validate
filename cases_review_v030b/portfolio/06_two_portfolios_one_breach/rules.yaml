@@ -1,0 +1,5 @@
+strategy: Two model portfolios
+constraints:
+  portfolio:
+    long_only: true
+    max_weight: 0.15

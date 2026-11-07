@@ -1,0 +1,47 @@
+{
+  "description": "Weekly P&L and weekly 99% VaR, 400 consecutive Fridays, calibrated. Consecutive Fridays are not a gap.",
+  "must_include": [
+    {
+      "check": "var_coverage",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "var_input_coherence",
+      "status": [
+        "PASS",
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "var_input_coherence",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_input_coherence",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "var_coverage",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_coverage",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "var_independence",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_independence",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "risk",
+  "origin": "review_v030"
+}

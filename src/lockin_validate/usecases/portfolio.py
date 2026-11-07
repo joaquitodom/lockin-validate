@@ -663,16 +663,20 @@ def check_turnover(pkg: Any, res: AuditResult) -> None:
             raw = one_way_turnover(w1, w0)
             to = one_way_turnover(w1, w0, ratio)
             traded = to > ZERO_TURNOVER
+            # schedule judgement uses the delivered target weights: unchanged targets are not a change outside the
+            # schedule even when drift makes the previous holdings differ from them (drift-adjusted `to` = cost measure)
+            changed = raw > ZERO_TURNOVER
+            sched_trade = bool(traded and changed)
             is_reb = True
             if freq is not None:
                 key = rebalance_period_key(d1, freq)
                 if i == 1:
                     seen_periods.add(rebalance_period_key(d0, freq))
                 is_reb = key not in seen_periods
-                if traded:
+                if sched_trade:
                     seen_periods.add(key)
             rows.append({"date": d1.date(), "turnover": to, "turnover_without_drift": raw, "traded": traded,
-                         "rebalance_date": bool(is_reb), "days": (d1 - d0).days})
+                         "target_changed": bool(changed), "rebalance_date": bool(is_reb), "days": (d1 - d0).days})
         df = pd.DataFrame(rows)
         span_days = max(1, (p.dates[-1] - p.dates[0]).days)
         years = span_days / 365.25
@@ -681,14 +685,16 @@ def check_turnover(pkg: Any, res: AuditResult) -> None:
         n_trade = int(df["traded"].sum())
         trades_per_year = n_trade / years
         zero_share = 1.0 - n_trade / len(df)
-        off = df[df["traded"] & ~df["rebalance_date"]] if freq else df.iloc[0:0]
+        n_changed = int((df["target_changed"] & df["traded"]).sum())  # target changed AND a trade net of drift
+        off = df[df["traded"] & df["target_changed"] & ~df["rebalance_date"]] if freq else df.iloc[0:0]
         off_big = off[off["turnover"] > NON_REBALANCE_TRADE]
         summary = {"n_intervals": len(df), "annual_turnover": annual, "mean_turnover": float(df["turnover"].mean()),
                    "max_turnover": float(df["turnover"].max()), "max_turnover_date": df.loc[df["turnover"].idxmax(), "date"],
                    "n_trade_dates": n_trade, "trades_per_year": trades_per_year, "zero_turnover_share": zero_share,
                    "drift_applied": drift_applied, "declared_frequency": freq,
                    "expected_rebalances_per_year": FREQ_PER_YEAR.get(freq) if freq else None,
-                   "n_changes_on_non_rebalance_dates": int(len(off)), "span_years": years,
+                   "n_changes_on_non_rebalance_dates": int(len(off)), "n_target_changes": n_changed,
+                   "span_years": years,
                    "annual_turnover_without_drift": float(df["turnover_without_drift"].sum()) / years}
         res.metrics.setdefault(cid, {})[p.name or "default"] = summary
         ev = [{"row": None, **{k: (round(v, 4) if isinstance(v, float) else v) for k, v in r.items()}}
@@ -715,8 +721,8 @@ def check_turnover(pkg: Any, res: AuditResult) -> None:
                     "rebalance schedule, not explained by drift", desc + f" With prices the drift of the previous "
                     f"weights is removed, and {len(off_big)} change(s) above {NON_REBALANCE_TRADE} remain on dates that are "
                     f"not the first rebalance of their {freq} period (declared in {src}): the delivered path trades more "
-                    "often than declared.", [e for e in ev if e["traded"] and not e["rebalance_date"]]
-                    + [e for e in ev if not (e["traded"] and not e["rebalance_date"])],
+                    "often than declared.", [e for e in ev if e["traded"] and e["target_changed"] and not e["rebalance_date"]]
+                    + [e for e in ev if not (e["traded"] and e["target_changed"] and not e["rebalance_date"])],
                     proc, action="Align the declaration (rebalance_frequency) with the model, or fix the export so that "
                                  "only rebalance dates carry new target weights.", priority="high", inputs=ins)
             continue
@@ -725,8 +731,10 @@ def check_turnover(pkg: Any, res: AuditResult) -> None:
             reasons.append(f"annual turnover {annual:.2f}x is above the {limit_txt}")
         if freq:
             exp_py = FREQ_PER_YEAR[freq]
-            if trades_per_year > 1.5 * exp_py and years >= 0.1:
-                reasons.append(f"{trades_per_year:.1f} trade dates per year is incompatible with the declared {freq} "
+            changes_per_year = n_changed / years
+            if changes_per_year > 1.5 * exp_py and years >= 0.1:
+                reasons.append(f"the delivered target weights change {changes_per_year:.1f} times per year, "
+                               f"incompatible with the declared {freq} "
                                f"rebalance ({exp_py}/year)")
             if len(off_big) and not drift_applied:
                 reasons.append(f"{len(off_big)} change(s) on non-rebalance dates that cannot be separated from drift "
@@ -739,6 +747,9 @@ def check_turnover(pkg: Any, res: AuditResult) -> None:
         else:
             res.add(cid, NAME, INFO, "Turnover of the weight path (context)", desc
                     + (f" Compatible with the declared {freq} rebalance." if freq else " No rebalance frequency declared.")
+                    + (f" The delivered target weights changed with a trade on {n_changed} of {len(df)} dates; the drift-adjusted "
+                       "turnover above is the cost of restoring the target on the dates it is listed, not a change of the "
+                       "delivered weights." if n_changed < n_trade else "")
                     + (" Drift removed with prices." if drift_applied else " No prices: drift not removed."),
                     ev, proc, priority="low", inputs=ins)
 
@@ -836,6 +847,9 @@ def check_weights_vs_positions(pkg: Any, res: AuditResult) -> None:
                     "allowing one session of lag.", ev, proc, inputs=ins)
 
 
+NAIVE_MIN_NET = 0.1  # below this mean net exposure the long-only 1/N comparator is not applicable
+
+
 def check_vs_naive(pkg: Any, res: AuditResult) -> None:
     cid, title = "portfolio_vs_naive", "Realised weight path vs the 1/N portfolio"
     miss = pkg.missing(cid)
@@ -857,6 +871,15 @@ def check_vs_naive(pkg: Any, res: AuditResult) -> None:
                            f"{min_dates} (conventions.portfolio_min_dates)")
             continue
         cash = cash_ticker(decl, p.tickers)
+        risky = [t for t in p.tickers if t != cash]
+        net_mean = float(p.wide[risky].sum(axis=1).mean()) if risky else 0.0
+        if net_mean <= NAIVE_MIN_NET:
+            not_executable(res, cid, NAME, title + p.label(),
+                           f"the 1/N comparator (long, fully invested in the names held) is not meaningful for this book: "
+                           f"mean net exposure {net_mean:+.2f} (<= {NAIVE_MIN_NET:g}), a short-only or market-neutral "
+                           "book is not an alternative to a long-only equal-weight portfolio; compare it with a cash "
+                           "or factor-neutral benchmark through benchmark_returns.csv instead")
+            continue
         try:
             rp, info = simulate(p, px, cash=cash)
             rn, _ = simulate(p, px, naive=True, cash=cash)
@@ -908,6 +931,14 @@ def check_vs_naive(pkg: Any, res: AuditResult) -> None:
                 + (f" Unpriced names dropped: {', '.join(info['dropped_unpriced'][:5])}." if info["dropped_unpriced"]
                    else ""))
         ins = ["weights", "prices", "benchmark_returns"]
+        if not math.isfinite(jk["z"]):
+            res.add(cid, NAME, NEEDS_REVIEW, "The weight path is identical to 1/N of the same names: no difference "
+                    "to test",
+                    desc.replace("z = nan, one-sided p = nan", "identical to 1/N") + " The model and 1/N hold the "
+                    "same weights on every date, so the construction adds nothing over the naive rule by definition "
+                    "(there is no Sharpe difference to test): it cannot beat 1/N, and a model that is 1/N adds nothing to "
+                    "justify.", ev, proc, inputs=ins)
+            continue
         beats = math.isfinite(jk["p_one_sided"]) and jk["p_one_sided"] < alpha and jk["sr1"] > jk["sr2"]
         if not beats:
             res.add(cid, NAME, NEEDS_REVIEW, "The weight path does not beat 1/N of the same names in Sharpe at "

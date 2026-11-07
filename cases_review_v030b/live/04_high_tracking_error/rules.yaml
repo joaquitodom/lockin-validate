@@ -1,0 +1,7 @@
+strategy: daily
+conventions:
+  periods_per_year: 252
+  review_date: '2023-03-20'
+live:
+  start: 2021-04-20
+  backtest_end: 2021-04-19

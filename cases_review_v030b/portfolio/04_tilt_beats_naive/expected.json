@@ -1,0 +1,52 @@
+{
+  "description": "Constant 15%/5% tilt towards the five high-drift names, rebalanced monthly to the same target; own JKM z > 3 (asserted in the generator). Drift-adjusted turnover is small, not an alert.",
+  "must_include": [
+    {
+      "check": "portfolio_constraints",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "portfolio_turnover",
+      "status": [
+        "INFO"
+      ]
+    },
+    {
+      "check": "portfolio_vs_naive",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "portfolio_constraints",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_constraints",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "portfolio_turnover",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_turnover",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "portfolio_vs_naive",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_vs_naive",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "portfolio",
+  "origin": "review_v030"
+}

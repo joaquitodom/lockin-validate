@@ -1,0 +1,7 @@
+strategy: monthly strategy
+conventions:
+  periods_per_year: 12
+  review_date: '2023-12-31'
+live:
+  start: 2021-07-31
+  backtest_end: 2021-06-30

@@ -1,0 +1,40 @@
+{
+  "description": "Columns day, loss (positive = loss), var_99; var_99 NaN on 3 of 1000 days (0.3%, below the 1% threshold). Calibrated.",
+  "must_include": [
+    {
+      "check": "var_coverage",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "var_coverage",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_coverage",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "var_independence",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_independence",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "var_input_coherence",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "basel_traffic_light",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "risk",
+  "origin": "review_v030"
+}

@@ -209,3 +209,46 @@ def test_clean_and_adversarial_cases_raise_no_review():
         out = run_case(ROOT / name / "expected.json")
         risk_reviews = [c for c in out["unexpected_review"] if c in CHECKS]
         assert risk_reviews == [], (name, risk_reviews)
+
+
+# ------------------------------------------------------------------ review v0.3.0 B (M2, L1)
+
+def _var_file(folder, pnl, var, col="var_99"):
+    import pandas as pd
+
+    dates = pd.bdate_range("2020-01-01", periods=len(pnl))
+    (folder / "var_forecasts.csv").write_text(
+        f"date,pnl,{col}\n" + "\n".join(f"{d.date()},{x:.8f},{v:.8f}" for d, x, v in zip(dates, pnl, var)) + "\n",
+        encoding="utf-8")
+
+
+def test_m2_kupiec_decision_agrees_with_exact_region(tmp_path):
+    from lockin_validate.usecases.risk import binom_two_sided_p
+
+    rng = np.random.default_rng(1)
+    # 0 exceptions in 260 days at 99%: asymptotic p = 0.022 but exact P(X=0) = 0.073 inside the region [0, 6]
+    _var_file(tmp_path, rng.normal(0, 0.01, 260).clip(-0.02, 0.02), np.full(260, 0.03))
+    res = audit(tmp_path, use_cases=["risk"])
+    f = [x for x in res.findings if x.check == "var_coverage"][0]
+    assert f.status == "PASS" and "[0, 6]" in f.detail
+    assert binom_two_sided_p(0, 260, 0.01) == pytest.approx(2 * 0.99 ** 260)
+    # 0 exceptions in 1000 days: P = 4e-5, outside any region: still "too few"
+    d2 = tmp_path / "long"
+    d2.mkdir()
+    _var_file(d2, rng.normal(0, 0.01, 1000).clip(-0.02, 0.02), np.full(1000, 0.03))
+    f = [x for x in audit(d2, use_cases=["risk"]).findings if x.check == "var_coverage"][0]
+    assert f.status == "NEEDS_REVIEW" and "too few" in f.title and "outside the exact acceptance region" in f.detail
+
+
+def test_l1_only_conditional_coverage_rejected_is_not_called_clustering(tmp_path):
+    rng = np.random.default_rng(2)
+    n = 250
+    pnl = rng.normal(0, 0.01, n).clip(-0.02, 0.02)
+    var = np.full(n, 0.03)
+    for i in range(10, 250, 24):  # 10 well-spread exceptions (4% rate vs 1%)
+        pnl[i] = -0.05
+    _var_file(tmp_path, pnl, var)
+    res = audit(tmp_path, use_cases=["risk"])
+    f = [x for x in res.findings if x.check == "var_independence"][0]
+    assert f.status == "NEEDS_REVIEW"
+    assert "conditional coverage rejected" in f.title and "cluster" not in f.title

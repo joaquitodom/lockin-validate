@@ -1,0 +1,40 @@
+{
+  "description": "Long-only fund holding 10 names at 9% plus an explicit CASH row at 10% (sum 1.00), cash_ticker declared, max_weight 0.12. No price for CASH. Constant target rebalanced monthly.",
+  "must_include": [
+    {
+      "check": "portfolio_constraints",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "portfolio_constraints",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_constraints",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "portfolio_concentration",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_concentration",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "portfolio_turnover",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_turnover",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "portfolio",
+  "origin": "review_v030"
+}

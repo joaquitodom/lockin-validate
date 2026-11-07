@@ -1,0 +1,20 @@
+{
+  "description": "Live returns delivered in percent (x100) while the backtest is in fractions; same underlying record. Shadow comparison must not PASS.",
+  "must_include": [
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": [
+        "NEEDS_REVIEW",
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": "PASS"
+    }
+  ],
+  "use_case": "live",
+  "origin": "review_v030"
+}

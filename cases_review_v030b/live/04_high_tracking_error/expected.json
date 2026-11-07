@@ -1,0 +1,24 @@
+{
+  "description": "Live = shadow + N(0, 30 bps) per day over 500 days: tracking error about 4.8% a year > 3% default threshold; correlation still high; mean diff zero.",
+  "must_include": [
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_period_integrity",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "live",
+  "origin": "review_v030"
+}

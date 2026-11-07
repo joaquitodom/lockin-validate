@@ -1,0 +1,24 @@
+{
+  "description": "All 150 fills are 15 bps BETTER than the model price (buys 15 bps below, sells 15 bps above): signed slippage is -15 bps on both sides. Execution quality must not flag (a side-blind computation would show +15 bps on sells... and a sign error +15 overall).",
+  "must_include": [
+    {
+      "check": "live_execution_quality",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "live_execution_quality",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_execution_quality",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "live",
+  "origin": "review_v030"
+}

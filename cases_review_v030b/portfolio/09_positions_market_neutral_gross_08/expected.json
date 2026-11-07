@@ -1,0 +1,24 @@
+{
+  "description": "Market-neutral book (+-8%, net 0, gross 0.8) with positions that implement it exactly (quantity = w x 1e6 / close). Implied weights are normalised by gross, so they equal the declared ones normalised by gross. Net is zero: a normalisation by net or sum would blow up.",
+  "must_include": [
+    {
+      "check": "portfolio_weights_vs_positions",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "portfolio_weights_vs_positions",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_weights_vs_positions",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "portfolio",
+  "origin": "review_v030"
+}

@@ -1,0 +1,28 @@
+{
+  "description": "Declared sharpe / annual_return (geometric CAGR, 252/n) / max_drawdown exactly equal what the backtest period gives; live drawdown shallower than the backtest's.",
+  "must_include": [
+    {
+      "check": "live_declared_vs_realised",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "live_declared_vs_realised",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_declared_vs_realised",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "live_period_integrity",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "live",
+  "origin": "review_v030"
+}

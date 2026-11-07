@@ -1,0 +1,46 @@
+{
+  "description": "Backtest 1000 days SR~1.6 (ends the day before live); live 400 days with negative mean (edge gone), no shadow over the live period.",
+  "must_include": [
+    {
+      "check": "live_performance_decay",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "live_structural_break",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "live_period_integrity",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": [
+        "NOT_EXECUTABLE"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "live_performance_decay",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_structural_break",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_period_integrity",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "live",
+  "origin": "review_v030"
+}

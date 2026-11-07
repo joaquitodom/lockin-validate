@@ -1,0 +1,6 @@
+strategy: Quality tilt
+constraints:
+  portfolio:
+    long_only: true
+    max_weight: 0.20
+    rebalance_frequency: quarterly

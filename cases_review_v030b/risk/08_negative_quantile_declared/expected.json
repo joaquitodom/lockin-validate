@@ -1,0 +1,44 @@
+{
+  "description": "VaR delivered as negative quantiles (var_99 = -2.33 sigma), declared conventions.risk_var_sign negative_quantile; calibrated, 1000 days.",
+  "must_include": [
+    {
+      "check": "var_coverage",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "var_input_coherence",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_input_coherence",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "var_coverage",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_coverage",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "var_independence",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_independence",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "basel_traffic_light",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "risk",
+  "origin": "review_v030"
+}

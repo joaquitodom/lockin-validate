@@ -1,0 +1,10 @@
+strategy: daily
+conventions:
+  periods_per_year: 252
+  review_date: '2022-10-31'
+live:
+  start: 2021-09-07
+  backtest_end: 2021-09-06
+  declared_sharpe: 0.6762
+  declared_annual_return: 0.07862
+  declared_max_drawdown: -0.19895

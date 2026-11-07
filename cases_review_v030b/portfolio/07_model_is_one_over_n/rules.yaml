@@ -1,0 +1,6 @@
+strategy: Equal-weight
+constraints:
+  portfolio:
+    long_only: true
+    max_weight: 0.12
+    rebalance_frequency: monthly

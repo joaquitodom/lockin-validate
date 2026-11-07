@@ -1,0 +1,29 @@
+{
+  "description": "Same tilt as 04 but prices.csv has month-end rows only (36 per name): periods per year must be inferred as 12; the path beats nothing in particular (statuses INFO or NEEDS_REVIEW), no crash, no CONFIRMED_ERROR; Sharpe annualised with 12.",
+  "must_include": [
+    {
+      "check": "portfolio_vs_naive",
+      "status": [
+        "INFO",
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "portfolio_vs_naive",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_turnover",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_constraints",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "portfolio",
+  "origin": "review_v030"
+}

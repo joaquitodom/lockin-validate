@@ -1,0 +1,17 @@
+{
+  "description": "Target never changes (raw weights identical on all 36 month-ends) but rules.yaml declares quarterly rebalancing. No weight changed, so no change can be outside the schedule: no CONFIRMED_ERROR. (Drift between rows exists but the delivered weights did not change.)",
+  "must_include": [],
+  "must_not_include": [
+    {
+      "check": "portfolio_turnover",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_constraints",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "portfolio",
+  "origin": "review_v030"
+}

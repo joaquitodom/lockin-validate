@@ -1,0 +1,4 @@
+strategy: Dollar-neutral long/short equity
+constraints:
+  portfolio:
+    gross_leverage_max: 1.0

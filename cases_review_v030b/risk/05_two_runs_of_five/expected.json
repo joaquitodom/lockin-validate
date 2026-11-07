@@ -1,0 +1,44 @@
+{
+  "description": "Exactly 10 exceptions in 1000 days (Kupiec LR=0) in two runs of 5 consecutive days. Coverage passes, independence must flag clusters. Last 250 days have 0 exceptions (green).",
+  "must_include": [
+    {
+      "check": "var_coverage",
+      "status": [
+        "PASS"
+      ]
+    },
+    {
+      "check": "var_independence",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    },
+    {
+      "check": "basel_traffic_light",
+      "status": [
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "var_coverage",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_coverage",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "var_independence",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "basel_traffic_light",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "risk",
+  "origin": "review_v030"
+}

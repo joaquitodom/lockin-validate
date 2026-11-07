@@ -36,7 +36,7 @@ backtest| < 1e-12 on 20 or more periods); the length of the overlap with the bac
 
 *Statuses.* CONFIRMED_ERROR: live dates before the declared start, dates after the review date, duplicates, or a
 live series identical to the backtest (a pasted backtest). NEEDS_REVIEW: overlap shorter than `live_min_periods`
-(it says how many), no backtest over the live period, gap of more than 30 days after `backtest_end` without
+(it says how many), no backtest over the live period, gap after `backtest_end` longer than 1.5 x the median spacing of the series (at least 10 days; 46 days for monthly data) without
 `live.gap_reason`, a live series that is an exact affine transform of the backtest (correlation > 0.99999). PASS:
 none of the above with a proper shadow backtest. INFO: the overlap description when only review items exist.
 
@@ -57,6 +57,13 @@ allow.* Verifying that the live returns are the ones in the broker statements (G
 difference with a Newey-West t-statistic (Bartlett kernel, lags `floor(4 (n/100)^(2/9))`), beta of live on backtest,
 cumulative return gap (`prod(1 + live) - prod(1 + backtest)`), the date of the largest single-period widening and the
 date since which the gap has been open, the share of periods whose sign differs.
+
+*Small samples.* The Newey-West variance is multiplied by `n / (n - lags - 1)` and compared with a Student t(n - 1)
+critical value; below 60 periods the plain iid t must reject as well. Monte Carlo of the one-sided 5% test at n = 30
+under iid H0: asymptotic HAC 8.6%, this rule 5.0% (AR(1) rho 0.3: 10.2% and 7.8%; the residual excess is the
+autocorrelation itself, not the correction). NAV columns with missing values give missing returns for the two
+periods around each hole (they are never merged into a multi-period return); the number is disclosed. Returns that look
+like percent (median |return| above 0.5, or beta of live on backtest near 100) are NEEDS_REVIEW "units look like percent".
 
 *Statuses.* NEEDS_REVIEW when TE > `live_tracking_error_review`, or the mean difference is significantly negative
 (one-sided at `live_alpha`), or correlation < 0.8. PASS for the specific property "no significant systematic

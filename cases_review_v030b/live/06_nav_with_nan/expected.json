@@ -1,0 +1,37 @@
+{
+  "description": "Live record delivered as NAV (starting ~100), two NaN NAV days. 250 days, shadow backtest. Must not crash; no CONFIRMED_ERROR; shadow comparison runs (PASS/INFO).",
+  "must_include": [
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": [
+        "PASS",
+        "INFO"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "live_period_integrity",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_vs_shadow_backtest",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_performance_decay",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_structural_break",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "live_declared_vs_realised",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "live",
+  "origin": "review_v030"
+}

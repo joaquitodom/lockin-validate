@@ -37,11 +37,86 @@ _N = NormalDist()
 MIN_LIVE = 20  # below this nothing statistical is attempted on the live series
 IDENTICAL_TOL = 1e-12
 AFFINE_CORR = 0.99999
-GAP_DAYS = 30
+GAP_DAYS = 30  # fallback only when the native spacing of the series cannot be inferred
+GAP_FACTOR = 1.5  # a gap is a spacing above this multiple of the median spacing of the series
+GAP_FLOOR_DAYS = 10  # ... and never below this many calendar days (weekends and holidays in daily data)
+SMALL_SAMPLE_N = 60  # below this a HAC rejection also needs the iid t to reject, both against t(n-1)
+PERCENT_MEDIAN = 0.5  # median |period return| above 50% (or beta ~100 against the shadow): the file is in percent
 SIDES = {"buy": "buy", "sell": "sell", "b": "buy", "s": "sell", "long": "buy", "short": "sell"}
 
 
 # --------------------------------------------------------------------------- statistics (numpy only)
+
+def _betacf(a: float, b: float, x: float) -> float:
+    tiny = 1e-300
+    qab, qap, qam = a + b, a + 1.0, a - 1.0
+    c, d = 1.0, 1.0 - qab * x / qap
+    d = 1.0 / (d if abs(d) > tiny else tiny)
+    h = d
+    for m in range(1, 300):
+        m2 = 2 * m
+        aa = m * (b - m) * x / ((qam + m2) * (a + m2))
+        d = 1.0 + aa * d
+        d = 1.0 / (d if abs(d) > tiny else tiny)
+        c = 1.0 + aa / c
+        c = c if abs(c) > tiny else tiny
+        h *= d * c
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2))
+        d = 1.0 + aa * d
+        d = 1.0 / (d if abs(d) > tiny else tiny)
+        c = 1.0 + aa / c
+        c = c if abs(c) > tiny else tiny
+        delta = d * c
+        h *= delta
+        if abs(delta - 1.0) < 1e-14:
+            break
+    return h
+
+
+def t_cdf(t: float, df: float) -> float:
+    """Student t distribution function (regularised incomplete beta, numpy-free)."""
+    if not math.isfinite(t):
+        return float("nan")
+    if df > 1e6:
+        return _N.cdf(t)
+    x = df / (df + t * t)
+    lbeta = math.lgamma(df / 2) + math.lgamma(0.5) - math.lgamma((df + 1) / 2)
+    front = math.exp(0.5 * df * math.log(x) + 0.5 * math.log(1 - x) - lbeta) if 0 < x < 1 else 0.0
+    if x < (df / 2 + 1) / (df / 2 + 0.5 + 2):
+        ib = front * _betacf(df / 2, 0.5, x) / (df / 2)
+    else:
+        ib = 1 - front * _betacf(0.5, df / 2, 1 - x) / 0.5
+    tail = 0.5 * ib
+    return tail if t < 0 else 1 - tail
+
+
+def t_ppf(p: float, df: float) -> float:
+    """Quantile of Student t by bisection on :func:`t_cdf`."""
+    lo, hi = -50.0, 50.0
+    for _ in range(80):
+        mid = 0.5 * (lo + hi)
+        if t_cdf(mid, df) < p:
+            lo = mid
+        else:
+            hi = mid
+    return 0.5 * (lo + hi)
+
+
+def significantly_below_zero(h: dict[str, float], alpha: float) -> bool:
+    """One-sided test that the mean is below zero, valid in small samples.
+
+    Uses the finite-sample HAC t (variance x n / (n - lags - 1)) against t(n - 1); for n < SMALL_SAMPLE_N the plain iid t
+    must reject as well, because the Newey-West variance is biased down at those sizes (see docs).
+    """
+    n = int(h.get("n", 0))
+    ta, ti = h.get("t_adj", float("nan")), h.get("t_iid", float("nan"))
+    if n < 3 or not math.isfinite(ta):
+        return False
+    crit = -t_ppf(1 - alpha, n - 1)
+    if ta >= crit:
+        return False
+    return not (n < SMALL_SAMPLE_N and not (math.isfinite(ti) and ti < crit))
+
 
 def hac_mean_test(x, lags: int | None = None) -> dict[str, float]:
     """Mean of ``x`` with a Newey-West (Bartlett) standard error. lags default: floor(4 (n/100)^(2/9))."""
@@ -49,7 +124,7 @@ def hac_mean_test(x, lags: int | None = None) -> dict[str, float]:
     n = a.size
     if n < 3:
         return {"n": n, "mean": float("nan"), "se": float("nan"), "t": float("nan"), "p_value": float("nan"),
-                "lags": 0}
+                "lags": 0, "t_adj": float("nan"), "t_iid": float("nan"), "p_adj": float("nan")}
     if lags is None:
         lags = int(math.floor(4 * (n / 100.0) ** (2.0 / 9.0)))
     lags = max(0, min(lags, n - 2))
@@ -60,8 +135,14 @@ def hac_mean_test(x, lags: int | None = None) -> dict[str, float]:
     lrv = max(lrv, 1e-30)
     se = math.sqrt(lrv / n)
     t = float(a.mean()) / se if se > 0 else float("nan")
+    se_adj = se * math.sqrt(n / (n - lags - 1.0))
+    sd = float(a.std(ddof=1))
+    t_adj = float(a.mean()) / se_adj if se_adj > 0 else float("nan")
+    t_iid = float(a.mean()) / (sd / math.sqrt(n)) if sd > 0 else float("nan")
     return {"n": int(n), "mean": float(a.mean()), "se": se, "t": t,
-            "p_value": 2 * (1 - _N.cdf(abs(t))) if math.isfinite(t) else float("nan"), "lags": lags}
+            "p_value": 2 * (1 - _N.cdf(abs(t))) if math.isfinite(t) else float("nan"), "lags": lags,
+            "t_adj": t_adj, "t_iid": t_iid,
+            "p_adj": 2 * (1 - t_cdf(abs(t_adj), n - 1)) if math.isfinite(t_adj) else float("nan")}
 
 
 def tracking_error(live, bt, ppy: int) -> float:
@@ -148,13 +229,17 @@ def _series(df: pd.DataFrame | None) -> tuple[pd.Series | None, dict[str, Any]]:
     d["_d"] = d["date"].dt.date
     has_acc = "account" in d.columns and d["account"].notna().any()
     d["_acc"] = d["account"].astype(object).where(d["account"].notna(), "default").astype(str) if has_acc else "default"
+    n_nav_missing = 0
     if "return" in d.columns and d["return"].notna().any():
         d = d.dropna(subset=["return"])
         d["_r"] = d["return"].astype(float)
         source = "return"
     elif "nav" in d.columns and d["nav"].notna().sum() >= 3:
-        d = d.dropna(subset=["nav"]).sort_values(["_acc", "date", "row"])
-        d["_r"] = d.groupby("_acc")["nav"].pct_change()
+        # difference first, drop later: a missing NAV makes the two returns around it NaN instead of merging them
+        # into one two-period return that would be compared with one-period shadow returns
+        d = d.sort_values(["_acc", "date", "row"])
+        n_nav_missing = int(d["nav"].isna().sum())
+        d["_r"] = d.groupby("_acc")["nav"].pct_change(fill_method=None)
         d = d.dropna(subset=["_r"])
         source = "nav"
     else:
@@ -181,6 +266,7 @@ def _series(df: pd.DataFrame | None) -> tuple[pd.Series | None, dict[str, Any]]:
     s = s.sort_index()
     s = pd.Series(s.to_numpy(dtype=float), index=list(s.index))
     return s, {"rows": rows, "n_accounts": n_acc, "aggregation": agg, "duplicates": dups, "source": source,
+               "n_nav_missing": n_nav_missing,
                "accounts": sorted(d["_acc"].unique().tolist())}
 
 
@@ -221,6 +307,17 @@ class Ctx:
                 self.bt_ref = None
         self.min_periods = int(pkg.conv("live_min_periods"))
         self.alpha = float(pkg.conv("live_alpha"))
+
+    def gap_limit(self) -> tuple[float, float]:
+        """(days above which the interval between backtest end and live start is a gap, median spacing in days)."""
+        for ser in (self.live_all, self.bt):
+            if ser is not None and len(ser) >= 4:
+                days = np.diff(np.array([pd.Timestamp(d).value // 86_400_000_000_000 for d in ser.index], dtype=float))
+                days = days[days > 0]
+                if days.size >= 3:
+                    sp = float(np.median(days))
+                    return max(GAP_FLOOR_DAYS, GAP_FACTOR * sp), sp
+        return float(GAP_DAYS), float("nan")
 
     def row(self, d: date) -> int | None:
         return (self.live_info.get("rows") or {}).get(d)
@@ -313,6 +410,23 @@ def check_period_integrity(pkg: Any, res: AuditResult, ctx: Ctx | None = None) -
                            f"on {n_ov} periods): a backtest with a constant haircut, not an independent record")
             ev.append({"problem": "affine copy of backtest", "n_overlap": n_ov, "max_abs_diff": max_diff,
                        "correlation": corr})
+    # units: returns delivered in percent instead of fractions
+    med_abs = float(np.median(np.abs(live.to_numpy(dtype=float)))) if len(live) else 0.0
+    beta_u = float("nan")
+    if n_ov >= MIN_LIVE and ctx.bt is not None and ctx.live is not None:
+        a_u = ctx.live.loc[ctx.overlap].to_numpy(dtype=float)
+        b_u = ctx.bt.loc[ctx.overlap].to_numpy(dtype=float)
+        if np.var(b_u, ddof=1) > 0:
+            beta_u = float(np.cov(a_u, b_u, ddof=1)[0, 1] / np.var(b_u, ddof=1))
+    if med_abs > PERCENT_MEDIAN or (math.isfinite(beta_u) and 50 < abs(beta_u) < 200 and math.isfinite(corr)
+                                    and abs(corr) > 0.5):
+        reviews.append("the units look like percent, not fractions "
+                       f"(median |period return| {med_abs:.3g}"
+                       + (f", beta of live on backtest {beta_u:.0f}" if math.isfinite(beta_u) else "")
+                       + "): 1.5 would be read as +150%; every live statistic is unreliable until the file is in "
+                         "fractions (0.015 for 1.5%)")
+        ev.append({"problem": "units look like percent", "median_abs_return": med_abs,
+                   "beta_live_on_backtest": beta_u if math.isfinite(beta_u) else None})
     # shadow coverage
     bt_last = ctx.bt.index[-1] if ctx.bt is not None and len(ctx.bt) else None
     live_first = ctx.live.index[0] if ctx.live is not None and len(ctx.live) else live.index[0]
@@ -333,9 +447,12 @@ def check_period_integrity(pkg: Any, res: AuditResult, ctx: Ctx | None = None) -
     # gap after the backtest end
     if ctx.bt_end is not None and ctx.start is not None:
         gap = (ctx.start - ctx.bt_end).days
-        if gap > GAP_DAYS and not ctx.cfg.get("gap_reason"):
+        gap_limit, spacing = ctx.gap_limit()
+        if gap > gap_limit and not ctx.cfg.get("gap_reason"):
             reviews.append(f"the live start {ctx.start} is {gap} days after the declared backtest end {ctx.bt_end} "
-                           "without a reason (rules.yaml live.gap_reason): what happened in between is not covered "
+                           + (f"(more than {gap_limit:.0f} days, {GAP_FACTOR:g} x the median spacing of "
+                              f"{spacing:.0f} days of the series) " if math.isfinite(spacing) else "")
+                           + "without a reason (rules.yaml live.gap_reason): what happened in between is not covered "
                            "by either record")
             ev.append({"problem": "gap", "backtest_end": ctx.bt_end, "live_start": ctx.start, "gap_days": gap})
         if gap < 0:
@@ -346,6 +463,8 @@ def check_period_integrity(pkg: Any, res: AuditResult, ctx: Ctx | None = None) -
                if ctx.live_info.get("n_accounts", 1) > 1 else "")
             + f"; declared live start {ctx.declared_start or 'not declared (first live date used)'}; backtest "
             + (f"{len(ctx.bt)} periods to {bt_last}" if ctx.bt is not None else "absent")
+            + (f"; {ctx.live_info['n_nav_missing']} missing NAV value(s) left as missing returns (not merged "
+               "into multi-period returns)" if ctx.live_info.get("n_nav_missing") else "")
             + f"; overlap {n_ov} periods" + (f" (correlation {corr:.4f}, max |diff| {max_diff:.2e})"
                                              if math.isfinite(corr) else "") + ".")
     ev.insert(0, {"summary": "overlap", "live_periods": len(live), "live_first": live.index[0], "live_last": live_last,
@@ -418,21 +537,23 @@ def check_vs_shadow(pkg: Any, res: AuditResult, ctx: Ctx | None = None) -> None:
     nonneg = np.where(cum_gap >= 0)[0]
     i_from = int(nonneg[-1]) + 1 if len(nonneg) and nonneg[-1] + 1 < n else 0
     te_max = float(pkg.conv("live_tracking_error_review"))
-    neg_sig = math.isfinite(hac["t"]) and hac["t"] < -_N.inv_cdf(1 - ctx.alpha)  # one-sided: live worse
+    neg_sig = significantly_below_zero(hac, ctx.alpha)  # one-sided: live worse; small-sample safe
     problems = []
     if te > te_max:
         problems.append(f"tracking error {te:.2%} a year above live_tracking_error_review = {te_max:.0%}")
     if neg_sig:
         problems.append(f"the live return is systematically below the shadow backtest: mean difference "
-                        f"{hac['mean'] * 1e4:+.2f} bps per period, HAC t = {hac['t']:.2f} (one-sided p = "
-                        f"{_N.cdf(hac['t']):.4f} < {ctx.alpha})")
+                        f"{hac['mean'] * 1e4:+.2f} bps per period, HAC t = {hac['t_adj']:.2f} (one-sided p = "
+                        f"{t_cdf(hac['t_adj'], n - 1):.4f} < {ctx.alpha}"
+                        + (f"; iid t = {hac['t_iid']:.2f}, also required to reject below {SMALL_SAMPLE_N} periods"
+                           if n < SMALL_SAMPLE_N else "") + ")")
     if math.isfinite(corr) and corr < 0.8:
         problems.append(f"correlation of live and backtest returns {corr:.3f} < 0.8")
     ev = [{"metric": "tracking_error_annual", "value": te, "threshold": te_max},
           {"metric": "correlation", "value": corr, "threshold": 0.8},
           {"metric": "beta_live_on_backtest", "value": beta},
-          {"metric": "mean_difference_per_period", "value": hac["mean"], "hac_t": hac["t"], "p_two_sided":
-              hac["p_value"], "lags": hac["lags"]},
+          {"metric": "mean_difference_per_period", "value": hac["mean"], "hac_t": hac["t_adj"], "iid_t": hac["t_iid"],
+              "p_two_sided": hac["p_adj"], "lags": hac["lags"]},
           {"metric": "share_of_periods_with_different_sign", "value": sign_diff},
           {"metric": "cumulative_gap_end", "value": float(cum_gap[-1]), "date": ctx.overlap[-1]},
           {"metric": "largest_widening", "value": float(widening[i_open]), "date": ctx.overlap[i_open],
@@ -440,17 +561,17 @@ def check_vs_shadow(pkg: Any, res: AuditResult, ctx: Ctx | None = None) -> None:
           {"metric": "gap_open_since", "date": ctx.overlap[i_from], "row": ctx.row(ctx.overlap[i_from])},
           {"metric": "n_overlap", "value": n}]
     res.metrics["live_vs_shadow_backtest"] = {"n": n, "tracking_error": te, "correlation": corr, "beta": beta,
-                                              "mean_difference": hac["mean"], "hac_t": hac["t"],
-                                              "p_value": hac["p_value"], "sign_disagreement": sign_diff,
+                                              "mean_difference": hac["mean"], "hac_t": hac["t_adj"],
+                                              "iid_t": hac["t_iid"], "p_value": hac["p_adj"], "sign_disagreement": sign_diff,
                                               "cumulative_gap": float(cum_gap[-1])}
     detail = (f"On {n} common periods: tracking error {te:.2%} a year, correlation {corr:.3f}, beta of live on backtest "
-              f"{beta:.2f}, mean difference {hac['mean'] * 1e4:+.2f} bps per period (HAC t = {hac['t']:.2f}), sign "
+              f"{beta:.2f}, mean difference {hac['mean'] * 1e4:+.2f} bps per period (HAC t = {hac['t_adj']:.2f}, iid t = {hac['t_iid']:.2f}), sign "
               f"differs on {sign_diff:.0%} of the periods. Cumulative return gap at {ctx.overlap[-1]}: "
               f"{cum_gap[-1]:+.2%}; largest single-period widening {widening[i_open]:+.2%} on {ctx.overlap[i_open]}; "
               + (f"the gap has been open since {ctx.overlap[i_from]}." if cum_gap[-1] < 0 else
                  "live is not behind the backtest cumulatively at the end of the overlap."))
     proc = (f"Common dates of live_returns.csv and returns.csv; TE = std(live - backtest, ddof 1) x sqrt({ppy}); "
-            "mean difference tested with a Newey-West t (Bartlett kernel, lags = floor(4 (n/100)^(2/9))); beta = "
+            "mean difference tested with a Newey-West t (Bartlett kernel, lags = floor(4 (n/100)^(2/9)), variance x n/(n - lags - 1), t(n - 1) critical value; below 60 periods the iid t must reject too); beta = "
             "cov / var(backtest); cumulative gap = prod(1 + live) - prod(1 + backtest).")
     if problems:
         res.add(check, NAME, NEEDS_REVIEW, "Live does not track the shadow backtest: " + problems[0],
@@ -730,19 +851,21 @@ def check_execution_quality(pkg: Any, res: AuditResult, ctx: Ctx | None = None) 
         sign = np.where(s["side"].to_numpy() == "buy", 1.0, -1.0)
         slip = sign * (s["price"].to_numpy(dtype=float) / s["model_price"].to_numpy(dtype=float) - 1.0) * 1e4
         hs = hac_mean_test(slip, lags=0)
+        flat = slip.size < 2 or float(np.std(slip)) < 1e-9
         per_side = {}
         for side in ("buy", "sell"):
             sel = slip[s["side"].to_numpy() == side]
             if sel.size:
                 per_side[side] = {"n": int(sel.size), "mean_bps": float(sel.mean())}
         worst = s.assign(slip_bps=slip).sort_values("slip_bps", ascending=False).head(5)
-        ev.append({"metric": "slippage_bps", "n": int(slip.size), "mean": hs["mean"], "t": hs["t"],
+        ev.append({"metric": "slippage_bps", "n": int(slip.size), "mean": hs["mean"], "t": None if flat else hs["t"],
                    "median": float(np.median(slip)), "p95": float(np.percentile(slip, 95)), "per_side": per_side,
                    "threshold": bps_max})
         ev += [{"metric": "worst_slippage", "row": int(r.row), "date": r.timestamp, "ticker": r.ticker, "side": r.side,
                 "slippage_bps": float(r.slip_bps)} for r in worst.itertuples()]
-        m.update({"slippage_mean_bps": hs["mean"], "slippage_t": hs["t"], "slippage_per_side": per_side})
-        parts.append(f"slippage vs model price: mean {hs['mean']:+.1f} bps (t = {hs['t']:.1f}, n = {slip.size}; "
+        m.update({"slippage_mean_bps": hs["mean"], "slippage_t": None if flat else hs["t"], "slippage_per_side": per_side})
+        t_txt = ("all slippages identical, no dispersion to test" if flat else f"t = {hs['t']:.1f}")
+        parts.append(f"slippage vs model price: mean {hs['mean']:+.1f} bps ({t_txt}, n = {slip.size}; "
                      + ", ".join(f"{k} {v['mean_bps']:+.1f} bps" for k, v in per_side.items()) + ")")
         if hs["mean"] > bps_max:
             problems.append(f"mean slippage {hs['mean']:+.1f} bps per trade above live_slippage_review_bps = "

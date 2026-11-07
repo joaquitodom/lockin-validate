@@ -1,0 +1,32 @@
+{
+  "description": "Short-only book, ten shorts at -10% (net -1.0, gross 1.0), declared net_exposure [-1.05,-0.95], gross_leverage_max 1.0, max_weight 0.12.",
+  "must_include": [
+    {
+      "check": "portfolio_constraints",
+      "status": [
+        "PASS"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "portfolio_constraints",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_constraints",
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "check": "portfolio_concentration",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "portfolio_concentration",
+      "status": "NEEDS_REVIEW"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "portfolio",
+  "origin": "review_v030"
+}

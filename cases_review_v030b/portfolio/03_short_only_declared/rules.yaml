@@ -1,0 +1,6 @@
+strategy: Short-only overlay
+constraints:
+  portfolio:
+    net_exposure: [-1.05, -0.95]
+    gross_leverage_max: 1.0
+    max_weight: 0.12

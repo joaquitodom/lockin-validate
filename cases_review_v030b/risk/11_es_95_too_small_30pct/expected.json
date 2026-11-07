@@ -1,0 +1,24 @@
+{
+  "description": "2000 days, correct 95% VaR, ES forecast 30% too small (0.7 x true): mean realised loss on exception days about 1.43 x mean ES (> 1.25 rule), Z2 about -0.43 (not below -0.70).",
+  "must_include": [
+    {
+      "check": "es_backtest",
+      "status": [
+        "NEEDS_REVIEW"
+      ]
+    }
+  ],
+  "must_not_include": [
+    {
+      "check": "es_backtest",
+      "status": "CONFIRMED_ERROR"
+    },
+    {
+      "check": "var_input_coherence",
+      "status": "CONFIRMED_ERROR"
+    }
+  ],
+  "errors_only_from": [],
+  "use_case": "risk",
+  "origin": "review_v030"
+}

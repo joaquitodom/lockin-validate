@@ -1,0 +1,17 @@
+{
+  "description": "Row 399 repeated (date duplicated, 1001 rows). Doc: CONFIRMED_ERROR.",
+  "must_include": [
+    {
+      "check": "var_input_coherence",
+      "status": [
+        "CONFIRMED_ERROR"
+      ]
+    }
+  ],
+  "must_not_include": [],
+  "errors_only_from": [
+    "var_input_coherence"
+  ],
+  "use_case": "risk",
+  "origin": "review_v030"
+}
