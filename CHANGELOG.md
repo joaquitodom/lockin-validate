@@ -48,6 +48,23 @@ checks are unchanged. The modules are review aids, not a certification or a stat
 ### Changed
 - Version 0.3.0 (pyproject.toml, `__version__`, CITATION.cff).
 
+### Fixed (two independent pre-registered reviews, docs/REVIEW_V030_A.md and docs/REVIEW_V030_B.md; responses in
+docs/REVIEW_V030_A_RESPONSE.md and docs/REVIEW_V030_B_RESPONSE.md)
+- signals: tied signal values share a quantile bucket (ties were broken by file order and produced fake spreads);
+  constant signals make turnover and quantile spread NOT_EXECUTABLE.
+- ml: rows with a blank probability are dropped before AUC, calibration and PSI (same n everywhere); an undefined
+  AUC makes the overfit gap NOT_EXECUTABLE; calibration with a 0% or 100% base rate is no longer a silent PASS.
+- forecast: horizons counted in observation steps, not calendar days (weekends created spurious horizons); exact
+  duplicate forecasts dropped and disclosed; bias flagged on the joint Mincer-Zarnowitz Wald test only (the former
+  "Wald or |t|>2" rule had a 12.5% false-alarm rate at n=30 in Monte Carlo).
+- portfolio: off-schedule trading judged on changes of the delivered target weights, not on drift (false
+  CONFIRMED_ERROR with constant targets); short-only and market-neutral books are not compared with long-only 1/N.
+- live: a missing NAV no longer merges two returns into one; gap rule relative to the native frequency (monthly
+  records were flagged); HAC test with a small-sample correction (size 8.6% -> 5.0% at n=30); returns in percent
+  units flagged.
+- risk: Kupiec decision on the exact binomial acceptance region, consistent with the printed region.
+- `python -m lockin_validate` works; `usecases` lists the detect files of every module.
+
 ## [0.2.1] - 2026-10-28
 
 Fixes from the independent review of 0.2.0 (docs/REVIEW_V020.md; response in docs/REVIEW_V020_RESPONSE.md). Score

@@ -147,7 +147,7 @@ a module document says that the number comes from a published rule. Defaults (th
   `declared_max_drawdown` (the `declared_*` values may also come from `declared_results.json`).
 - `risk` (risk): `horizon_days`, `confidence` (context only) and `window` (traffic-light window when
   `risk_traffic_light_window` is not set).
-- `forecast` (forecast): `revised_data` (actuals subject to revision).
+- `forecast` (forecast): `revised_data` (actuals subject to data revisions).
 - `research.n_trials` and `declared_results.json` `n_trials` (ml, `ml_evaluation_protocol`): trials declared for the
   models scored on the test split.
 

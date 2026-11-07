@@ -138,4 +138,4 @@ def load_all() -> None:
 
 def describe() -> list[dict[str, Any]]:
     return [{"name": uc.name, "title": uc.title, "audience": uc.audience, "description": uc.description,
-             "inputs": sorted(uc.files), "checks": uc.checks} for uc in REGISTRY.values()]
+             "inputs": sorted(set(uc.files) | set(uc.detect_files)), "checks": uc.checks} for uc in REGISTRY.values()]

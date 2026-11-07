@@ -117,13 +117,13 @@ result have none):
 
 ## Benchmark battery
 
-`cases/` holds 52 synthetic cases, each with an `expected.json` fixed by construction before the tool runs: 11 core
+`cases/` holds 109 synthetic cases (57 of them for the 0.3.0 use-case modules, `cases/usecase_*`) and the 52 original, each with an `expected.json` fixed by construction before the tool runs: 11 core
 cases (one problem each, plus a clean case and a synthetic "lockin-style" quality-ranking case), 12 adversarial cases
 written by an independent reviewer role, 7 statistical cases (best-of-200 noise must fail the deflated Sharpe, a
 genuine signal must pass it, autocorrelated returns inflate the naive Sharpe, under-declared trials, short track record,
 LLM before its cutoff...), 6 data cases (fundamentals before filing, survivorship, recycled ticker, split not
 applied, reference mismatch, clean extended inputs) and 16 lesson cases for the 0.2.0 checks (a planted positive and
-a clean negative per family, expectations committed before the checks existed). Current result (0.2.1): 52 of 52
+a clean negative per family, expectations committed before the checks existed). Current result (0.3.0): 109 of 109 cases with all expected outcomes, no false positive, pre-registered detections 159 of 159; two independent reviews of the modules scored 17 of 18 and 30 of 33 after fixes (docs/REVIEW_V030_A_RESPONSE.md, docs/REVIEW_V030_B_RESPONSE.md). Result for the original 52 (0.2.1): 52 of 52
 cases with all expected outcomes, no false positive; **pre-registered detections 52 of 52**, reported apart from the
 **20 expectations added after seeing the output** (post hoc, all met, not counted as detections); 6 unexpected review
 items (40 in 0.1.0, mostly reduced by relabelling: see [docs/ALERT_POLICY.md](docs/ALERT_POLICY.md)). An independent

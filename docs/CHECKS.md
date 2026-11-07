@@ -594,7 +594,7 @@ being correct ("data first, reconstruction second, statistics third").
 
 **Quantile portfolios and top-minus-bottom spread** (block: signals)
 
-- What it checks: Each date the signal is sorted into signal_quantiles (5) equal-sized buckets; mean forward return per bucket at the primary horizon, top-minus-bottom spread with Newey-West t-stat, monotonicity (Spearman between bucket rank and mean return) and the share of the spread from the long leg. NEEDS_REVIEW when the spread t-stat < 2, monotonicity < 0.6, or the long leg contributes less than 25% of the spread while rules.yaml declares short_selling: false; INFO otherwise.
+- What it checks: Each date the signal is sorted into signal_quantiles (5) buckets by average rank (tied values share a bucket); mean forward return per bucket at the primary horizon, top-minus-bottom spread with Newey-West t-stat, monotonicity (Spearman between bucket rank and mean return) and the share of the spread from the long leg. NEEDS_REVIEW when the spread t-stat < 2, monotonicity < 0.6, or the long leg contributes less than 25% of the spread while rules.yaml declares short_selling: false; INFO otherwise.
 - Why it matters: A long-only book captures the long leg only; a spread that lives in the bottom bucket, or that is not monotonic, is not the alpha the IC suggests.
 - How to fix: Report the per-bucket table; design the strategy on the leg it can actually hold.
 - Allows concluding: Where in the ranking the return difference sits.
