@@ -10,3 +10,8 @@ build/
 /review_output/
 .env
 .env.*
+paper/*.aux
+paper/*.log
+paper/*.bbl
+paper/*.blg
+paper/*.out

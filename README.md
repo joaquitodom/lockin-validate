@@ -115,6 +115,10 @@ result have none):
 >
 > Suggested action (priority high): Recompute the result with the declared costs and report both.
 
+## Paper
+
+Joaquín Domínguez and Mateo Domínguez, *When the Backtest Lies: Lessons from a Spent Single-Use Holdout and an Open-Source Toolkit for Validating Systematic Strategies* (working paper, 2026): [paper/lockin-validate-paper.pdf](paper/lockin-validate-paper.pdf), LaTeX sources in `paper/`.
+
 ## Benchmark battery
 
 `cases/` holds 109 synthetic cases (57 of them for the 0.3.0 use-case modules, `cases/usecase_*`) and the 52 original, each with an `expected.json` fixed by construction before the tool runs: 11 core
