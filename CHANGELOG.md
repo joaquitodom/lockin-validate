@@ -3,6 +3,14 @@
 All notable changes to this project are documented here. The format follows Keep a Changelog and the project uses
 semantic versioning.
 
+## [0.3.1] - 2026-11-17
+
+No change to the checks.
+
+### Added
+- The working paper (LaTeX sources and PDF) in `paper/`, linked from the README.
+- Zenodo metadata (`.zenodo.json`) for DOI archiving of releases; `python -m lockin_validate` entry point.
+
 ## [0.3.0] - 2026-11-06
 
 Use-case modules: validation of other kinds of financial models beyond the backtest of a trading strategy. The core
