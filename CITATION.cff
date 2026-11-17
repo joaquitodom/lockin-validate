@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
-title: "lockin-validate: offline validation of quantitative investment strategies and their backtests"
+title: "lockin-validate: offline validation of quantitative strategies, backtests and financial models"
 type: software
 authors:
   - given-names: "Joaquín"

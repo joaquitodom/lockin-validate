@@ -1,0 +1,14 @@
+{
+  "title": "lockin-validate: offline validation of quantitative strategies, backtests and financial models",
+  "upload_type": "software",
+  "description": "An offline, open-source Python toolkit that audits the inputs of a quantitative strategy, reconstructs and reconciles its results from trades, detects look-ahead, omitted costs, metric errors and rule-versus-implementation mismatches, and assesses statistical significance and overfitting. Since version 0.3.0 it also validates alpha signals, supervised models, VaR and ES backtests, point forecasts, portfolio weights and live track records. Every finding links to its evidence. The checks are review aids, not a certification.",
+  "creators": [
+    {"name": "Domínguez, Joaquín", "affiliation": "Independent researcher"},
+    {"name": "Domínguez, Mateo", "affiliation": "Independent researcher"}
+  ],
+  "license": "Apache-2.0",
+  "keywords": ["backtest", "validation", "backtest overfitting", "deflated Sharpe ratio", "look-ahead bias", "model validation", "VaR backtesting", "forecast evaluation", "quantitative finance"],
+  "related_identifiers": [
+    {"identifier": "https://github.com/joaquitodom/lockin-validate", "relation": "isSupplementTo", "scheme": "url"}
+  ]
+}
