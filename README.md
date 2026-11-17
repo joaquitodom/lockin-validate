@@ -1,5 +1,7 @@
 # lockin-validate
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24315374.svg)](https://doi.org/10.5281/zenodo.24315374)
+
 **Offline toolkit to validate quantitative investment strategies and their backtests.** Give it a folder with what a
 strategy owner delivers (prices, signals, trades, positions, costs, rules, declared results, optionally fundamentals,
 universe membership, a trials log...) and it produces a reproducible report in which **every finding links to its
@@ -117,7 +119,7 @@ result have none):
 
 ## Paper
 
-Joaquín Domínguez and Mateo Domínguez, *When the Backtest Lies: Lessons from a Spent Single-Use Holdout and an Open-Source Toolkit for Validating Systematic Strategies* (working paper, 2026): [paper/lockin-validate-paper.pdf](paper/lockin-validate-paper.pdf), LaTeX sources in `paper/`.
+Joaquín Domínguez and Mateo Domínguez, *When the Backtest Lies: Lessons from a Spent Single-Use Holdout and an Open-Source Toolkit for Validating Systematic Strategies* (working paper, 2026): [paper/lockin-validate-paper.pdf](paper/lockin-validate-paper.pdf), LaTeX sources in `paper/`. Software archived on Zenodo: [doi:10.5281/zenodo.24315374](https://doi.org/10.5281/zenodo.24315374) (all versions).
 
 ## Benchmark battery
 
